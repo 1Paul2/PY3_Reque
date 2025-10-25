@@ -1,0 +1,21 @@
+/* RESET sencillo para quitar estilos del template de Vite */
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+/* El root NO debe tener max-width ni padding */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}

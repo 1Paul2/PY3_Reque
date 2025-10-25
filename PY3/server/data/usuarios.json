@@ -1,0 +1,14 @@
+[
+  {
+    "code": "admin01",
+    "password": "admin123",
+    "nombre": "Administrador",
+    "rol": "admin",
+    "cedula": "000",
+    "correo": "admin@sistema.local",
+    "telefono": "",
+    "fechaNac": "",
+    "idioma": "es",
+    "mustChangePassword": false
+  }
+]
