@@ -1,0 +1,25 @@
+{
+  "name": "py3",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run vite\" \"npm run server\"",
+    "vite": "vite",
+    "server": "nodemon server/server.js --watch server",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "nodemon": "^2.0.22",
+    "vite": "^5.4.0"
+  }
+}

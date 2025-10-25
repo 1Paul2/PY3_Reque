@@ -1,0 +1,203 @@
+:root { font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; }
+body { margin:0; background:#0b0c10; color:#e5e7eb; }
+.center-screen { min-height:100vh; display:grid; place-items:center; padding:24px; }
+.card { background:#0f1724; padding:24px; border-radius:12px; max-width:420px; width:100%; box-shadow:0 8px 28px rgba(0,0,0,.5); border:1px solid rgba(255,255,255,0.02); }
+h1,h2,h3 { margin:0 0 10px; }
+label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; color:#c1c5cc; }
+
+.input {
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #273342;
+  background:#0b1220;
+  color:#e5e7eb;
+}
+.input:focus { outline: none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(96,165,250,.2); }
+
+.btn-primary, .btn-secondary, .btn-danger {
+  border:0; border-radius:12px; padding:10px 14px; cursor:pointer;
+}
+.btn-primary { background:#3b82f6; color:white; }
+.btn-secondary { background:#334155; color:#e5e7eb; }
+.btn-danger { background:#ef4444; color:white; }
+
+.error { color:#fca5a5; margin-top:8px; }
+.muted { color:#9aa4b2; font-size:.9rem; }
+.home { max-width:980px; margin:0 auto; padding:24px; }
+.home-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.stack { display:flex; gap:12px; margin-top:16px; }
+
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:grid; place-items:center; padding:24px; z-index:60; }
+.modal-card { max-width:680px; width:100%; background:#0f1724; border-radius:12px; padding:20px; border:1px solid rgba(255,255,255,0.02); }
+.modal-title { margin:0 0 6px; }
+.modal-text { margin:0 0 12px; color:#cbd5e1; }
+
+/* Grid del formulario del modal */
+.form-grid {
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:12px;
+  margin-top:8px;
+}
+.form-grid .col { display:flex; flex-direction:column; }
+.form-grid .col-span-2 { grid-column: 1 / -1; }
+
+/* Acciones del modal alineadas en fila y compactas */
+.modal-actions {
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:14px;
+}
+.compact-actions { padding-top:6px; }
+.btn-compact { width:auto; min-width:140px; }
+
+/* ===== MEJOR ESPACIADO Y TAMAÑO DEL FORMULARIO ===== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px); /* efecto de desenfoque elegante */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px; /* más aire alrededor */
+  z-index: 100;
+}
+
+/* Cuadro principal del modal */
+.modal-card {
+  max-width: 980px;       /* más ancho */
+  width: 100%;
+  background: #0e1525;
+  border-radius: 20px;
+  padding: 60px 70px;     /* más alto y ancho */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* Títulos más grandes */
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.modal-text {
+  color: #cbd5e1;
+  font-size: 1rem;
+  margin-bottom: 32px;
+}
+
+/* === FORMULARIO === */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 40px;   /* más espacio horizontal */
+  row-gap: 34px;      /* más espacio vertical */
+  margin-top: 10px;
+}
+
+.form-grid .col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* espacio entre label e input */
+}
+
+.form-grid .col-span-2 {
+  grid-column: 1 / -1;
+}
+
+/* Inputs amplios */
+.input {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid #273342;
+  background: #0b1220;
+  color: #e5e7eb;
+  font-size: 1rem;
+}
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+}
+
+/* === BOTONES === */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 40px; /* más separación con el formulario */
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+.btn-secondary {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .modal-card {
+    max-width: 95%;
+    padding: 40px 32px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    row-gap: 26px;
+    column-gap: 0;
+  }
+}
+/* === Ajuste de tamaño solo para el login === */
+.card form .input {
+  padding: 10px 14px;          /* más compacto */
+  font-size: 0.95rem;
+  border-radius: 10px;
+}
+
+.card {
+  max-width: 380px;            /* cuadro un poco más angosto */
+  padding: 36px 44px;          /* menos padding para equilibrar */
+}
+
+.card h2 {
+  font-size: 1.5rem;
+}
+
+.card button.btn-primary {
+  padding: 10px 18px;          /* botón más pequeño */
+  border-radius: 10px;
+}
+
+.card small {
+  font-size: 0.85rem;
+}
+
+.card p {
+  margin-bottom: 8px;
+}
+
+/* Espaciado entre campos más ajustado */
+.card label {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.card input + label {
+  margin-top: 12px;
+}
