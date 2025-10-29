@@ -188,6 +188,8 @@ function Login({ onLogin, api }) {
 function AdminHome({ session, onLogout, api }) {
   const [showCreate, setShowCreate] = useState(false);
   const [confirmOut, setConfirmOut] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [currentSection, setCurrentSection] = useState(""); // 👈 sección activa
 
   const recordarCodigos = () => {
     const usuarios = api.getAll();
@@ -206,26 +208,54 @@ function AdminHome({ session, onLogout, api }) {
 
   return (
     <div className="home">
+      {/* Menú */}
+      <div className="menu-container">
+        <button className="btn-menu-toggle" onClick={() => setShowMenu(!showMenu)}>☰</button>
+        {showMenu && (
+          <div className="dropdown-menu">
+            <button className="btn-menu" onClick={() => setCurrentSection("clientes")}>Gestión Clientes</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
+          </div>
+        )}
+      </div>
+
+      {/* 🔹 Encabezado */}
       <div className="home-head">
         <div>
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Rol: {session.rol}</div>
         </div>
-        <button className="btn-danger" onClick={()=>setConfirmOut(true)}>Cerrar sesion</button>
+        <button className="btn-danger" onClick={() => setConfirmOut(true)}>Cerrar sesión</button>
       </div>
 
-      <div className="stack">
-        <button className="btn-primary"  onClick={()=>setShowCreate(true)}>Crear usuario</button>
-        <button className="btn-secondary" onClick={recordarCodigos}>Recordar codigos</button>
+      {/* 🔹 Contenido principal según sección */}
+      <div style={{ maxWidth: 800, margin: "16px auto" }}>
+        {currentSection === "" && (
+          <>
+            <div className="stack">
+              <button className="btn-primary" onClick={() => setShowCreate(true)}>Crear usuario</button>
+              <button className="btn-secondary" onClick={recordarCodigos}>Recordar codigos</button>
+            </div>
+            {showCreate && <CreateUserModal onClose={() => setShowCreate(false)} api={api} />}
+          </>
+        )}
+        {currentSection === "clientes" && <GestionClientes />}
+        {currentSection === "vehiculos" && <div>Sección Vehículos</div>}
+        {currentSection === "inventario" && <div>Sección Inventario</div>}
+        {currentSection === "citas" && <div>Sección Citas</div>}
+        {currentSection === "cotizacion" && <div>Sección Cotización</div>}
+        {currentSection === "reportes" && <div>Sección Reportes</div>}
       </div>
-
-      {showCreate && <CreateUserModal onClose={()=>setShowCreate(false)} api={api} />}
 
       {confirmOut && (
         <ConfirmDialog
-          title="¿Seguro que desea cerrar sesion?"
-          message="Si sale, volvera a la pantalla de inicio de sesion."
-          onCancel={()=>setConfirmOut(false)}
+          title="¿Seguro que desea cerrar sesión?"
+          message="Si sale, volverá a la pantalla de inicio de sesión."
+          onCancel={() => setConfirmOut(false)}
           onConfirm={onLogout}
         />
       )}
@@ -236,26 +266,68 @@ function AdminHome({ session, onLogout, api }) {
 /* ======================= USER HOME ======================= */
 function UserHome({ session, onLogout }) {
   const [confirmOut, setConfirmOut] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // estado del submenú
+  const [currentSection, setCurrentSection] = useState(""); // sección activa
+
   return (
     <div className="home">
+
+      {/* Botón del submenú (esquina izquierda) */}
+      <div className="menu-container">
+        <button
+          className="btn-menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
+
+        {menuOpen && (
+          <div className="dropdown-menu">
+            <button className="btn-menu" onClick={() => setCurrentSection("clientes")}>Gestión Clientes</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
+          </div>
+        )}
+      </div>
+
+      {/* Encabezado */}
       <div className="home-head">
         <div>
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Código: {session.code}</div>
         </div>
-        <button className="btn-danger" onClick={()=>setConfirmOut(true)}>Cerrar sesion</button>
+        <button className="btn-danger" onClick={() => setConfirmOut(true)}>
+          Cerrar sesión
+        </button>
       </div>
 
-      <div className="card" style={{maxWidth: 520, margin:"16px auto"}}>
-        <h3>Interfaz de Usuario</h3>
-        <p>Ingresaste correctamente, {session.nombre}. Aquí irá el menú del rol usuario.</p>
+      {/* Contenido principal según sección */}
+      <div style={{ maxWidth: 800, margin: "16px auto" }}>
+        {currentSection === "" && (
+          <div className="card" style={{ maxWidth: 520, margin: "16px auto" }}>
+            <h3>Interfaz de Usuario</h3>
+            <p>
+              Ingresaste correctamente, {session.nombre}. Aquí irá el menú del rol usuario.
+            </p>
+          </div>
+        )}
+        {currentSection === "clientes" && <GestionClientes />}
+        {currentSection === "vehiculos" && <div>Sección Vehículos</div>}
+        {currentSection === "inventario" && <div>Sección Inventario</div>}
+        {currentSection === "citas" && <div>Sección Citas</div>}
+        {currentSection === "cotizacion" && <div>Sección Cotización</div>}
+        {currentSection === "reportes" && <div>Sección Reportes</div>}
       </div>
 
+      {/* Confirmación de salida */}
       {confirmOut && (
         <ConfirmDialog
-          title="¿Seguro que desea cerrar sesion?"
-          message="Si sale, volvera a la pantalla de inicio de sesion."
-          onCancel={()=>setConfirmOut(false)}
+          title="¿Seguro que desea cerrar sesión?"
+          message="Si sale, volverá a la pantalla de inicio de sesión."
+          onCancel={() => setConfirmOut(false)}
           onConfirm={onLogout}
         />
       )}
@@ -516,3 +588,103 @@ function ConfirmDialog({ title, message, onCancel, onConfirm }) {
 }
 
 export default App;
+
+/* ======================= GESTION CLIENTES ======================= */
+function GestionClientes() {
+  const [clientes, setClientes] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [newCliente, setNewCliente] = useState({ nombre: "", cedula: "", correo: "" });
+
+  // Agregar cliente
+  const agregarCliente = () => {
+    if (!newCliente.nombre.trim() || !newCliente.cedula.trim()) return;
+    setClientes([...clientes, { ...newCliente, id: Date.now() }]);
+    setNewCliente({ nombre: "", cedula: "", correo: "" });
+    setShowForm(false);
+  };
+
+  // Filtrar clientes
+  const clientesFiltrados = clientes.filter(c =>
+    c.nombre.toLowerCase().includes(search.toLowerCase()) ||
+    c.cedula.includes(search) ||
+    (c.correo && c.correo.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  return (
+    <div className="gestion-clientes">
+      <h2>Gestión de Clientes</h2>
+
+      {/* Barra de búsqueda arriba del botón */}
+      <input
+        className="search-bar"
+        placeholder="Buscar cliente..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        style={{ width: "100%", padding: 6, marginBottom: 10 }}
+      />
+
+      {/* Botón agregar cliente */}
+      <button
+        className="btn btn-add"
+        onClick={() => setShowForm(!showForm)}
+        style={{ marginBottom: 10 }}
+      >
+        {showForm ? "Cancelar" : "Agregar Cliente"}
+      </button>
+
+      {/* Formulario para agregar cliente */}
+      {showForm && (
+        <div className="form-container">
+          <input
+            placeholder="Nombre"
+            value={newCliente.nombre}
+            onChange={e => setNewCliente({ ...newCliente, nombre: e.target.value })}
+          />
+          <input
+            placeholder="Cédula"
+            value={newCliente.cedula}
+            onChange={e => setNewCliente({ ...newCliente, cedula: e.target.value })}
+          />
+          <input
+            placeholder="Correo"
+            value={newCliente.correo}
+            onChange={e => setNewCliente({ ...newCliente, correo: e.target.value })}
+          />
+          <input
+            placeholder="Numero Telefornico"
+            value={newCliente.numero}
+            onChange={e => setNewCliente({ ...newCliente, numero: e.target.value })}
+          />
+          <button className="btn btn-add" onClick={agregarCliente}>Guardar</button>
+        </div>
+      )}
+
+      {/* Lista de clientes */}
+      <ul className="cliente-list">
+        {clientesFiltrados.map(c => (
+          <li
+            key={c.id}
+            onClick={() => setSelected(c)}
+            className={selected?.id === c.id ? "selected" : ""}
+          >
+            {c.nombre} ({c.cedula})
+          </li>
+        ))}
+      </ul>
+
+      {/* Información del cliente seleccionado */}
+      {selected && (
+        <div className="cliente-info">
+          <h3>Información del Cliente</h3>
+          <p><b>Nombre:</b> {selected.nombre}</p>
+          <p><b>Cédula:</b> {selected.cedula}</p>
+          <p><b>Correo:</b> {selected.correo || "N/A"}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
