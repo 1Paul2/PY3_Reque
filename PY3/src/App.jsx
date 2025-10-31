@@ -124,6 +124,7 @@ function Login({ onLogin, api }) {
   const [pass, setPass] = useState("");
   const [err, setErr] = useState("");
   const [forcePwd, setForcePwd] = useState(null); // { user }
+  const [showCreate, setShowCreate] = useState(false); // modal crear usuario
 
   const submit = (e) => {
     e && e.preventDefault();
@@ -150,26 +151,31 @@ function Login({ onLogin, api }) {
   return (
     <div className="center-screen">
       <div className="card">
-        <h2>Inicio de sesion</h2>
+        <h2>Inicio de sesión</h2>
         <p>Ingrese su <b>codigo</b>, <b>correo</b> o <b>nombre</b> y su contraseña</p>
         {err && <p className="error">{err}</p>}
 
         <form onSubmit={submit}>
           <label>Codigo / Correo / Nombre</label>
-          <input className="input" value={key} onChange={e=>setKey(e.target.value)} />
+          <input className="input" value={key} onChange={e => setKey(e.target.value)} />
 
           <label>Contraseña</label>
-          <input className="input" type="password" value={pass} onChange={e=>setPass(e.target.value)} />
+          <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} />
 
-          <button className="btn-primary" type="submit">Entrar</button>
+          {/* Botones alineados en la misma fila */}
+          <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
+            <button type="submit" className="btn-primary">Entrar</button>
+            <button type="button" className="btn-primary" onClick={() => setShowCreate(true)}>Crear usuario</button>
+          </div>
         </form>
 
-        <small style={{display:"block", marginTop:10}}>
+        <small style={{ display: "block", marginTop: 10 }}>
           <b>Admin de prueba:</b><br/>
           Codigo: admin01 — Contraseña: admin123
         </small>
       </div>
 
+      {/* Modal de cambiar contraseña */}
       {forcePwd && (
         <ChangePasswordModal
           user={forcePwd.user}
@@ -180,16 +186,23 @@ function Login({ onLogin, api }) {
           }}
         />
       )}
+
+      {/* Modal de crear usuario */}
+      {showCreate && (
+        <CreateUserModal
+          onClose={() => setShowCreate(false)}
+          api={api}
+        />
+      )}
     </div>
   );
 }
 
 /* ======================= ADMIN HOME ======================= */
 function AdminHome({ session, onLogout, api }) {
-  const [showCreate, setShowCreate] = useState(false);
   const [confirmOut, setConfirmOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [currentSection, setCurrentSection] = useState(""); // 👈 sección activa
+  const [currentSection, setCurrentSection] = useState("clientes"); // inicia en gestión clientes
 
   const recordarCodigos = () => {
     const usuarios = api.getAll();
@@ -223,7 +236,7 @@ function AdminHome({ session, onLogout, api }) {
         )}
       </div>
 
-      {/* 🔹 Encabezado */}
+      {/* Encabezado */}
       <div className="home-head">
         <div>
           <h1>Bienvenido, {session.nombre}</h1>
@@ -232,25 +245,20 @@ function AdminHome({ session, onLogout, api }) {
         <button className="btn-danger" onClick={() => setConfirmOut(true)}>Cerrar sesión</button>
       </div>
 
-      {/* 🔹 Contenido principal según sección */}
-      <div style={{ maxWidth: 800, margin: "16px auto" }}>
-        {currentSection === "" && (
-          <>
-            <div className="stack">
-              <button className="btn-primary" onClick={() => setShowCreate(true)}>Crear usuario</button>
-              <button className="btn-secondary" onClick={recordarCodigos}>Recordar codigos</button>
-            </div>
-            {showCreate && <CreateUserModal onClose={() => setShowCreate(false)} api={api} />}
-          </>
-        )}
-        {currentSection === "clientes" && <GestionClientes />}
-        {currentSection === "vehiculos" && <div>Sección Vehículos</div>}
-        {currentSection === "inventario" && <div>Sección Inventario</div>}
-        {currentSection === "citas" && <div>Sección Citas</div>}
-        {currentSection === "cotizacion" && <div>Sección Cotización</div>}
-        {currentSection === "reportes" && <div>Sección Reportes</div>}
+      {/* ===== CUADRO CENTRAL GRIS ===== */}
+      <div className="center-panel">
+        {/* Contenido principal según sección */}
+        <div style={{ maxWidth: 800, margin: "16px auto" }}>
+          {currentSection === "clientes" && <GestionClientes />}
+          {currentSection === "vehiculos" && <GestionVehiculos />}
+          {currentSection === "inventario" && <div>Sección Inventario</div>}
+          {currentSection === "citas" && <div>Sección Citas</div>}
+          {currentSection === "cotizacion" && <div>Sección Cotización</div>}
+          {currentSection === "reportes" && <div>Sección Reportes</div>}
+        </div>
       </div>
 
+      {/* Confirmación cerrar sesión */}
       {confirmOut && (
         <ConfirmDialog
           title="¿Seguro que desea cerrar sesión?"
@@ -267,7 +275,7 @@ function AdminHome({ session, onLogout, api }) {
 function UserHome({ session, onLogout }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // estado del submenú
-  const [currentSection, setCurrentSection] = useState(""); // sección activa
+  const [currentSection, setCurrentSection] = useState("clientes"); // inicia en gestión clientes
 
   return (
     <div className="home">
@@ -306,16 +314,8 @@ function UserHome({ session, onLogout }) {
 
       {/* Contenido principal según sección */}
       <div style={{ maxWidth: 800, margin: "16px auto" }}>
-        {currentSection === "" && (
-          <div className="card" style={{ maxWidth: 520, margin: "16px auto" }}>
-            <h3>Interfaz de Usuario</h3>
-            <p>
-              Ingresaste correctamente, {session.nombre}. Aquí irá el menú del rol usuario.
-            </p>
-          </div>
-        )}
         {currentSection === "clientes" && <GestionClientes />}
-        {currentSection === "vehiculos" && <div>Sección Vehículos</div>}
+        {currentSection === "vehiculos" && <GestionVehiculos />}
         {currentSection === "inventario" && <div>Sección Inventario</div>}
         {currentSection === "citas" && <div>Sección Citas</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
@@ -592,17 +592,22 @@ export default App;
 /* ======================= GESTION CLIENTES ======================= */
 function GestionClientes() {
   const [clientes, setClientes] = useState([]);
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [newCliente, setNewCliente] = useState({ nombre: "", cedula: "", correo: "" });
+  const [search, setSearchClientes] = useState("");
+  const [selected, setSelectedClientes] = useState(null);
+  const [showForm, setShowFormClientes] = useState(false);
+  const [newCliente, setNewCliente] = useState({ 
+    nombre: "", 
+    cedula: "", 
+    correo: "", 
+    numero: ""
+  });
 
   // Agregar cliente
   const agregarCliente = () => {
     if (!newCliente.nombre.trim() || !newCliente.cedula.trim()) return;
     setClientes([...clientes, { ...newCliente, id: Date.now() }]);
-    setNewCliente({ nombre: "", cedula: "", correo: "" });
-    setShowForm(false);
+    setNewCliente({ nombre: "", cedula: "", correo: "", numero: "" });
+    setShowFormClientes(false);
   };
 
   // Filtrar clientes
@@ -616,25 +621,25 @@ function GestionClientes() {
     <div className="gestion-clientes">
       <h2>Gestión de Clientes</h2>
 
-      {/* Barra de búsqueda arriba del botón */}
+      {/* Barra de búsqueda */}
       <input
         className="search-bar"
         placeholder="Buscar cliente..."
         value={search}
-        onChange={e => setSearch(e.target.value)}
+        onChange={e => setSearchClientes(e.target.value)}
         style={{ width: "100%", padding: 6, marginBottom: 10 }}
       />
 
-      {/* Botón agregar cliente */}
+      {/* Botón agregar */}
       <button
         className="btn btn-add"
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => setShowFormClientes(!showForm)}
         style={{ marginBottom: 10 }}
       >
         {showForm ? "Cancelar" : "Agregar Cliente"}
       </button>
 
-      {/* Formulario para agregar cliente */}
+      {/* Formulario */}
       {showForm && (
         <div className="form-container">
           <input
@@ -653,7 +658,7 @@ function GestionClientes() {
             onChange={e => setNewCliente({ ...newCliente, correo: e.target.value })}
           />
           <input
-            placeholder="Numero Telefornico"
+            placeholder="Número Telefónico"
             value={newCliente.numero}
             onChange={e => setNewCliente({ ...newCliente, numero: e.target.value })}
           />
@@ -666,7 +671,7 @@ function GestionClientes() {
         {clientesFiltrados.map(c => (
           <li
             key={c.id}
-            onClick={() => setSelected(c)}
+            onClick={() => setSelectedClientes(c)}
             className={selected?.id === c.id ? "selected" : ""}
           >
             {c.nombre} ({c.cedula})
@@ -674,17 +679,130 @@ function GestionClientes() {
         ))}
       </ul>
 
-      {/* Información del cliente seleccionado */}
+      {/*  Modal flotante con la info del cliente */}
       {selected && (
-        <div className="cliente-info">
-          <h3>Información del Cliente</h3>
-          <p><b>Nombre:</b> {selected.nombre}</p>
-          <p><b>Cédula:</b> {selected.cedula}</p>
-          <p><b>Correo:</b> {selected.correo || "N/A"}</p>
+        <div className="modal-overlay" onClick={() => setSelectedClientes(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Información del Cliente</h3>
+            <p><b>Nombre:</b> {selected.nombre}</p>
+            <p><b>Cédula:</b> {selected.cedula}</p>
+            <p><b>Número:</b> {selected.numero}</p>
+            <p><b>Correo:</b> {selected.correo || "N/A"}</p>
+            <button className="btn btn-close" onClick={() => setSelectedClientes(null)}>Cerrar</button>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
+/* ======================= GESTION VEHICULOS ======================= */
+function GestionVehiculos() {
+  const [vehiculos, setVehiculos] = useState([]);
+  const [search, setSearchVehiculos] = useState("");
+  const [selected, setSelectedVehiculos] = useState(null);
+  const [showFormVehiculos, setShowFormVehiculos] = useState(false);
+  const [newVehiculo, setNewVehiculo] = useState({
+    marca: "",
+    modelo: "",
+    anoVehiculo: "",
+    placa: "",
+    tipo: ""
+  });
 
+  // Agregar vehículo
+  const agregarVehiculos = () => {
+    if (!newVehiculo.marca.trim() || !newVehiculo.placa.trim()) return;
+    setVehiculos([...vehiculos, { ...newVehiculo, id: Date.now() }]);
+    setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
+    setShowFormVehiculos(false);
+  };
+
+  // Filtrar vehículos
+  const vehiculosFiltrados = vehiculos.filter(v =>
+    v.placa.toLowerCase().includes(search.toLowerCase()) ||
+    v.modelo.toLowerCase().includes(search.toLowerCase()) ||
+    (v.marca && v.marca.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  return (
+    <div className="gestion-vehiculos">
+      <h2>Gestión de Vehículos</h2>
+
+      {/* Barra de búsqueda */}
+      <input
+        className="search-bar"
+        placeholder="Buscar Vehículo..."
+        value={search}
+        onChange={e => setSearchVehiculos(e.target.value)}
+        style={{ width: "100%", padding: 6, marginBottom: 10 }}
+      />
+
+      {/* Botón agregar vehículo */}
+      <button
+        className="btn btn-add"
+        onClick={() => setShowFormVehiculos(!showFormVehiculos)}
+        style={{ marginBottom: 10 }}
+      >
+        {showFormVehiculos ? "Cancelar" : "Agregar Vehículo"}
+      </button>
+
+      {/* Formulario */}
+      {showFormVehiculos && (
+        <div className="form-container">
+          <input
+            placeholder="Placa"
+            value={newVehiculo.placa}
+            onChange={e => setNewVehiculo({ ...newVehiculo, placa: e.target.value })}
+          />
+          <input
+            placeholder="Año del Vehículo"
+            value={newVehiculo.anoVehiculo}
+            onChange={e => setNewVehiculo({ ...newVehiculo, anoVehiculo: e.target.value })}
+          />
+          <input
+            placeholder="Modelo"
+            value={newVehiculo.modelo}
+            onChange={e => setNewVehiculo({ ...newVehiculo, modelo: e.target.value })}
+          />
+          <input
+            placeholder="Marca"
+            value={newVehiculo.marca}
+            onChange={e => setNewVehiculo({ ...newVehiculo, marca: e.target.value })}
+          />
+          <input
+            placeholder="Tipo"
+            value={newVehiculo.tipo}
+            onChange={e => setNewVehiculo({ ...newVehiculo, tipo: e.target.value })}
+          />
+          <button className="btn btn-add" onClick={agregarVehiculos}>Guardar</button>
+        </div>
+      )}
+
+      {/* Lista */}
+      <ul className="vehiculo-list">
+        {vehiculosFiltrados.map(v => (
+          <li
+            key={v.id}
+            onClick={() => setSelectedVehiculos(v)}
+            className={selected?.id === v.id ? "selected" : ""}
+          >
+            {v.placa} ({v.tipo})
+          </li>
+        ))}
+      </ul>
+
+      {/* Información */}
+      {selected && (
+        <div className="vehiculos-info">
+          <h3>Información del Vehículo</h3>
+          <p><b>Placa:</b> {selected.placa}</p>
+          <p><b>Marca:</b> {selected.marca}</p>
+          <p><b>Modelo:</b> {selected.modelo}</p>
+          <p><b>Tipo:</b> {selected.tipo}</p>
+          <p><b>Año:</b> {selected.anoVehiculo || "N/A"}</p>
+        </div>
+      )}
+    </div>
+  );
+}

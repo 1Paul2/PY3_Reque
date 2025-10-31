@@ -1,7 +1,22 @@
 :root { font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; }
-body { margin:0; background:#0b0c10; color:#e5e7eb; }
+/*fondo principal*/
+body {
+  margin: 0;
+  background: #0b0c10 url("old-car-at-shop-cmoqec8v43avgin8.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #e5e7eb;
+}
 .center-screen { min-height:100vh; display:grid; place-items:center; padding:24px; }
-.card { background:#0f1724; padding:24px; border-radius:12px; max-width:420px; width:100%; box-shadow:0 8px 28px rgba(0,0,0,.5); border:1px solid rgba(255,255,255,0.02); }
+/*inicio de sesion*/
+.card {
+  background: rgba(22, 25, 29, 0.9);
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 28px rgba(157, 36, 36, 0.5);
+  border: 1px solid rgba(208, 9, 9, 0.02);
+}
 h1,h2,h3 { margin:0 0 10px; }
 label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; color:#c1c5cc; }
 
@@ -18,8 +33,8 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .btn-primary, .btn-secondary, .btn-danger, .btn-menu {
   border:0; border-radius:12px; padding:10px 14px; cursor:pointer;
 }
-.btn-primary { background:#3b82f6; color:white; }
-.btn-menu { background:#3b82f6; color:white; }
+.btn-primary { background:#a62906; color:white; }
+.btn-menu { background:#f64b3b; color:white; }
 .btn-secondary { background:#334155; color:#e5e7eb; }
 .btn-danger { background:#ef4444; color:white; }
 
@@ -29,7 +44,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .home-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .stack { display:flex; gap:12px; margin-top:16px; }
 
-.modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:grid; place-items:center; padding:24px; z-index:60; }
+.modal { position:fixed; inset:0; background:rgba(137, 4, 4, 0.6); display:grid; place-items:center; padding:24px; z-index:60; }
 .modal-card { max-width:680px; width:100%; background:#0f1724; border-radius:12px; padding:20px; border:1px solid rgba(255,255,255,0.02); }
 .modal-title { margin:0 0 6px; }
 .modal-text { margin:0 0 12px; color:#cbd5e1; }
@@ -72,11 +87,18 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .modal-card {
   max-width: 980px;       /* más ancho */
   width: 100%;
-  background: #0e1525;
+  background: rgba(60, 57, 57, 0.65);
   border-radius: 20px;
   padding: 60px 70px;     /* más alto y ancho */
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(20, 6, 80, 0.08);
+  box-shadow: 0 20px 60px rgba(81, 0, 0, 0.8);
+}
+
+/* === Ajuste de tamaño solo para el login === */
+.modal-card form .input {
+  background: #0600008e;       /* color de fondo del input */
+  color: #ffffff;            /* color del texto */
+  border: 1px solid #6c5e5e;    /* opcional: color del borde */
 }
 
 /* Títulos más grandes */
@@ -144,12 +166,17 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .btn-primary {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #9e0000;
+  color: rgb(255, 255, 255);
 }
+
 .btn-secondary {
   background-color: #374151;
   color: #e5e7eb;
+}
+
+.btn-primary:hover {
+  background: #cc0303;   /* color al pasar el mouse */
 }
 
 /* === RESPONSIVE === */
@@ -166,9 +193,19 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 /* === Ajuste de tamaño solo para el login === */
 .card form .input {
-  padding: 10px 14px;          /* más compacto */
+  padding: 10px 14px;        /* más compacto */
   font-size: 0.95rem;
   border-radius: 10px;
+  max-width: 350px;
+  
+  background: #231e1e;       /* color de fondo del input */
+  color: #ffffff;            /* color del texto */
+  border: 1px solid #6c5e5e;    /* opcional: color del borde */
+}
+
+.card form .input:focus {
+  border: 2px solid #ff0000;  /* borde rojo cuando el input está activo */
+  box-shadow: 0 0 4px #ff0000; /* opcional: resplandor rojo */
 }
 
 .card {
@@ -183,7 +220,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .card button.btn-primary {
   padding: 10px 18px;
   border-radius: 10px;
-  margin-top: 20px; /* 🔽 baja el botón 20px */
+  margin-top: 20px;
 }
 
 .card small {
@@ -269,6 +306,71 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/*Cuadro grande*/
+.home-panel {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: rgba(30, 30, 30, 0.85); /* gris oscuro semi-transparente */
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  font-family: Arial, sans-serif;
+}
+
+.center-panel {
+  background: rgba(30, 30, 30, 0.85); /* gris oscuro semi-transparente */
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 900px;   /* ancho máximo del cuadro */
+  margin: 40px auto;  /* margen arriba/abajo y centrado horizontal */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  color: #fff;
+}
+
+/* Encabezado */
+.home-panel .home-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botones */
+.home-panel button {
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  padding: 6px 12px;
+}
+
+/* Botón cerrar sesión */
+.home-panel .btn-danger {
+  background: #c0392b;
+  color: white;
+}
+.home-panel .btn-danger:hover {
+  background: #e74c3c;
+}
+
+/* Menú de secciones */
+.home-panel .section-menu {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+.home-panel .section-menu button {
+  background: #555;
+  color: white;
+  padding: 6px 10px;
+}
+.home-panel .section-menu button:hover {
+  background: #777;
+}
+
+.section-modal .btn-close:hover {
+  background: #715dce;
 }
 
 /*Gestion de Clientes*/
@@ -362,6 +464,174 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .gestion-clientes .cliente-info {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #3d042b;
+  border-radius: 8px;
+  background: #715dce;
+}
+
+/* === MODAL flotante centrado y compacto === */
+.gestion-clientes .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3); /* fondo tenue */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.gestion-clientes .modal {
+  background: #351c42;
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;          /* ancho fijo */
+  max-width: 90%;
+  display: flex;
+  flex-direction: column; /* elementos en vertical */
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-clientes .modal h3 {
+  color: #4b0082;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-clientes .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.gestion-clientes .btn-close {
+  background: #4b0082;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  align-self: center;
+  transition: background 0.2s;
+}
+
+.gestion-clientes .btn-close:hover {
+  background: #715dce;
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/*Gestion de Vehiculos*/
+
+.gestion-vehiculos {
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.gestion-vehiculos h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #5d87d6; /* morado */
+}
+
+.gestion-vehiculos .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 5px;
+}
+
+.gestion-vehiculos .btn-add {
+  background: #4b0082;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.gestion-vehiculos .btn-add:hover {
+  background: #cec7d3;
+}
+
+.gestion-vehiculos .form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px;       /* menos padding para que no sea tan alto */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;           /* espacio entre inputs */
+}
+
+.gestion-vehiculos .form-container input,
+.gestion-vehiculos .form-container button {
+  width: 100%;
+  height: 36px;        /* alto uniforme */
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.gestion-vehiculos .form-container button:hover {
+  background: #6a0dad;
+}
+
+.gestion-vehiculos input {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+}
+
+.gestion-vehiculos .vehiculo-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.gestion-vehiculos .vehiculo-list li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-vehiculos .vehiculo-list li:hover {
+  background: #3d0747;
+}
+
+.gestion-vehiculos .vehiculo-list li.selected {
+  background: #715dce;
+}
+
+.gestion-vehiculos .vehiculo-info {
   margin-top: 20px;
   padding: 15px;
   border: 1px solid #3d042b;
