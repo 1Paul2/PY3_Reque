@@ -1,4 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
+import GestionClientes from "./GestionClientes"; // importamos nuestro componente
+// otros imports: Login, AdminHome, UserHome, etc.
 
 /* ======================= API HTTP ======================= */
 const apiHttp = {
@@ -588,113 +590,6 @@ function ConfirmDialog({ title, message, onCancel, onConfirm }) {
 }
 
 export default App;
-
-/* ======================= GESTION CLIENTES ======================= */
-function GestionClientes() {
-  const [clientes, setClientes] = useState([]);
-  const [search, setSearchClientes] = useState("");
-  const [selected, setSelectedClientes] = useState(null);
-  const [showForm, setShowFormClientes] = useState(false);
-  const [newCliente, setNewCliente] = useState({ 
-    nombre: "", 
-    cedula: "", 
-    correo: "", 
-    numero: ""
-  });
-
-  // Agregar cliente
-  const agregarCliente = () => {
-    if (!newCliente.nombre.trim() || !newCliente.cedula.trim()) return;
-    setClientes([...clientes, { ...newCliente, id: Date.now() }]);
-    setNewCliente({ nombre: "", cedula: "", correo: "", numero: "" });
-    setShowFormClientes(false);
-  };
-
-  // Filtrar clientes
-  const clientesFiltrados = clientes.filter(c =>
-    c.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    c.cedula.includes(search) ||
-    (c.correo && c.correo.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  return (
-    <div className="gestion-clientes">
-      <h2>Gestión de Clientes</h2>
-
-      {/* Barra de búsqueda */}
-      <input
-        className="search-bar"
-        placeholder="Buscar cliente..."
-        value={search}
-        onChange={e => setSearchClientes(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
-
-      {/* Botón agregar */}
-      <button
-        className="btn btn-add"
-        onClick={() => setShowFormClientes(!showForm)}
-        style={{ marginBottom: 10 }}
-      >
-        {showForm ? "Cancelar" : "Agregar Cliente"}
-      </button>
-
-      {/* Formulario */}
-      {showForm && (
-        <div className="form-container">
-          <input
-            placeholder="Nombre"
-            value={newCliente.nombre}
-            onChange={e => setNewCliente({ ...newCliente, nombre: e.target.value })}
-          />
-          <input
-            placeholder="Cédula"
-            value={newCliente.cedula}
-            onChange={e => setNewCliente({ ...newCliente, cedula: e.target.value })}
-          />
-          <input
-            placeholder="Correo"
-            value={newCliente.correo}
-            onChange={e => setNewCliente({ ...newCliente, correo: e.target.value })}
-          />
-          <input
-            placeholder="Número Telefónico"
-            value={newCliente.numero}
-            onChange={e => setNewCliente({ ...newCliente, numero: e.target.value })}
-          />
-          <button className="btn btn-add" onClick={agregarCliente}>Guardar</button>
-        </div>
-      )}
-
-      {/* Lista de clientes */}
-      <ul className="cliente-list">
-        {clientesFiltrados.map(c => (
-          <li
-            key={c.id}
-            onClick={() => setSelectedClientes(c)}
-            className={selected?.id === c.id ? "selected" : ""}
-          >
-            {c.nombre} ({c.cedula})
-          </li>
-        ))}
-      </ul>
-
-      {/*  Modal flotante con la info del cliente */}
-      {selected && (
-        <div className="modal-overlay" onClick={() => setSelectedClientes(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>Información del Cliente</h3>
-            <p><b>Nombre:</b> {selected.nombre}</p>
-            <p><b>Cédula:</b> {selected.cedula}</p>
-            <p><b>Número:</b> {selected.numero}</p>
-            <p><b>Correo:</b> {selected.correo || "N/A"}</p>
-            <button className="btn btn-close" onClick={() => setSelectedClientes(null)}>Cerrar</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 /* ======================= GESTION VEHICULOS ======================= */
 function GestionVehiculos() {

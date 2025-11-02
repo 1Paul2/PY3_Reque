@@ -370,10 +370,10 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .section-modal .btn-close:hover {
-  background: #715dce;
+  background: #ad1414;
 }
 
-/*Gestion de Clientes*/
+/*=============================Gestion de Clientes=================================*/
 
 .gestion-clientes {
   max-width: 600px;
@@ -384,7 +384,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #5d87d6; /* morado */
+  color: #920303; /* morado */
 }
 
 .gestion-clientes .btn {
@@ -396,14 +396,54 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-right: 5px;
 }
 
-.gestion-clientes .btn-add {
-  background: #4b0082;
-  color: white;
-  margin-bottom: 10px;
+/* Botones para modales Agregar y Editar */
+.gestion-clientes .modal.modal-agregar .btn-group,
+.gestion-clientes .modal.modal-editar .btn-group {
+  display: flex;
+  justify-content: space-between; /* separa los botones a los extremos */
+  width: 100%;
+  margin-top: 10px;
 }
 
-.gestion-clientes .btn-add:hover {
-  background: #cec7d3;
+/* Botones para modal lista/detalle */
+.gestion-clientes .modal.modal-lista .btn-group {
+  display: flex;
+  justify-content: space-between; /* separa los botones a los extremos */
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px; /* espacio mínimo entre botones */
+}
+
+.gestion-clientes .modal.modal-lista .btn-group .btn {
+  flex: 1;  /* opcional, todos los botones del mismo ancho */
+}
+
+/* Si querés que el botón Cerrar quede más a la derecha y más pequeño */
+.gestion-clientes .modal.modal-lista .btn-close {
+  flex: none;
+  margin-left: auto; /* empuja Cerrar hacia la derecha */
+}
+
+.gestion-clientes .btn-add,
+.gestion-clientes .btn-close,
+.gestion-clientes .btn-edit,
+.gestion-clientes .btn-delate {
+  background: #6d0b02;
+  color: rgb(241, 227, 214);
+  margin-top: 12px;       /* 🔹 separación hacia arriba */
+  margin-bottom: 8px;   /* 🔹 más separación hacia abajo */
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-clientes .btn-add:hover,
+.gestion-clientes .btn-close:hover,
+.gestion-clientes .btn-edit:hover,
+.gestion-clientes .btn-delate:hover {
+  background: #e85e4e;
 }
 
 .gestion-clientes .form-container {
@@ -424,25 +464,25 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   height: 36px;        /* alto uniforme */
   padding: 6px 10px;
   border-radius: 4px;
-  border: 1px solid #aaa;
+  border: 1px solid #4a0a0a;
   box-sizing: border-box;
   font-size: 16px;
 }
 
 .gestion-clientes .form-container button:hover {
-  background: #6a0dad;
+  background: #54012c;
 }
 
 .gestion-clientes input {
   padding: 6px;
   border-radius: 4px;
-  border: 1px solid #aaa;
+  border: 1px solid #750101;
 }
 
 .gestion-clientes .cliente-list {
   list-style: none;
   padding: 0;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   border-radius: 6px;
   max-height: 300px;
   overflow-y: auto;
@@ -450,23 +490,23 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 
 .gestion-clientes .cliente-list li {
   padding: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ffffff;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .gestion-clientes .cliente-list li:hover {
-  background: #3d0747;
+  background: #ab0303;
 }
 
 .gestion-clientes .cliente-list li.selected {
-  background: #715dce;
+  background: hsl(2, 100%, 25%);
 }
 
 .gestion-clientes .cliente-info {
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid #3d042b;
+  border: 1px solid #690303;
   border-radius: 8px;
   background: #715dce;
 }
@@ -486,23 +526,23 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .gestion-clientes .modal {
-  background: #351c42;
+  background: rgba(80, 75, 75, 0.7); /* gris oscuro semitransparente */
   padding: 20px;
   border-radius: 10px;
-  width: 280px;          /* ancho fijo */
+  width: 280px;
   max-width: 90%;
   display: flex;
-  flex-direction: column; /* elementos en vertical */
+  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-clientes .modal h3 {
-  color: #4b0082;
+  color: #820000;
   font-size: 18px;
   text-align: center;
   width: 100%;
@@ -515,22 +555,6 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   line-height: 1.4;
 }
 
-.gestion-clientes .btn-close {
-  background: #4b0082;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 12px;
-  align-self: center;
-  transition: background 0.2s;
-}
-
-.gestion-clientes .btn-close:hover {
-  background: #715dce;
-}
-
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -541,7 +565,30 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
     opacity: 1;
   }
 }
-/*Gestion de Vehiculos*/
+
+.gestion-clientes .modal-editar input,
+.gestion-clientes .modal-agregar input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto al enfocar */
+.gestion-clientes .modal-editar input:focus
+.gestion-clientes .modal-agregar input:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/*=============================Gestion de Vehiculos=================================*/
 
 .gestion-vehiculos {
   max-width: 600px;
