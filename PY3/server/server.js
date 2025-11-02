@@ -10,6 +10,7 @@ app.use(express.json());
 
 const DATA_DIR = path.resolve("./server/data");
 const DATA_FILE = path.join(DATA_DIR, "usuarios.json");
+const DATA_FILE_CLIENTES = path.join(DATA_DIR, "clientes.json");
 
 // Asegura datos iniciales (admin)
 function ensureDataFile() {
@@ -113,4 +114,74 @@ app.put("/api/usuarios", (req, res) => {
 const PORT = 5174;
 app.listen(PORT, () => {
   console.log(`API usuarios corriendo en http://localhost:${PORT}`);
+});
+
+/*=======================================Gestion Clientes======================================== */
+function ensureClientesFile() {
+  if (!fs.existsSync(DATA_FILE_CLIENTES)) {
+    fs.writeFileSync(DATA_FILE_CLIENTES, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureClientesFile();
+
+function readClientes() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_CLIENTES, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    console.error("readClientes error:", e);
+    return [];
+  }
+}
+
+function writeClientes(list) {
+  fs.writeFileSync(DATA_FILE_CLIENTES, JSON.stringify(list, null, 2), "utf8");
+}
+
+// GET: lista de clientes
+app.get("/api/clientes", (_req, res) => {
+  return res.json(readClientes());
+});
+
+// POST: agregar cliente
+app.post("/api/clientes", (req, res) => {
+  const nuevo = req.body || {};
+  if (!nuevo.nombre || !nuevo.cedula) {
+    return res.status(400).json({ ok: false, error: "Nombre y cédula son obligatorios" });
+  }
+
+  const clientes = readClientes();
+  if (clientes.find(c => c.cedula === nuevo.cedula)) {
+    return res.status(409).json({ ok: false, error: "Cliente ya existe" });
+  }
+
+  nuevo.id = Date.now();
+  clientes.push(nuevo);
+  writeClientes(clientes);
+  return res.json({ ok: true, clientes });
+});
+
+// PUT: actualizar cliente
+app.put("/api/clientes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const update = req.body || {};
+  const clientes = readClientes();
+  const idx = clientes.findIndex(c => c.id === id);
+  if (idx === -1) return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
+
+  clientes[idx] = { ...clientes[idx], ...update };
+  writeClientes(clientes);
+  return res.json({ ok: true, cliente: clientes[idx] });
+});
+
+// DELETE: eliminar cliente
+app.delete("/api/clientes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const clientes = readClientes();
+  if (!clientes.find(c => c.id === id)) return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
+
+  const filtered = clientes.filter(c => c.id !== id);
+  writeClientes(filtered);
+  return res.json({ ok: true, clientes: filtered });
 });
