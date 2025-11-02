@@ -19,8 +19,8 @@ const apiClientes = {
     if (!res.ok || data.ok === false) throw new Error(data.error);
     return data.clientes; // ✅ devuelve la lista actualizada de clientes
   },
-  update: async (id, cliente) => {
-    const res = await fetch(`/api/clientes/${id}`, {
+  update: async (cedula, cliente) => {
+    const res = await fetch(`/api/clientes/${cedula}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cliente)
@@ -29,8 +29,8 @@ const apiClientes = {
     if (!res.ok || data.ok === false) throw new Error(data.error);
     return data.cliente;
   },
-  remove: async (id) => {
-    const res = await fetch(`/api/clientes/${id}`, { method: "DELETE" });
+  remove: async (cedula) => {
+    const res = await fetch(`/api/clientes/${cedula}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok || data.ok === false) throw new Error(data.error);
     return data.clientes;
@@ -83,8 +83,8 @@ function GestionClientes() {
     if (!selected) return;
 
     try {
-      await apiClientes.update(selected.id, selected);
-      setClientes(clientes.map(c => c.id === selected.id ? selected : c));
+      await apiClientes.update(selected.cedula, selected);
+      setClientes(clientes.map(c => c.cedula === selected.cedula ? selected : c));
       setShowModalEditar(false);
     } catch (e) {
       alert(e.message);
@@ -92,11 +92,11 @@ function GestionClientes() {
   };
 
   /* === ELIMINAR CLIENTE === */
-  const eliminarCliente = async (id) => {
+  const eliminarCliente = async (cedula) => {
     if (!confirm("¿Seguro que deseas eliminar este cliente?")) return;
 
     try {
-      const updated = await apiClientes.remove(id);
+      const updated = await apiClientes.remove(cedula);
       setClientes(updated);
       setSelectedClientes(null);
     } catch (e) {
@@ -136,9 +136,9 @@ function GestionClientes() {
       <ul className="cliente-list">
         {clientesFiltrados.map(c => (
           <li
-            key={c.id}
+            key={c.cedula}
             onClick={() => setSelectedClientes(c)}
-            className={selected?.id === c.id ? "selected" : ""}
+            className={selected?.cedula === c.cedula ? "selected" : ""}
           >
             {c.nombre} ({c.cedula})
           </li>
@@ -189,7 +189,7 @@ function GestionClientes() {
             <p><b>Correo:</b> {selected.correo || "N/A"}</p>
             <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button className="btn btn-edit" onClick={() => setShowModalEditar(true)}>Modificar</button>
-              <button className="btn btn-delate" onClick={() => eliminarCliente(selected.id)}>Eliminar</button>
+              <button className="btn btn-delate" onClick={() => eliminarCliente(selected.cedula)}>Eliminar</button>
               <button className="btn btn-close" onClick={() => setSelectedClientes(null)}>Cerrar</button>
             </div>
           </div>
