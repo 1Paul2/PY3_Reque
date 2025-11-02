@@ -116,7 +116,7 @@ app.listen(PORT, () => {
   console.log(`API usuarios corriendo en http://localhost:${PORT}`);
 });
 
-/*=======================================Gestion Clientes======================================== */
+/*======================================= Gestion Clientes ========================================*/
 function ensureClientesFile() {
   if (!fs.existsSync(DATA_FILE_CLIENTES)) {
     fs.writeFileSync(DATA_FILE_CLIENTES, JSON.stringify([], null, 2), "utf8");
@@ -139,12 +139,12 @@ function writeClientes(list) {
   fs.writeFileSync(DATA_FILE_CLIENTES, JSON.stringify(list, null, 2), "utf8");
 }
 
-// GET: lista de clientes
+/* === GET: lista de clientes === */
 app.get("/api/clientes", (_req, res) => {
   return res.json(readClientes());
 });
 
-// POST: agregar cliente
+/* === POST: agregar cliente === */
 app.post("/api/clientes", (req, res) => {
   const nuevo = req.body || {};
   if (!nuevo.nombre || !nuevo.cedula) {
@@ -152,36 +152,47 @@ app.post("/api/clientes", (req, res) => {
   }
 
   const clientes = readClientes();
-  if (clientes.find(c => c.cedula === nuevo.cedula)) {
+
+  // 🔍 Verifica si la cédula ya existe
+  if (clientes.some(c => c.cedula === nuevo.cedula)) {
     return res.status(409).json({ ok: false, error: "Cliente ya existe" });
   }
 
-  nuevo.id = Date.now();
+  // ❌ NO se crea ningún id, usamos la cédula como clave única
   clientes.push(nuevo);
   writeClientes(clientes);
+
   return res.json({ ok: true, clientes });
 });
 
-// PUT: actualizar cliente
-app.put("/api/clientes/:id", (req, res) => {
-  const id = Number(req.params.id);
+/* === PUT: actualizar cliente === */
+app.put("/api/clientes/:cedula", (req, res) => {
+  const cedula = req.params.cedula;
   const update = req.body || {};
   const clientes = readClientes();
-  const idx = clientes.findIndex(c => c.id === id);
-  if (idx === -1) return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
+
+  const idx = clientes.findIndex(c => c.cedula === cedula);
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
+  }
 
   clientes[idx] = { ...clientes[idx], ...update };
   writeClientes(clientes);
+
   return res.json({ ok: true, cliente: clientes[idx] });
 });
 
-// DELETE: eliminar cliente
-app.delete("/api/clientes/:id", (req, res) => {
-  const id = Number(req.params.id);
+/* === DELETE: eliminar cliente === */
+app.delete("/api/clientes/:cedula", (req, res) => {
+  const cedula = req.params.cedula;
   const clientes = readClientes();
-  if (!clientes.find(c => c.id === id)) return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
 
-  const filtered = clientes.filter(c => c.id !== id);
+  if (!clientes.some(c => c.cedula === cedula)) {
+    return res.status(404).json({ ok: false, error: "Cliente no encontrado" });
+  }
+
+  const filtered = clientes.filter(c => c.cedula !== cedula);
   writeClientes(filtered);
+
   return res.json({ ok: true, clientes: filtered });
 });
