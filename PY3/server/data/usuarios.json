@@ -10,5 +10,29 @@
     "fechaNac": "",
     "idioma": "es",
     "mustChangePassword": false
+  },
+  {
+    "code": "J2510-911",
+    "password": "J2510-911",
+    "mustChangePassword": true,
+    "nombre": "Julian",
+    "rol": "usuario",
+    "cedula": "119280911",
+    "correo": "j@gmail.com",
+    "telefono": "63861313",
+    "fechaNac": "2005-05-16",
+    "idioma": "es"
+  },
+  {
+    "code": "12510-001",
+    "password": "12510-001",
+    "mustChangePassword": true,
+    "nombre": "1",
+    "rol": "admin",
+    "cedula": "1",
+    "correo": "je@gmail.com",
+    "telefono": "86061157",
+    "fechaNac": "2001-01-01",
+    "idioma": "es"
   }
 ]
