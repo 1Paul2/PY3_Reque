@@ -599,7 +599,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #5d87d6; /* morado */
+  color: #920303; /* igual que clientes */
 }
 
 .gestion-vehiculos .btn {
@@ -611,53 +611,93 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-right: 5px;
 }
 
-.gestion-vehiculos .btn-add {
-  background: #4b0082;
-  color: white;
-  margin-bottom: 10px;
+/* Botones para modales Agregar y Editar */
+.gestion-vehiculos .modal.modal-agregar .btn-group,
+.gestion-vehiculos .modal.modal-editar .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
 }
 
-.gestion-vehiculos .btn-add:hover {
-  background: #cec7d3;
+/* Botones para modal lista/detalle */
+.gestion-vehiculos .modal.modal-lista .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-vehiculos .modal.modal-lista .btn-group .btn {
+  flex: 1;
+}
+
+/* Botón Cerrar a la derecha */
+.gestion-vehiculos .modal.modal-lista .btn-close {
+  flex: none;
+  margin-left: auto;
+}
+
+.gestion-vehiculos .btn-add,
+.gestion-vehiculos .btn-close,
+.gestion-vehiculos .btn-edit,
+.gestion-vehiculos .btn-delate {
+  background: #6d0b02;
+  color: rgb(241, 227, 214);
+  margin-top: 12px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-vehiculos .btn-add:hover,
+.gestion-vehiculos .btn-close:hover,
+.gestion-vehiculos .btn-edit:hover,
+.gestion-vehiculos .btn-delate:hover {
+  background: #e85e4e;
 }
 
 .gestion-vehiculos .form-container {
   width: 100%;
   max-width: 400px;
   margin: 0 auto;
-  padding: 10px;       /* menos padding para que no sea tan alto */
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 15px;           /* espacio entre inputs */
+  gap: 15px;
 }
 
 .gestion-vehiculos .form-container input,
 .gestion-vehiculos .form-container button {
   width: 100%;
-  height: 36px;        /* alto uniforme */
+  height: 36px;
   padding: 6px 10px;
   border-radius: 4px;
-  border: 1px solid #aaa;
+  border: 1px solid #4a0a0a;
   box-sizing: border-box;
   font-size: 16px;
 }
 
 .gestion-vehiculos .form-container button:hover {
-  background: #6a0dad;
+  background: #54012c;
 }
 
 .gestion-vehiculos input {
   padding: 6px;
   border-radius: 4px;
-  border: 1px solid #aaa;
+  border: 1px solid #750101;
 }
 
 .gestion-vehiculos .vehiculo-list {
   list-style: none;
   padding: 0;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   border-radius: 6px;
   max-height: 300px;
   overflow-y: auto;
@@ -665,23 +705,156 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 
 .gestion-vehiculos .vehiculo-list li {
   padding: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ffffff;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .gestion-vehiculos .vehiculo-list li:hover {
-  background: #3d0747;
+  background: #ab0303;
 }
 
 .gestion-vehiculos .vehiculo-list li.selected {
-  background: #715dce;
+  background: hsl(2, 100%, 25%);
 }
 
 .gestion-vehiculos .vehiculo-info {
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid #3d042b;
+  border: 1px solid #690303;
   border-radius: 8px;
   background: #715dce;
+}
+
+/* === MODAL flotante centrado y compacto === */
+.gestion-vehiculos .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.gestion-vehiculos .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-vehiculos .modal h3 {
+  color: #820000;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-vehiculos .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.gestion-vehiculos .modal-editar input,
+.gestion-vehiculos .modal-agregar input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-vehiculos .modal-editar input:focus,
+.gestion-vehiculos .modal-agregar input:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* ====== Input de búsqueda ====== */
+.gestion-vehiculos .input-busqueda {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-vehiculos .input-busqueda:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* ====== Lista desplegable ====== */
+.gestion-vehiculos .lista-clientes {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #820000;
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.gestion-vehiculos .lista-clientes li {
+  padding: 8px 10px;
+  color: #2e0000;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-vehiculos .lista-clientes li:hover {
+  background: #ffe5e5;
+}
+
+/* Asegura que el bloque del input de búsqueda ocupe todo el ancho del modal */
+.gestion-vehiculos .modal-agregar .selector-cliente,
+.gestion-vehiculos .modal-editar .selector-cliente {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

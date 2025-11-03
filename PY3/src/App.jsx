@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import GestionClientes from "./GestionClientes"; // importamos nuestro componente
+import GestionVehiculos from "./GestionVehiculos"; // importamos nuestro componente
 import RegistroAdministrador from "./RegistroAdministrador";
 
 // otros imports: Login, AdminHome, UserHome, etc.
@@ -272,8 +273,8 @@ function AdminHome({ session, onLogout, api }) {
       <div className="center-panel">
         {/* Contenido principal según sección */}
         <div style={{ maxWidth: 800, margin: "16px auto" }}>
-          {currentSection === "clientes" && <GestionClientes />}
-          {currentSection === "vehiculos" && <GestionVehiculos />}
+          {currentSection === "clientes" && <GestionClientes session={session} />}
+          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
           {currentSection === "inventario" && <div>Sección Inventario</div>}
           {currentSection === "citas" && <div>Sección Citas</div>}
           {currentSection === "cotizacion" && <div>Sección Cotización</div>}
@@ -337,8 +338,8 @@ function UserHome({ session, onLogout }) {
 
       {/* Contenido principal según sección */}
       <div style={{ maxWidth: 800, margin: "16px auto" }}>
-        {currentSection === "clientes" && <GestionClientes />}
-        {currentSection === "vehiculos" && <GestionVehiculos />}
+        {currentSection === "clientes" && <GestionClientes session={session} />}
+        {currentSection === "vehiculos" && <GestionVehiculos session={session}/>}
         {currentSection === "inventario" && <div>Sección Inventario</div>}
         {currentSection === "citas" && <div>Sección Citas</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
@@ -612,113 +613,3 @@ function ConfirmDialog({ title, message, onCancel, onConfirm }) {
 
 export default App;
 
-/* ======================= GESTION VEHICULOS ======================= */
-function GestionVehiculos() {
-  const [vehiculos, setVehiculos] = useState([]);
-  const [search, setSearchVehiculos] = useState("");
-  const [selected, setSelectedVehiculos] = useState(null);
-  const [showFormVehiculos, setShowFormVehiculos] = useState(false);
-  const [newVehiculo, setNewVehiculo] = useState({
-    marca: "",
-    modelo: "",
-    anoVehiculo: "",
-    placa: "",
-    tipo: ""
-  });
-
-  // Agregar vehículo
-  const agregarVehiculos = () => {
-    if (!newVehiculo.marca.trim() || !newVehiculo.placa.trim()) return;
-    setVehiculos([...vehiculos, { ...newVehiculo, id: Date.now() }]);
-    setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
-    setShowFormVehiculos(false);
-  };
-
-  // Filtrar vehículos
-  const vehiculosFiltrados = vehiculos.filter(v =>
-    v.placa.toLowerCase().includes(search.toLowerCase()) ||
-    v.modelo.toLowerCase().includes(search.toLowerCase()) ||
-    (v.marca && v.marca.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  return (
-    <div className="gestion-vehiculos">
-      <h2>Gestión de Vehículos</h2>
-
-      {/* Barra de búsqueda */}
-      <input
-        className="search-bar"
-        placeholder="Buscar Vehículo..."
-        value={search}
-        onChange={e => setSearchVehiculos(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
-
-      {/* Botón agregar vehículo */}
-      <button
-        className="btn btn-add"
-        onClick={() => setShowFormVehiculos(!showFormVehiculos)}
-        style={{ marginBottom: 10 }}
-      >
-        {showFormVehiculos ? "Cancelar" : "Agregar Vehículo"}
-      </button>
-
-      {/* Formulario */}
-      {showFormVehiculos && (
-        <div className="form-container">
-          <input
-            placeholder="Placa"
-            value={newVehiculo.placa}
-            onChange={e => setNewVehiculo({ ...newVehiculo, placa: e.target.value })}
-          />
-          <input
-            placeholder="Año del Vehículo"
-            value={newVehiculo.anoVehiculo}
-            onChange={e => setNewVehiculo({ ...newVehiculo, anoVehiculo: e.target.value })}
-          />
-          <input
-            placeholder="Modelo"
-            value={newVehiculo.modelo}
-            onChange={e => setNewVehiculo({ ...newVehiculo, modelo: e.target.value })}
-          />
-          <input
-            placeholder="Marca"
-            value={newVehiculo.marca}
-            onChange={e => setNewVehiculo({ ...newVehiculo, marca: e.target.value })}
-          />
-          <input
-            placeholder="Tipo"
-            value={newVehiculo.tipo}
-            onChange={e => setNewVehiculo({ ...newVehiculo, tipo: e.target.value })}
-          />
-          <button className="btn btn-add" onClick={agregarVehiculos}>Guardar</button>
-        </div>
-      )}
-
-      {/* Lista */}
-      <ul className="vehiculo-list">
-        {vehiculosFiltrados.map(v => (
-          <li
-            key={v.id}
-            onClick={() => setSelectedVehiculos(v)}
-            className={selected?.id === v.id ? "selected" : ""}
-          >
-            {v.placa} ({v.tipo})
-          </li>
-        ))}
-      </ul>
-
-      {/* Información */}
-      {selected && (
-        <div className="vehiculos-info">
-          <h3>Información del Vehículo</h3>
-          <p><b>Placa:</b> {selected.placa}</p>
-          <p><b>Marca:</b> {selected.marca}</p>
-          <p><b>Modelo:</b> {selected.modelo}</p>
-          <p><b>Tipo:</b> {selected.tipo}</p>
-          <p><b>Año:</b> {selected.anoVehiculo || "N/A"}</p>
-        </div>
-      )}
-    </div>
-  );
-}

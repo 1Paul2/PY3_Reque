@@ -38,7 +38,7 @@ const apiClientes = {
 };
 
 /* ======================= Gestion Clientes ======================= */
-function GestionClientes() {
+function GestionClientes({ session }) {
   const [clientes, setClientes] = useState([]);
   const [search, setSearchClientes] = useState("");
   const [selected, setSelectedClientes] = useState(null);
@@ -66,7 +66,41 @@ function GestionClientes() {
 
   /* === AGREGAR CLIENTE === */
   const agregarCliente = async () => {
-    if (!newCliente.nombre.trim() || !newCliente.cedula.trim()) return;
+    const soloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const soloNumeros = /^\d+$/; // solo números (sin + ni -)
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const { nombre, cedula, correo, numero } = newCliente;
+
+    // Validar campos vacíos
+    if (!nombre.trim() || !cedula.trim()) {
+      alert("El nombre y la cédula son obligatorios.");
+      return;
+    }
+
+    // Validar nombre solo letras
+    if (!soloLetras.test(nombre.trim())) {
+      alert("El nombre solo puede contener letras y espacios.");
+      return;
+    }
+
+    // Validar cédula (solo números y 9 dígitos)
+    if (!soloNumeros.test(cedula.trim()) || cedula.trim().length !== 9) {
+      alert("La cédula debe contener exactamente 9 dígitos numéricos.");
+      return;
+    }
+
+    // Validar número (solo números y al menos 8 dígitos)
+    if (numero && (!soloNumeros.test(numero.trim()) || numero.trim().length < 8)) {
+      alert("El número telefónico debe contener solo números y tener al menos 8 dígitos.");
+      return;
+    }
+
+    // Validar formato de correo
+    if (correo && !formatoCorreo.test(correo.trim())) {
+      alert("El correo electrónico no tiene un formato válido.");
+      return;
+    }
 
     try {
       const updated = await apiClientes.create(newCliente);
@@ -82,6 +116,30 @@ function GestionClientes() {
   const guardarEdicion = async () => {
     if (!selected) return;
 
+    // === VALIDACIONES ===
+    const soloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const soloNumeros = /^\d+$/; // solo números
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Validar nombre solo letras
+    if (!soloLetras.test(selected.nombre.trim())) {
+      alert("El nombre solo puede contener letras y espacios.");
+      return;
+    }
+
+    // Validar número (solo números y mínimo 8 dígitos)
+    if (selected.numero && (!soloNumeros.test(selected.numero.trim()) || selected.numero.trim().length < 8)) {
+      alert("El número telefónico debe contener solo números y tener al menos 8 dígitos.");
+      return;
+    }
+
+    // Validar formato de correo
+    if (selected.correo && !formatoCorreo.test(selected.correo.trim())) {
+      alert("El correo electrónico no tiene un formato válido.");
+      return;
+    }
+
+    // === Si todo está bien, procede a guardar ===
     try {
       await apiClientes.update(selected.cedula, selected);
       setClientes(clientes.map(c => c.cedula === selected.cedula ? selected : c));
@@ -93,6 +151,11 @@ function GestionClientes() {
 
   /* === ELIMINAR CLIENTE === */
   const eliminarCliente = async (cedula) => {
+    if (session.rol !== "admin") {
+      alert("No tienes permiso para eliminar clientes.");
+      return;
+    }
+
     if (!confirm("¿Seguro que deseas eliminar este cliente?")) return;
 
     try {
@@ -201,23 +264,35 @@ function GestionClientes() {
         <div className="modal-overlay" onClick={() => setShowModalEditar(false)}>
           <div className="modal modal-editar" onClick={e => e.stopPropagation()}>
             <h3>Editar Cliente</h3>
+
+            <label><b>Cédula:</b></label>
+            <input
+              value={selected.cedula}
+              disabled // ✅ no editable
+            />
+            
+            <label><b>Nombre:</b></label>
             <input
               value={selected.nombre}
               onChange={e => setSelectedClientes({ ...selected, nombre: e.target.value })}
+              placeholder="Editar nombre"
             />
-            <input
-              value={selected.cedula}
-              onChange={e => setSelectedClientes({ ...selected, cedula: e.target.value })}
-            />
+
+            <label><b>Correo:</b></label>
             <input
               value={selected.correo}
               onChange={e => setSelectedClientes({ ...selected, correo: e.target.value })}
+              placeholder="Editar correo"
             />
+
+            <label><b>Número Telefónico:</b></label>
             <input
               value={selected.numero}
               onChange={e => setSelectedClientes({ ...selected, numero: e.target.value })}
+              placeholder="Editar número"
             />
-            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
+
+            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
               <button className="btn btn-add" onClick={guardarEdicion}>Guardar</button>
               <button className="btn btn-close" onClick={() => setShowModalEditar(false)}>Cancelar</button>
             </div>
