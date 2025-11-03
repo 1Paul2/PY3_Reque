@@ -1,5 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import GestionClientes from "./GestionClientes"; // importamos nuestro componente
+import RegistroAdministrador from "./RegistroAdministrador";
+
 // otros imports: Login, AdminHome, UserHome, etc.
 
 /* ======================= API HTTP ======================= */
@@ -40,6 +42,7 @@ function App() {
   const [users, setUsers] = useState(null);
   const [session, setSession] = useState(null);
   const [loadErr, setLoadErr] = useState("");
+  const [adminVerificado, setAdminVerificado] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -125,8 +128,9 @@ function Login({ onLogin, api }) {
   const [key, setKey] = useState("");
   const [pass, setPass] = useState("");
   const [err, setErr] = useState("");
-  const [forcePwd, setForcePwd] = useState(null); // { user }
-  const [showCreate, setShowCreate] = useState(false); // modal crear usuario
+  const [forcePwd, setForcePwd] = useState(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [mostrarVerificacionAdmin, setMostrarVerificacionAdmin] = useState(false);
 
   const submit = (e) => {
     e && e.preventDefault();
@@ -164,10 +168,15 @@ function Login({ onLogin, api }) {
           <label>Contraseña</label>
           <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} />
 
-          {/* Botones alineados en la misma fila */}
           <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
             <button type="submit" className="btn-primary">Entrar</button>
-            <button type="button" className="btn-primary" onClick={() => setShowCreate(true)}>Crear usuario</button>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => setMostrarVerificacionAdmin(true)}
+            >
+              Crear usuario
+            </button>
           </div>
         </form>
 
@@ -177,7 +186,7 @@ function Login({ onLogin, api }) {
         </small>
       </div>
 
-      {/* Modal de cambiar contraseña */}
+      {/* Modal cambiar contraseña */}
       {forcePwd && (
         <ChangePasswordModal
           user={forcePwd.user}
@@ -189,7 +198,19 @@ function Login({ onLogin, api }) {
         />
       )}
 
-      {/* Modal de crear usuario */}
+      {/* 🔒 Nuevo: Modal de verificación administrador */}
+      {mostrarVerificacionAdmin && (
+        <RegistroAdministrador
+          api={api}
+          onClose={() => setMostrarVerificacionAdmin(false)}
+          alValidar={() => {
+            setMostrarVerificacionAdmin(false);
+            setShowCreate(true);
+          }}
+        />
+      )}
+
+      {/* Modal crear usuario (solo si admin verificado) */}
       {showCreate && (
         <CreateUserModal
           onClose={() => setShowCreate(false)}
