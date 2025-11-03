@@ -11,6 +11,7 @@ app.use(express.json());
 const DATA_DIR = path.resolve("./server/data");
 const DATA_FILE = path.join(DATA_DIR, "usuarios.json");
 const DATA_FILE_CLIENTES = path.join(DATA_DIR, "clientes.json");
+const DATA_FILE_VEHICULOS = path.join(DATA_DIR, "./VehiculosClientes.json");
 
 // Asegura datos iniciales (admin)
 function ensureDataFile() {
@@ -195,4 +196,91 @@ app.delete("/api/clientes/:cedula", (req, res) => {
   writeClientes(filtered);
 
   return res.json({ ok: true, clientes: filtered });
+});
+
+/*======================================= Gestion Vehiculos ========================================*/
+function ensureVehiculosFile() {
+  if (!fs.existsSync(DATA_FILE_VEHICULOS)) {
+    fs.writeFileSync(DATA_FILE_VEHICULOS, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureVehiculosFile();
+
+function readVehiculos() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_VEHICULOS, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    console.error("readVehiculos error:", e);
+    return [];
+  }
+}
+
+function writeVehiculos(list) {
+  fs.writeFileSync(DATA_FILE_VEHICULOS, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === GET: lista de vehículos === */
+app.get("/api/vehiculos", (_req, res) => {
+  return res.json(readVehiculos());
+});
+
+/* === POST: agregar vehículo === */
+app.post("/api/vehiculos", (req, res) => {
+  const nuevo = req.body || {};
+  const { placa, marca, clienteCedula, clienteNombre } = nuevo;
+
+  if (!placa || !marca) {
+    return res.status(400).json({ ok: false, error: "Placa y marca son obligatorias" });
+  }
+
+  if (!clienteCedula || !clienteNombre) {
+    return res.status(400).json({ ok: false, error: "Debe seleccionar un cliente" });
+  }
+
+  const vehiculos = readVehiculos();
+
+  if (vehiculos.some(v => v.placa === placa)) {
+    return res.status(409).json({ ok: false, error: "Vehículo ya existe" });
+  }
+
+  const id = Date.now();
+  const nuevoVehiculo = { ...nuevo, id };
+  vehiculos.push(nuevoVehiculo);
+  writeVehiculos(vehiculos);
+
+  return res.json({ ok: true, vehiculos });
+});
+
+/* === PUT: actualizar vehículo por placa === */
+app.put("/api/vehiculos/:placa", (req, res) => {
+  const placa = req.params.placa;
+  const update = req.body || {};
+  const vehiculos = readVehiculos();
+
+  const idx = vehiculos.findIndex(v => v.placa === placa);
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Vehículo no encontrado" });
+  }
+
+  vehiculos[idx] = { ...vehiculos[idx], ...update };
+  writeVehiculos(vehiculos);
+
+  return res.json({ ok: true, vehiculo: vehiculos[idx] });
+});
+
+/* === DELETE: eliminar vehículo por placa === */
+app.delete("/api/vehiculos/:placa", (req, res) => {
+  const placa = req.params.placa;
+  const vehiculos = readVehiculos();
+
+  if (!vehiculos.some(v => v.placa === placa)) {
+    return res.status(404).json({ ok: false, error: "Vehículo no encontrado" });
+  }
+
+  const filtered = vehiculos.filter(v => v.placa !== placa);
+  writeVehiculos(filtered);
+
+  return res.json({ ok: true, vehiculos: filtered });
 });
