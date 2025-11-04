@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "tipo": "Automóvil",
+    "marca": "Toyota",
+    "modelo": "Corolla"
+  },
+  {
+    "id": 2,
+    "tipo": "Automóvil",
+    "marca": "Honda",
+    "modelo": "Civic"
+  },
+  {
+    "id": 3,
+    "tipo": "SUV",
+    "marca": "Hyundai",
+    "modelo": "Tucson"
+  },
+  {
+    "id": 4,
+    "tipo": "Pick-Up",
+    "marca": "Ford",
+    "modelo": "Ranger"
+  },
+  {
+    "id": 5,
+    "tipo": "Sedán",
+    "marca": "Nissan",
+    "modelo": "Versa"
+  },
+  {
+    "id": 6,
+    "tipo": "SUV",
+    "marca": "Kia",
+    "modelo": "Sportage"
+  },
+  {
+    "id": 7,
+    "tipo": "Camión",
+    "marca": "Isuzu",
+    "modelo": "NPR"
+  },
+  {
+    "id": 8,
+    "tipo": "Motocicleta",
+    "marca": "Yamaha",
+    "modelo": "FZ25"
+  },
+  {
+    "id": 9,
+    "tipo": "Automóvil",
+    "marca": "Mazda",
+    "modelo": "3"
+  },
+  {
+    "id": 10,
+    "tipo": "SUV",
+    "marca": "Chevrolet",
+    "modelo": "Tracker"
+  }
+]

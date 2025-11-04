@@ -13,8 +13,8 @@
   },
   {
     "code": "J2510-911",
-    "password": "J2510-911",
-    "mustChangePassword": true,
+    "password": "Julian0216",
+    "mustChangePassword": false,
     "nombre": "Julian",
     "rol": "usuario",
     "cedula": "119280911",

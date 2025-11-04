@@ -1,0 +1,42 @@
+[
+  {
+    "marca": "1",
+    "modelo": "1",
+    "anoVehiculo": "1",
+    "placa": "1",
+    "tipo": "1",
+    "clienteCedula": "111232345",
+    "clienteNombre": "j",
+    "id": 1762211742516
+  },
+  {
+    "marca": "1",
+    "modelo": "1",
+    "anoVehiculo": "1",
+    "placa": "2",
+    "tipo": "1",
+    "clienteCedula": "111111111",
+    "clienteNombre": "Julian",
+    "id": 1762211863640
+  },
+  {
+    "marca": "3",
+    "modelo": "3",
+    "anoVehiculo": "3",
+    "placa": "3",
+    "tipo": "3",
+    "clienteCedula": "222222222",
+    "clienteNombre": "d",
+    "id": 1762213993800
+  },
+  {
+    "marca": "3",
+    "modelo": "3",
+    "anoVehiculo": "1",
+    "placa": "7",
+    "tipo": "3",
+    "clienteCedula": "111232345",
+    "clienteNombre": "j",
+    "id": 1762214991619
+  }
+]
