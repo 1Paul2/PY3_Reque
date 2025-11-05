@@ -1,42 +1,40 @@
 [
   {
-    "marca": "1",
-    "modelo": "1",
-    "anoVehiculo": "1",
+    "id": 1762320963637,
     "placa": "1",
-    "tipo": "1",
-    "clienteCedula": "111232345",
-    "clienteNombre": "j",
-    "id": 1762211742516
-  },
-  {
-    "marca": "1",
-    "modelo": "1",
-    "anoVehiculo": "1",
-    "placa": "2",
-    "tipo": "1",
+    "marca": "Ford",
+    "modelo": "Ranger",
+    "tipo": "Camioneta",
+    "anoVehiculo": "",
     "clienteCedula": "111111111",
-    "clienteNombre": "Julian",
-    "id": 1762211863640
+    "clienteNombre": "Julian"
   },
   {
-    "marca": "3",
-    "modelo": "3",
-    "anoVehiculo": "3",
+    "id": 1762321214774,
     "placa": "3",
-    "tipo": "3",
-    "clienteCedula": "222222222",
-    "clienteNombre": "d",
-    "id": 1762213993800
+    "marca": "Kia",
+    "modelo": "Sportage",
+    "tipo": "SUV",
+    "clienteCedula": "111111111",
+    "clienteNombre": "Julian"
   },
   {
-    "marca": "3",
-    "modelo": "3",
-    "anoVehiculo": "1",
-    "placa": "7",
-    "tipo": "3",
-    "clienteCedula": "111232345",
-    "clienteNombre": "j",
-    "id": 1762214991619
+    "id": 1762321303907,
+    "placa": "12",
+    "marca": "Ford",
+    "modelo": "Ranger",
+    "tipo": "Camioneta",
+    "clienteCedula": "222222222",
+    "clienteNombre": "DER"
+  },
+  {
+    "id": 1762321478530,
+    "placa": "123",
+    "marca": "Ford",
+    "modelo": "Ranger",
+    "tipo": "Camioneta",
+    "anoVehiculo": 2022,
+    "clienteCedula": "111111111",
+    "clienteNombre": "Julian"
   }
 ]
