@@ -488,7 +488,7 @@ function CreateUserModal({ onClose, api }) {
                     value={form.idioma}
                     onChange={e=>setForm({...form, idioma:e.target.value})}
                   >
-                    <option value="es">Español (es)</option>
+                    <option value="es">EspanoVehiculol (es)</option>
                     <option value="en">English (en)</option>
                   </select>
                 </div>

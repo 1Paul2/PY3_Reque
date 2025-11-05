@@ -39,14 +39,24 @@ const apiVehiculos = {
 /* ======================= Gestion Vehiculos ======================= */
 function GestionVehiculos({ session }) {
   const [vehiculos, setVehiculos] = useState([]);
+  const [vehiculosBase, setVehiculosBase] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
+  const [textoCliente, setTextoCliente] = useState("");
+  const [mostrarListaClientes, setMostrarListaClientes] = useState(false);
+  const [textoVehiculo, setTextoVehiculo] = useState("");
+  const [mostrarListaVehiculos, setMostrarListaVehiculos] = useState(false);
   const [search, setSearchVehiculos] = useState("");
   const [selected, setSelectedVehiculos] = useState(null);
   const [showFormAgregar, setShowFormAgregar] = useState(false);
   const [showFormEditar, setShowFormEditar] = useState(false);
-  const [textoCliente, setTextoCliente] = useState("");
-  const [mostrarLista, setMostrarLista] = useState(false);
+  const resetFormularioVehiculo = () => {
+  setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
+  setTextoCliente("");
+  setTextoVehiculo("");
+  setClienteSeleccionado("");
+  };
+
   const [newVehiculo, setNewVehiculo] = useState({
     marca: "",
     modelo: "",
@@ -55,22 +65,27 @@ function GestionVehiculos({ session }) {
     tipo: "",
   });
 
-  // Cargar vehículos y clientes al inicio
+  // Cargar datos al inicio
   useEffect(() => {
     (async () => {
       try {
-        const [vehiculosRes, clientesRes] = await Promise.all([
+        const [vehiculosRes, vehiculosBaseRes, clientesRes] = await Promise.all([
           fetch("/api/vehiculos"),
+          fetch("/api/vehiculosBase"),
           fetch("/api/clientes"),
         ]);
 
-        if (!vehiculosRes.ok || !clientesRes.ok)
+        if (!vehiculosRes.ok || !vehiculosBaseRes.ok || !clientesRes.ok)
           throw new Error("Error al cargar datos");
 
-        const vehiculosData = await vehiculosRes.json();
-        const clientesData = await clientesRes.json();
+        const [vehiculosData, vehiculosBaseData, clientesData] = await Promise.all([
+          vehiculosRes.json(),
+          vehiculosBaseRes.json(),
+          clientesRes.json(),
+        ]);
 
         setVehiculos(vehiculosData);
+        setVehiculosBase(vehiculosBaseData);
         setClientes(clientesData);
       } catch (e) {
         console.error(e);
@@ -87,29 +102,23 @@ function GestionVehiculos({ session }) {
     }
 
     if (!clienteSeleccionado) {
-      alert("Debes seleccionar un cliente para vincular el vehículo.");
+      alert("Debes seleccionar un cliente.");
       return;
     }
 
     try {
       const cliente = clientes.find(c => c.cedula === clienteSeleccionado);
-
       const vehiculoCompleto = {
-      ...newVehiculo,
-      clienteCedula: cliente?.cedula || "",
-      clienteNombre: cliente?.nombre || "",
+        ...newVehiculo,
+        clienteCedula: cliente?.cedula || "",
+        clienteNombre: cliente?.nombre || "",
       };
       const updated = await apiVehiculos.create(vehiculoCompleto);
       setVehiculos(updated);
-      setNewVehiculo({
-        marca: "",
-        modelo: "",
-        anoVehiculo: "",
-        placa: "",
-        tipo: "",
-      });
-      setClienteSeleccionado("");
       setShowFormAgregar(false);
+      setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
+      setTextoCliente("");
+      setTextoVehiculo("");
     } catch (e) {
       alert(e.message);
     }
@@ -126,9 +135,7 @@ function GestionVehiculos({ session }) {
     try {
       await apiVehiculos.update(selected.placa, selected);
       setVehiculos(
-        vehiculos.map((v) =>
-          v.placa === selected.placa ? selected : v
-        )
+        vehiculos.map(v => (v.placa === selected.placa ? selected : v))
       );
       setShowFormEditar(false);
     } catch (e) {
@@ -142,7 +149,6 @@ function GestionVehiculos({ session }) {
       alert("No tienes permiso para eliminar vehículos.");
       return;
     }
-
     if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
 
     try {
@@ -175,15 +181,10 @@ function GestionVehiculos({ session }) {
         style={{ width: "100%", padding: 6, marginBottom: 10 }}
       />
 
-      {/* BOTÓN AGREGAR */}
-      <button
-        className="btn btn-add"
-        onClick={() => setShowFormAgregar(true)}
-      >
+      <button className="btn btn-add" onClick={() => setShowFormAgregar(true)}>
         Agregar Vehículo
       </button>
 
-      {/* LISTA DE VEHÍCULOS */}
       <ul className="vehiculo-list">
         {vehiculosFiltrados.map((v) => (
           <li
@@ -198,52 +199,87 @@ function GestionVehiculos({ session }) {
 
       {/* MODAL AGREGAR */}
       {showFormAgregar && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowFormAgregar(false)}
-        >
-          <div
-            className="modal modal-agregar"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setShowFormAgregar(false)}>
+          <div className="modal modal-agregar" onClick={(e) => e.stopPropagation()}>
             <h3>Agregar Vehículo</h3>
-            
-            {/* Selector de cliente con búsqueda personalizada */}
+
+            {/* Cliente */}
             <div className="selector-cliente">
-            <label><b>Seleccionar cliente:</b></label>
-            <input
+              <label><b>Seleccionar cliente:</b></label>
+              <input
                 type="text"
-                className="input-busqueda"
+                className="input-busqueda-clientes"
                 placeholder="Escribe o selecciona un cliente..."
                 value={textoCliente}
                 onChange={(e) => setTextoCliente(e.target.value)}
-                onFocus={() => setMostrarLista(true)}
-                onBlur={() => setTimeout(() => setMostrarLista(false), 200)}
-            />
-
-            {mostrarLista && textoCliente && (
+                onFocus={() => setMostrarListaClientes(true)}
+                onBlur={() => setTimeout(() => setMostrarListaClientes(false), 200)}
+              />
+              {mostrarListaClientes && textoCliente && (
                 <ul className="lista-clientes">
-                {clientes
+                  {clientes
                     .filter((c) =>
-                    `${c.nombre} ${c.cedula}`.toLowerCase().includes(textoCliente.toLowerCase())
+                      `${c.nombre} ${c.cedula}`.toLowerCase().includes(textoCliente.toLowerCase())
                     )
                     .map((c) => (
-                    <li
+                      <li
                         key={c.cedula}
                         onClick={() => {
-                        setClienteSeleccionado(c.cedula);
-                        setTextoCliente(`${c.nombre} - ${c.cedula}`);
-                        setMostrarLista(false);
+                          setClienteSeleccionado(c.cedula);
+                          setTextoCliente(`${c.nombre} - ${c.cedula}`);
+                          setMostrarListaClientes(false);
                         }}
-                    >
+                      >
                         {c.nombre} - {c.cedula}
-                    </li>
+                      </li>
                     ))}
                 </ul>
-            )}
+              )}
             </div>
 
+            {/* Vehículo base */}
+            <div className="selector-vehiculo">
+              <label><b>Seleccionar vehículo:</b></label>
+              <input
+                type="text"
+                className="input-busqueda-vehiculos"
+                placeholder="Buscar tipo o modelo..."
+                value={textoVehiculo}
+                onChange={(e) => setTextoVehiculo(e.target.value)}
+                onFocus={() => setMostrarListaVehiculos(true)}
+                onBlur={() => setTimeout(() => setMostrarListaVehiculos(false), 200)}
+              />
+              {mostrarListaVehiculos && textoVehiculo && (
+                <ul className="lista-vehiculos">
+                  {vehiculosBase
+                    .filter((v) =>
+                      `${v.marca} ${v.modelo} ${v.tipo} ${v.anoVehiculo ?? ""}`
+                        .toLowerCase()
+                        .includes(textoVehiculo.toLowerCase())
+                    )
+                    .map((v) => (
+                      <li
+                        key={v.id}
+                        onClick={() => {
+                          setNewVehiculo({
+                            ...newVehiculo,
+                            tipo: v.tipo,
+                            marca: v.marca,
+                            modelo: v.modelo,
+                            anoVehiculo: v.anoVehiculo
+                          });
+                          setTextoVehiculo(`${v.marca} ${v.modelo} ${v.anoVehiculo ?? ""} (${v.tipo})`);
+                          setMostrarListaVehiculos(false);
+                        }}
+                      >
+                        {v.marca} {v.modelo} {v.anoVehiculo ?? ""} ({v.tipo})
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
 
+            {/* Datos adicionales */}
             <input
               placeholder="Placa"
               value={newVehiculo.placa}
@@ -251,48 +287,15 @@ function GestionVehiculos({ session }) {
                 setNewVehiculo({ ...newVehiculo, placa: e.target.value })
               }
             />
-            <input
-              placeholder="Año del Vehículo"
-              value={newVehiculo.anoVehiculo}
-              onChange={(e) =>
-                setNewVehiculo({
-                  ...newVehiculo,
-                  anoVehiculo: e.target.value,
-                })
-              }
-            />
-            <input
-              placeholder="Modelo"
-              value={newVehiculo.modelo}
-              onChange={(e) =>
-                setNewVehiculo({ ...newVehiculo, modelo: e.target.value })
-              }
-            />
-            <input
-              placeholder="Marca"
-              value={newVehiculo.marca}
-              onChange={(e) =>
-                setNewVehiculo({ ...newVehiculo, marca: e.target.value })
-              }
-            />
-            <input
-              placeholder="Tipo"
-              value={newVehiculo.tipo}
-              onChange={(e) =>
-                setNewVehiculo({ ...newVehiculo, tipo: e.target.value })
-              }
-            />
 
-            <div
-              className="btn-group"
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <button className="btn btn-add" onClick={agregarVehiculo}>
-                Guardar
-              </button>
+            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
+              <button className="btn btn-add" onClick={agregarVehiculo}>Guardar</button>
               <button
                 className="btn btn-close"
-                onClick={() => setShowFormAgregar(false)}
+                onClick={() => {
+                  resetFormularioVehiculo();
+                  setShowFormAgregar(false);
+                }}
               >
                 Cancelar
               </button>
@@ -303,44 +306,20 @@ function GestionVehiculos({ session }) {
 
       {/* MODAL DETALLE */}
       {selected && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedVehiculos(null)}
-        >
-          <div
-            className="modal modal-lista"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setSelectedVehiculos(null)}>
+          <div className="modal modal-lista" onClick={(e) => e.stopPropagation()}>
             <h3>Información del Vehículo</h3>
             <p><b>Placa:</b> {selected.placa}</p>
             <p><b>Marca:</b> {selected.marca}</p>
             <p><b>Modelo:</b> {selected.modelo}</p>
             <p><b>Tipo:</b> {selected.tipo}</p>
-            <p><b>Año:</b> {selected.anoVehiculo || "N/A"}</p>
+            <p><b>anoVehiculo:</b> {selected.anoVehiculo || "N/A"}</p>
             <p><b>Cédula Cliente:</b> {selected.clienteCedula || "No asignado"}</p>
 
-            <div
-              className="btn-group"
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <button
-                className="btn btn-edit"
-                onClick={() => setShowFormEditar(true)}
-              >
-                Modificar
-              </button>
-              <button
-                className="btn btn-delate"
-                onClick={() => eliminarVehiculo(selected.placa)}
-              >
-                Eliminar
-              </button>
-              <button
-                className="btn btn-close"
-                onClick={() => setSelectedVehiculos(null)}
-              >
-                Cerrar
-              </button>
+            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
+              <button className="btn btn-edit" onClick={() => setShowFormEditar(true)}>Modificar</button>
+              <button className="btn btn-delate" onClick={() => eliminarVehiculo(selected.placa)}>Eliminar</button>
+              <button className="btn btn-close" onClick={() => setSelectedVehiculos(null)}>Cerrar</button>
             </div>
           </div>
         </div>
@@ -348,76 +327,37 @@ function GestionVehiculos({ session }) {
 
       {/* MODAL EDITAR */}
       {showFormEditar && selected && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowFormEditar(false)}
-        >
-          <div
-            className="modal modal-editar"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setShowFormEditar(false)}>
+          <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
             <h3>Editar Vehículo</h3>
-
             <label><b>Placa:</b></label>
             <input
               value={selected.placa}
-              onChange={(e) =>
-                setSelectedVehiculos({ ...selected, placa: e.target.value })
-              }
+              onChange={(e) => setSelectedVehiculos({ ...selected, placa: e.target.value })}
             />
-
-            <label><b>Año del Vehículo:</b></label>
+            <label><b>anoVehiculo:</b></label>
             <input
               value={selected.anoVehiculo}
-              onChange={(e) =>
-                setSelectedVehiculos({
-                  ...selected,
-                  anoVehiculo: e.target.value,
-                })
-              }
+              onChange={(e) => setSelectedVehiculos({ ...selected, anoVehiculo: e.target.value })}
             />
-
             <label><b>Modelo:</b></label>
             <input
               value={selected.modelo}
-              onChange={(e) =>
-                setSelectedVehiculos({ ...selected, modelo: e.target.value })
-              }
+              onChange={(e) => setSelectedVehiculos({ ...selected, modelo: e.target.value })}
             />
-
             <label><b>Marca:</b></label>
             <input
               value={selected.marca}
-              onChange={(e) =>
-                setSelectedVehiculos({ ...selected, marca: e.target.value })
-              }
+              onChange={(e) => setSelectedVehiculos({ ...selected, marca: e.target.value })}
             />
-
             <label><b>Tipo:</b></label>
             <input
               value={selected.tipo}
-              onChange={(e) =>
-                setSelectedVehiculos({ ...selected, tipo: e.target.value })
-              }
+              onChange={(e) => setSelectedVehiculos({ ...selected, tipo: e.target.value })}
             />
-
-            <div
-              className="btn-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 10,
-              }}
-            >
-              <button className="btn btn-add" onClick={guardarEdicion}>
-                Guardar
-              </button>
-              <button
-                className="btn btn-close"
-                onClick={() => setShowFormEditar(false)}
-              >
-                Cancelar
-              </button>
+            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
+              <button className="btn btn-add" onClick={guardarEdicion}>Guardar</button>
+              <button className="btn btn-close" onClick={() => setShowFormEditar(false)}>Cancelar</button>
             </div>
           </div>
         </div>

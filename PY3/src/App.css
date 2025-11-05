@@ -791,8 +791,9 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   outline: none;
 }
 
-/* ====== Input de búsqueda ====== */
-.gestion-vehiculos .input-busqueda {
+/* Inputs iguales */
+.gestion-vehiculos .input-busqueda-clientes,
+.gestion-vehiculos .input-busqueda-vehiculos {
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
@@ -805,16 +806,26 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.gestion-vehiculos .input-busqueda:focus {
+.gestion-vehiculos .input-busqueda-clientes:focus,
+.gestion-vehiculos .input-busqueda-vehiculos:focus {
   border-color: #e85e4e;
   box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
   outline: none;
 }
 
-/* ====== Lista desplegable ====== */
-.gestion-vehiculos .lista-clientes {
+/* Posicionamiento relativo de cada bloque */
+.selector-cliente,
+.selector-vehiculo {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+/* Listas con estilo idéntico */
+.lista-clientes,
+.lista-vehiculos {
   position: absolute;
-  top: calc(100% + 2px);
+  top: calc(100% + 1px);
   left: 0;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
@@ -826,17 +837,20 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   list-style: none;
   padding: 0;
   margin: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
-.gestion-vehiculos .lista-clientes li {
+/* Ítems iguales para ambas listas */
+.lista-clientes li,
+.lista-vehiculos li {
   padding: 8px 10px;
   color: #2e0000;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.gestion-vehiculos .lista-clientes li:hover {
+.lista-clientes li:hover,
+.lista-vehiculos li:hover {
   background: #ffe5e5;
 }
 
