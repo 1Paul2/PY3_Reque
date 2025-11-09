@@ -2,6 +2,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import GestionClientes from "./GestionClientes"; // importamos nuestro componente
 import GestionVehiculos from "./GestionVehiculos"; // importamos nuestro componente
 import RegistroAdministrador from "./RegistroAdministrador";
+import GestionInventariosAdmin from "./InventarioAdmin";
+import GestionInventariosUsuario from "./InventarioUsuario";
 
 // otros imports: Login, AdminHome, UserHome, etc.
 
@@ -275,7 +277,7 @@ function AdminHome({ session, onLogout, api }) {
         <div style={{ maxWidth: 800, margin: "16px auto" }}>
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
-          {currentSection === "inventario" && <div>Sección Inventario</div>}
+          {currentSection === "inventario" && <GestionInventariosAdmin session={session}/>}
           {currentSection === "citas" && <div>Sección Citas</div>}
           {currentSection === "cotizacion" && <div>Sección Cotización</div>}
           {currentSection === "reportes" && <div>Sección Reportes</div>}
@@ -340,7 +342,7 @@ function UserHome({ session, onLogout }) {
       <div style={{ maxWidth: 800, margin: "16px auto" }}>
         {currentSection === "clientes" && <GestionClientes session={session} />}
         {currentSection === "vehiculos" && <GestionVehiculos session={session}/>}
-        {currentSection === "inventario" && <div>Sección Inventario</div>}
+        {currentSection === "inventario" && <GestionInventariosUsuario session={session}/>}
         {currentSection === "citas" && <div>Sección Citas</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
         {currentSection === "reportes" && <div>Sección Reportes</div>}

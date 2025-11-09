@@ -252,7 +252,7 @@ function GestionClientes({ session }) {
             <p><b>Correo:</b> {selected.correo || "N/A"}</p>
             <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button className="btn btn-edit" onClick={() => setShowModalEditar(true)}>Modificar</button>
-              <button className="btn btn-delate" onClick={() => eliminarCliente(selected.cedula)}>Eliminar</button>
+              <button className="btn btn-delete" onClick={() => eliminarCliente(selected.cedula)}>Eliminar</button>
               <button className="btn btn-close" onClick={() => setSelectedClientes(null)}>Cerrar</button>
             </div>
           </div>

@@ -318,7 +318,7 @@ function GestionVehiculos({ session }) {
 
             <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button className="btn btn-edit" onClick={() => setShowFormEditar(true)}>Modificar</button>
-              <button className="btn btn-delate" onClick={() => eliminarVehiculo(selected.placa)}>Eliminar</button>
+              <button className="btn btn-delete" onClick={() => eliminarVehiculo(selected.placa)}>Eliminar</button>
               <button className="btn btn-close" onClick={() => setSelectedVehiculos(null)}>Cerrar</button>
             </div>
           </div>

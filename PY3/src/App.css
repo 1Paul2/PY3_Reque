@@ -427,7 +427,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes .btn-add,
 .gestion-clientes .btn-close,
 .gestion-clientes .btn-edit,
-.gestion-clientes .btn-delate {
+.gestion-clientes .btn-delete {
   background: #6d0b02;
   color: rgb(241, 227, 214);
   margin-top: 12px;       /* 🔹 separación hacia arriba */
@@ -442,7 +442,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes .btn-add:hover,
 .gestion-clientes .btn-close:hover,
 .gestion-clientes .btn-edit:hover,
-.gestion-clientes .btn-delate:hover {
+.gestion-clientes .btn-delete:hover {
   background: #e85e4e;
 }
 
@@ -589,7 +589,6 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 /*=============================Gestion de Vehiculos=================================*/
-
 .gestion-vehiculos {
   max-width: 600px;
   margin: 20px auto;
@@ -642,7 +641,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos .btn-add,
 .gestion-vehiculos .btn-close,
 .gestion-vehiculos .btn-edit,
-.gestion-vehiculos .btn-delate {
+.gestion-vehiculos .btn-delete {
   background: #6d0b02;
   color: rgb(241, 227, 214);
   margin-top: 12px;
@@ -657,7 +656,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos .btn-add:hover,
 .gestion-vehiculos .btn-close:hover,
 .gestion-vehiculos .btn-edit:hover,
-.gestion-vehiculos .btn-delate:hover {
+.gestion-vehiculos .btn-delete:hover {
   background: #e85e4e;
 }
 
@@ -860,6 +859,335 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   width: 100%;
   display: block;
   position: relative;
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/*=============================Gestion de Inventario=================================*/
+.gestion-inventario {
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.gestion-inventario h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #920303;
+}
+
+.gestion-inventario .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 5px;
+}
+
+/* Botones para modales Agregar y Editar */
+.gestion-inventario .modal.modal-agregar .btn-group,
+.gestion-inventario .modal.modal-editar .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Botones para modal lista/detalle */
+.gestion-inventario .modal.modal-lista .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-inventario .modal.modal-lista .btn-group .btn {
+  flex: 1;
+}
+
+/* Botón Cerrar a la derecha */
+.gestion-inventario .modal.modal-lista .btn-close {
+  flex: none;
+  margin-left: auto;
+}
+
+.gestion-inventario .btn-add,
+.gestion-inventario .btn-close,
+.gestion-inventario .btn-edit,
+.gestion-inventario .btn-delete {
+  background: #6d0b02;
+  color: rgb(241, 227, 214);
+  margin-top: 12px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-inventario .btn-add:hover,
+.gestion-inventario .btn-close:hover,
+.gestion-inventario .btn-edit:hover,
+.gestion-inventario .btn-delete:hover {
+  background: #e85e4e;
+}
+
+.gestion-inventario .form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gestion-inventario .form-container input,
+.gestion-inventario .form-container button {
+  width: 100%;
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #4a0a0a;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.gestion-inventario .form-container button:hover {
+  background: #54012c;
+}
+
+.gestion-inventario input {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #750101;
+}
+
+.gestion-inventario .inventario-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.gestion-inventario .inventario-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-inventario .inventario-list li:hover {
+  background: #ab0303;
+}
+
+.gestion-inventario .inventario-list li.selected {
+  background: hsl(2, 100%, 25%);
+}
+
+.gestion-inventario .inventario-info {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #690303;
+  border-radius: 8px;
+  background: #715dce;
+}
+
+/* === MODAL flotante centrado y compacto === */
+.gestion-inventario .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.gestion-inventario .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-inventario .modal h3 {
+  color: #820000;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-inventario .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.gestion-inventario .modal-editar input,
+.gestion-inventario .modal-agregar input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-inventario .modal-editar input:focus,
+.gestion-inventario .modal-agregar input:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* Inputs iguales */
+.gestion-inventario .input-busqueda-inventario,
+.gestion-inventario .input-busqueda-vehiculos {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-inventario .input-busqueda-inventario:focus,
+.gestion-inventario .input-busqueda-vehiculos:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* Listas con estilo idéntico */
+.lista-inventario,
+.lista-vehiculos {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #820000;
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+}
+
+/* Ítems iguales para ambas listas */
+.lista-inventario li,
+.lista-vehiculos li {
+  padding: 8px 10px;
+  color: #2e0000;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lista-inventario li:hover,
+.lista-vehiculos li:hover {
+  background: #ffe5e5;
+}
+
+.categoria {
+  list-style: none;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.inventario-list li {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.inventario-list li.selected {
+  background-color: #e6f0ff;
+  border-radius: 5px;
+}
+
+.inventario-list ul {
+  list-style: none;
+  padding-left: 15px;
+}
+
+
+.vehiculo-item {
+  font-weight: bold;
+  color: #f5f5f5;
+  background-color: #8a0303;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.vehiculo-item:hover {
+  background: #b00404;
+}
+
+.vehiculo-item.selected {
+  background: hsl(2, 100%, 25%);
+}
+
+.vehiculo-repuestos {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.vehiculo-repuestos li {
+  padding: 8px;
+  border-bottom: 1px solid #ffffff;
+  color: #f1e3d6;
+  transition: background 0.2s;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.vehiculo-repuestos li:hover {
+  background: #ab0303;
 }
 
 @keyframes aparecer {
