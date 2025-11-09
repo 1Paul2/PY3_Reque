@@ -256,6 +256,7 @@ function AdminHome({ session, onLogout, api }) {
             <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
             <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
             <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("trabajos")}>Gestion Trabajos</button>
             <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
             <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
           </div>
@@ -279,6 +280,7 @@ function AdminHome({ session, onLogout, api }) {
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
           {currentSection === "inventario" && <GestionInventariosAdmin session={session}/>}
           {currentSection === "citas" && <div>Sección Citas</div>}
+          {currentSection === "trabajos" && <div>Sección Trabajos</div>}
           {currentSection === "cotizacion" && <div>Sección Cotización</div>}
           {currentSection === "reportes" && <div>Sección Reportes</div>}
         </div>
@@ -321,6 +323,7 @@ function UserHome({ session, onLogout }) {
             <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
             <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
             <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
+            <button className="btn-menu" onClick={() => setCurrentSection("trabajos")}>Gestion Trabajos</button>
             <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
             <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
           </div>
@@ -344,6 +347,7 @@ function UserHome({ session, onLogout }) {
         {currentSection === "vehiculos" && <GestionVehiculos session={session}/>}
         {currentSection === "inventario" && <GestionInventariosUsuario session={session}/>}
         {currentSection === "citas" && <div>Sección Citas</div>}
+        {currentSection === "trabajos" && <div>Sección Trabajos</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
         {currentSection === "reportes" && <div>Sección Reportes</div>}
       </div>
