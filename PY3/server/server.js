@@ -303,3 +303,138 @@ app.delete("/api/vehiculos/:placa", (req, res) => {
 
   return res.json({ ok: true, vehiculos: filtered });
 });
+
+/*======================================= Gestion Inventario ========================================*/
+const DATA_FILE_INVENTARIO = path.join(DATA_DIR, "inventario.json");
+
+/* === Crear archivo si no existe === */
+function ensureInventarioFile() {
+  if (!fs.existsSync(DATA_FILE_INVENTARIO)) {
+    fs.writeFileSync(DATA_FILE_INVENTARIO, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureInventarioFile();
+
+/* === FUNCIONES AUXILIARES === */
+function readInventario() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_INVENTARIO, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeInventario(list) {
+  fs.writeFileSync(DATA_FILE_INVENTARIO, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === GET: obtener todos los repuestos === */
+app.get("/api/inventario", (_req, res) => {
+  return res.json(readInventario());
+});
+
+/* === POST: agregar nuevo repuesto === */
+app.post("/api/inventario", (req, res) => {
+  const nuevo = req.body || {};
+  const { codigo, nombre, descripcion, cantidad, precio, vehiculoId } = nuevo;
+
+  if (!codigo || !nombre) {
+    return res.status(400).json({ ok: false, error: "Código y nombre son obligatorios" });
+  }
+
+  const inventario = readInventario();
+  if (inventario.some(r => r.codigo === codigo)) {
+    return res.status(409).json({ ok: false, error: "Repuesto ya existe" });
+  }
+
+  // ✅ Verificar si el vehículo existe (en vehiculos.json)
+  if (vehiculoId) {
+    const vehiculos = readVehiculosBase();
+    const existeVehiculo = vehiculos.some(v => v.id === vehiculoId);
+    if (!existeVehiculo) {
+      return res.status(400).json({ ok: false, error: "Vehículo asociado no existe" });
+    }
+  }
+
+  const id = Date.now();
+  const nuevoRepuesto = { id, codigo, nombre, descripcion, cantidad, precio, vehiculoId };
+  inventario.push(nuevoRepuesto);
+  writeInventario(inventario);
+
+  return res.json(nuevoRepuesto);
+});
+
+/* === PUT: actualizar repuesto por código === */
+app.put("/api/inventario/:codigo", (req, res) => {
+  const codigo = req.params.codigo; // ✅ ahora se usa el código como identificador
+  const update = req.body || {};
+  const inventario = readInventario();
+
+  const idx = inventario.findIndex(r => r.codigo === codigo);
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Repuesto no encontrado" });
+  }
+
+  // Actualizar con los nuevos valores
+  inventario[idx] = { ...inventario[idx], ...update };
+  writeInventario(inventario);
+
+  return res.json(inventario[idx]);
+});
+
+
+/* === DELETE: eliminar repuesto por código === */
+app.delete("/api/inventario/:codigo", (req, res) => {
+  const codigo = req.params.codigo;
+  const inventario = readInventario();
+
+  if (!inventario.some(r => r.codigo === codigo)) {
+    return res.status(404).json({ ok: false, error: "Repuesto no encontrado" });
+  }
+
+  const filtered = inventario.filter(r => r.codigo !== codigo);
+  writeInventario(filtered);
+
+  return res.json({ ok: true, inventario: filtered });
+});
+
+/* === POST: agregar vehículo al catálogo base (vehiculos.json) === */
+app.post("/api/vehiculosBase", (req, res) => {
+  try {
+    const nuevo = req.body || {};
+    const { tipo, marca, modelo, anoVehiculo } = nuevo;
+
+    if (!tipo || !marca || !modelo || !anoVehiculo) {
+      return res.status(400).json({ ok: false, error: "Todos los campos son obligatorios" });
+    }
+
+    // Leer el archivo existente
+    let vehiculosBase = [];
+    if (fs.existsSync(DATA_FILE_BASE_VEHICULOS)) {
+      const data = fs.readFileSync(DATA_FILE_BASE_VEHICULOS, "utf8");
+      vehiculosBase = JSON.parse(data || "[]");
+    }
+
+    // Verificar duplicado (por marca + modelo + año)
+    const duplicado = vehiculosBase.find(
+      v => v.marca === marca && v.modelo === modelo && v.anoVehiculo === anoVehiculo
+    );
+    if (duplicado) {
+      return res.status(409).json({ ok: false, error: "Este vehículo ya existe en el catálogo" });
+    }
+
+    // Crear y guardar el nuevo vehículo
+    const id = Date.now();
+    const nuevoVehiculo = { id, tipo, marca, modelo, anoVehiculo };
+    vehiculosBase.push(nuevoVehiculo);
+
+    fs.writeFileSync(DATA_FILE_BASE_VEHICULOS, JSON.stringify(vehiculosBase, null, 2), "utf8");
+
+    res.status(201).json({ ok: true, vehiculo: nuevoVehiculo });
+  } catch (error) {
+    console.error("Error al agregar vehículo base:", error);
+    res.status(500).json({ ok: false, error: "Error al agregar vehículo" });
+  }
+});
