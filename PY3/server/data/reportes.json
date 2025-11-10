@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1762806023504,
+    "tipo": "Clientes",
+    "descripcion": "Hil",
+    "usuario": "Desconocido",
+    "fecha": "2025-11-10T20:20:23.485Z"
+  },
+  {
+    "id": 1762806120393,
+    "tipo": "Vehiculos",
+    "descripcion": "rt",
+    "usuario": "Desconocido",
+    "fecha": "2025-11-10T20:22:00.374Z"
+  },
+  {
+    "id": 1762807610463,
+    "tipo": "Clientes",
+    "descripcion": "1",
+    "usuario": "Desconocido",
+    "fecha": "2025-11-10T20:46:50.446Z"
+  },
+  {
+    "id": 1762810267210,
+    "tipo": "Vehiculos",
+    "descripcion": "El vehiculo Toyota no existe en nuestro inventario\n\n",
+    "usuario": "Desconocido",
+    "fecha": "2025-11-10T21:31:07.194Z"
+  },
+  {
+    "id": 1762811111275,
+    "tipo": "Inventario",
+    "descripcion": "Faltan tornillos",
+    "usuario": "Desconocido",
+    "fecha": "2025-11-10T21:45:11.261Z"
+  }
+]
