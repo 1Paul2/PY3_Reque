@@ -438,3 +438,95 @@ app.post("/api/vehiculosBase", (req, res) => {
     res.status(500).json({ ok: false, error: "Error al agregar vehículo" });
   }
 });
+
+/*======================================= Gestion Reportes ========================================*/
+const DATA_FILE_REPORTES = path.join(DATA_DIR, "reportes.json");
+
+// 🗂️ Asegura que exista el archivo
+function ensureReportesFile() {
+  if (!fs.existsSync(DATA_FILE_REPORTES)) {
+    fs.writeFileSync(DATA_FILE_REPORTES, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureReportesFile();
+
+function readReportes() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_REPORTES, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeReportes(list) {
+  fs.writeFileSync(DATA_FILE_REPORTES, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === POST: enviar reporte === */
+app.post("/api/reportes", (req, res) => {
+  const nuevo = req.body || {};
+  const { tipo, descripcion, usuario, fecha } = nuevo;
+
+  if (!tipo || !descripcion || !usuario) {
+    return res.status(400).json({ ok: false, error: "Faltan campos obligatorios" });
+  }
+
+  const reportes = readReportes();
+  const id = Date.now();
+  const reporte = {
+    id,
+    tipo, // cliente, vehiculo, inventario, otro
+    descripcion,
+    usuario,
+    fecha: fecha || new Date().toISOString(),
+  };
+
+  reportes.push(reporte);
+  writeReportes(reportes);
+
+  return res.json({ ok: true, reporte });
+});
+
+/* === GET: listar y filtrar reportes === */
+app.get("/api/reportes", (req, res) => {
+  const { orden, tipo, usuario } = req.query;
+  let reportes = readReportes();
+
+  if (tipo) {
+    reportes = reportes.filter(r =>
+      r.tipo.toLowerCase().includes(tipo.toLowerCase())
+    );
+  }
+
+  if (usuario) {
+    reportes = reportes.filter(r =>
+      r.usuario.toLowerCase().includes(usuario.toLowerCase())
+    );
+  }
+
+  // Ordenar por fecha (nuevo o antiguo)
+  if (orden === "nuevo") {
+    reportes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  } else if (orden === "antiguo") {
+    reportes.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  }
+
+  return res.json(reportes);
+});
+
+/* === DELETE: eliminar reporte === */
+app.delete("/api/reportes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  let reportes = readReportes();
+
+  if (!reportes.some(r => r.id === id)) {
+    return res.status(404).json({ ok: false, error: "Reporte no encontrado" });
+  }
+
+  reportes = reportes.filter(r => r.id !== id);
+  writeReportes(reportes);
+
+  return res.json({ ok: true, reportes });
+});
