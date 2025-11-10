@@ -173,17 +173,17 @@ function GestionVehiculos({ session }) {
       <h2>Gestión de Vehículos</h2>
 
       {/* BARRA DE BÚSQUEDA */}
-      <input
-        className="search-bar"
-        placeholder="Buscar vehículo..."
-        value={search}
-        onChange={(e) => setSearchVehiculos(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
-
-      <button className="btn btn-add" onClick={() => setShowFormAgregar(true)}>
-        Agregar Vehículo
-      </button>
+      <div className="search-add-container">
+        <input
+          className="search-bar"
+          placeholder="Buscar vehículo..."
+          value={search}
+          onChange={(e) => setSearchVehiculos(e.target.value)}
+        />
+        <button className="btn btn-add" onClick={() => setShowFormAgregar(true)}>
+          Agregar Vehículo
+        </button>
+      </div>
 
       <ul className="vehiculo-list">
         {vehiculosFiltrados.map((v) => (

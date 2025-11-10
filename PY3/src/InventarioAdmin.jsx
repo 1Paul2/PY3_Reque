@@ -235,26 +235,24 @@ function GestionInventario({ session }) {
     <div className="gestion-inventario">
       <h2>Gestión de Inventario</h2>
 
-      <input
-        className="search-bar"
-        placeholder="Buscar repuesto..."
-        value={search}
-        onChange={(e) => setSearchInventario(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
+      <div className="search-add-container">
+        <input
+          className="search-bar"
+          placeholder="Buscar repuesto..."
+          value={search}
+          onChange={(e) => setSearchInventario(e.target.value)}
+        />
 
-      {session?.rol === "admin" && (
-        <button className="btn btn-add" onClick={() => setShowFormAgregar(true)}>
-          Agregar Repuesto
+        {session?.rol === "admin" && (
+          <button className="btn btn-add" onClick={() => setShowFormAgregar(true)}>
+            Agregar Repuesto
+          </button>
+        )}
+
+        <button className="btn btn-add" onClick={() => setShowFormVehiculo(true)}>
+          Agregar Vehículo
         </button>
-      )}
-      <button
-        className="btn btn-add"
-        style={{ marginTop: "10px" }}
-        onClick={() => setShowFormVehiculo(true)}
-      >
-        Agregar Vehículo
-      </button>
+      </div>
 
       {/* === LISTA AGRUPADA === */}
       <ul className="inventario-list">

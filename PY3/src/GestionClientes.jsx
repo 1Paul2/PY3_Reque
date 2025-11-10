@@ -178,22 +178,20 @@ function GestionClientes({ session }) {
     <div className="gestion-clientes">
       <h2>Gestión de Clientes</h2>
 
-      {/* BARRA DE BÚSQUEDA */}
-      <input
-        className="search-bar"
-        placeholder="Buscar cliente..."
-        value={search}
-        onChange={e => setSearchClientes(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
-
-      {/* BOTÓN AGREGAR */}
-      <button
-        className="btn btn-add"
-        onClick={() => setShowModalAgregar(true)}
-      >
-        Agregar Cliente
-      </button>
+      <div className="busqueda-agregar">
+        <input
+          className="search-bar"
+          placeholder="Buscar cliente..."
+          value={search}
+          onChange={e => setSearchClientes(e.target.value)}
+        />
+        <button
+          className="btn btn-add"
+          onClick={() => setShowModalAgregar(true)}
+        >
+          Agregar Cliente
+        </button>
+      </div>
 
       {/* LISTA DE CLIENTES */}
       <ul className="cliente-list">

@@ -4,6 +4,8 @@ import GestionVehiculos from "./GestionVehiculos"; // importamos nuestro compone
 import RegistroAdministrador from "./RegistroAdministrador";
 import GestionInventariosAdmin from "./InventarioAdmin";
 import GestionInventariosUsuario from "./InventarioUsuario";
+import GestionReportesUsuario from "./ReportesUsuario";
+import GestioReportesAdministrador from "./ReportesAdministrador";
 
 // otros imports: Login, AdminHome, UserHome, etc.
 
@@ -282,7 +284,7 @@ function AdminHome({ session, onLogout, api }) {
           {currentSection === "citas" && <div>Sección Citas</div>}
           {currentSection === "trabajos" && <div>Sección Trabajos</div>}
           {currentSection === "cotizacion" && <div>Sección Cotización</div>}
-          {currentSection === "reportes" && <div>Sección Reportes</div>}
+          {currentSection === "reportes" && <GestioReportesAdministrador session={session}/>}
         </div>
       </div>
 
@@ -349,7 +351,7 @@ function UserHome({ session, onLogout }) {
         {currentSection === "citas" && <div>Sección Citas</div>}
         {currentSection === "trabajos" && <div>Sección Trabajos</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
-        {currentSection === "reportes" && <div>Sección Reportes</div>}
+        {currentSection === "reportes" && <GestionReportesUsuario session={session}/>}
       </div>
 
       {/* Confirmación de salida */}

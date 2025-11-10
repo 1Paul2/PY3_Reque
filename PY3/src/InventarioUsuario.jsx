@@ -75,13 +75,14 @@ function InventarioUsuarioNormal() {
     <div className="gestion-inventario">
       <h2>Inventario de Repuestos</h2>
 
-      <input
-        className="search-bar"
-        placeholder="Buscar repuesto o vehículo..."
-        value={search}
-        onChange={(e) => setSearchInventario(e.target.value)}
-        style={{ width: "100%", padding: 6, marginBottom: 10 }}
-      />
+      <div className="search-add-container">
+        <input
+          className="search-bar"
+          placeholder="Buscar repuesto o vehículo..."
+          value={search}
+          onChange={(e) => setSearchInventario(e.target.value)}
+        />
+      </div>
 
       <ul className="inventario-list">
         {/* 🔧 UNIVERSALES */}

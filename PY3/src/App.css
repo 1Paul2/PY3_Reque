@@ -373,8 +373,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: #ad1414;
 }
 
-/*=============================Gestion de Clientes=================================*/
-
+/*============================= Gestion de Clientes =================================*/
 .gestion-clientes {
   max-width: 600px;
   margin: 20px auto;
@@ -387,6 +386,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   color: #920303; /* morado */
 }
 
+/* ================== Botones generales ================== */
 .gestion-clientes .btn {
   padding: 8px 12px;
   border-radius: 6px;
@@ -396,47 +396,19 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-right: 5px;
 }
 
-/* Botones para modales Agregar y Editar */
-.gestion-clientes .modal.modal-agregar .btn-group,
-.gestion-clientes .modal.modal-editar .btn-group {
-  display: flex;
-  justify-content: space-between; /* separa los botones a los extremos */
-  width: 100%;
-  margin-top: 10px;
-}
-
-/* Botones para modal lista/detalle */
-.gestion-clientes .modal.modal-lista .btn-group {
-  display: flex;
-  justify-content: space-between; /* separa los botones a los extremos */
-  width: 100%;
-  margin-top: 10px;
-  gap: 5px; /* espacio mínimo entre botones */
-}
-
-.gestion-clientes .modal.modal-lista .btn-group .btn {
-  flex: 1;  /* opcional, todos los botones del mismo ancho */
-}
-
-/* Si querés que el botón Cerrar quede más a la derecha y más pequeño */
-.gestion-clientes .modal.modal-lista .btn-close {
-  flex: none;
-  margin-left: auto; /* empuja Cerrar hacia la derecha */
-}
-
 .gestion-clientes .btn-add,
 .gestion-clientes .btn-close,
 .gestion-clientes .btn-edit,
 .gestion-clientes .btn-delete {
   background: #6d0b02;
   color: rgb(241, 227, 214);
-  margin-top: 12px;       /* 🔹 separación hacia arriba */
-  margin-bottom: 8px;   /* 🔹 más separación hacia abajo */
+  margin-top: 12px;
+  margin-bottom: 8px;
   border: none;
   border-radius: 6px;
   padding: 8px 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .gestion-clientes .btn-add:hover,
@@ -444,24 +416,86 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes .btn-edit:hover,
 .gestion-clientes .btn-delete:hover {
   background: #e85e4e;
+  transform: translateY(-1px);
 }
 
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.gestion-clientes .busqueda-agregar {
+  display: flex;
+  gap: 10px;            /* espacio entre input y botón */
+  margin-bottom: 10px;
+  align-items: center;   /* alinea verticalmente */
+}
+
+/* Barra de búsqueda */
+.gestion-clientes .busqueda-agregar .search-bar {
+  flex: 1;              /* ocupa el espacio restante */
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-clientes .busqueda-agregar .search-bar:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/*============================= Lista de Clientes - Gestión =================================*/
+.gestion-clientes .cliente-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;    /* igual que reportes */
+  border-radius: 6px;           /* igual que reportes */
+  max-height: 400px;            /* mismo tamaño que reportes */
+  overflow-y: auto;
+  background: none;
+  margin-top: 10px;
+}
+
+/* Cada ítem de la lista */
+.gestion-clientes .cliente-list li {
+  font-weight: bold;
+  color: #f5f5f5;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;                /* igual que reportes */
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.gestion-clientes .cliente-list li:hover {
+  background: #8a0303;          /* mismo hover que reportes */
+  color: #fff;
+}
+
+.gestion-clientes .cliente-list li.selected {
+  background: hsl(5, 10%, 21%); /* mismo seleccionado que reportes */
+}
+
+/* ================== Formulario en modales ================== */
 .gestion-clientes .form-container {
   width: 100%;
   max-width: 400px;
   margin: 0 auto;
-  padding: 10px;       /* menos padding para que no sea tan alto */
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 15px;           /* espacio entre inputs */
+  gap: 15px;
 }
 
 .gestion-clientes .form-container input,
 .gestion-clientes .form-container button {
   width: 100%;
-  height: 36px;        /* alto uniforme */
+  height: 36px;
   padding: 6px 10px;
   border-radius: 4px;
   border: 1px solid #4a0a0a;
@@ -479,30 +513,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   border: 1px solid #750101;
 }
 
-.gestion-clientes .cliente-list {
-  list-style: none;
-  padding: 0;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.gestion-clientes .cliente-list li {
-  padding: 10px;
-  border-bottom: 1px solid #ffffff;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.gestion-clientes .cliente-list li:hover {
-  background: #ab0303;
-}
-
-.gestion-clientes .cliente-list li.selected {
-  background: hsl(2, 100%, 25%);
-}
-
+/* ================== Información del cliente ================== */
 .gestion-clientes .cliente-info {
   margin-top: 20px;
   padding: 15px;
@@ -511,14 +522,14 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: #715dce;
 }
 
-/* === MODAL flotante centrado y compacto === */
+/* ================== Modales ================== */
 .gestion-clientes .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.3); /* fondo tenue */
+  background: rgba(30, 30, 30, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -526,7 +537,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .gestion-clientes .modal {
-  background: rgba(80, 75, 75, 0.7); /* gris oscuro semitransparente */
+  background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
   width: 280px;
@@ -580,15 +591,42 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Efecto al enfocar */
-.gestion-clientes .modal-editar input:focus
+.gestion-clientes .modal-editar input:focus,
 .gestion-clientes .modal-agregar input:focus {
   border-color: #e85e4e;
   box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
   outline: none;
 }
 
-/*=============================Gestion de Vehiculos=================================*/
+/* ================== Grupos de botones en modales ================== */
+/* Agregar y editar */
+.gestion-clientes .modal.modal-agregar .btn-group,
+.gestion-clientes .modal.modal-editar .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Detalle/lista */
+.gestion-clientes .modal.modal-lista .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-clientes .modal.modal-lista .btn-group .btn {
+  flex: 1;
+}
+
+.gestion-clientes .modal.modal-lista .btn-close {
+  flex: none;
+  margin-left: auto;
+}
+
+/*============================= Gestión de Vehículos =================================*/
 .gestion-vehiculos {
   max-width: 600px;
   margin: 20px auto;
@@ -598,54 +636,131 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #920303; /* igual que clientes */
+  color: #920303;
 }
 
-.gestion-vehiculos .btn {
-  padding: 8px 12px;
+/* Contenedor para barra de búsqueda y botón */
+.gestion-vehiculos .search-add-container {
+  display: flex;
+  gap: 10px; /* espacio entre input y botón */
+  margin-bottom: 10px;
+}
+
+.gestion-vehiculos .search-add-container .search-bar {
+  flex: 1; /* ocupa todo el espacio disponible */
+  padding: 6px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid #750101;
+  font-size: 16px;
+}
+
+.gestion-vehiculos .search-add-container .btn-add {
+  flex: none; /* el botón mantiene su tamaño natural */
+}
+
+/* ======================= Lista de Vehículos ======================= */
+.gestion-vehiculos .vehiculo-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+}
+
+.gestion-vehiculos .vehiculo-list li {
+  font-weight: bold;
+  color: #f5f5f5;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.gestion-vehiculos .vehiculo-list li:hover {
+  background: #8a0303;
+  color: #fff;
+}
+
+.gestion-vehiculos .vehiculo-list li.selected {
+  background: hsl(5, 10%, 21%);
+}
+
+/* ======================= Listas desplegables de clientes y vehículos ======================= */
+.selector-cliente,
+.selector-vehiculo {
+  position: relative;
+  width: 100%;
+}
+
+.lista-clientes,
+.lista-vehiculos {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #820000;
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.lista-clientes li,
+.lista-vehiculos li {
+  padding: 8px 10px;
+  color: #2e0000;
   cursor: pointer;
   transition: background 0.2s;
-  margin-right: 5px;
 }
 
-/* Botones para modales Agregar y Editar */
-.gestion-vehiculos .modal.modal-agregar .btn-group,
-.gestion-vehiculos .modal.modal-editar .btn-group {
-  display: flex;
-  justify-content: space-between;
+.lista-clientes li:hover,
+.lista-vehiculos li:hover {
+  background: #ffe5e5;
+}
+
+/* ======================= Inputs de modales ======================= */
+.gestion-vehiculos .modal-editar input,
+.gestion-vehiculos .modal-agregar input,
+.gestion-vehiculos .input-busqueda-clientes,
+.gestion-vehiculos .input-busqueda-vehiculos {
   width: 100%;
-  margin-top: 10px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Botones para modal lista/detalle */
-.gestion-vehiculos .modal.modal-lista .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-  gap: 5px;
+.gestion-vehiculos .modal-editar input:focus,
+.gestion-vehiculos .modal-agregar input:focus,
+.gestion-vehiculos .input-busqueda-clientes:focus,
+.gestion-vehiculos .input-busqueda-vehiculos:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
 }
 
-.gestion-vehiculos .modal.modal-lista .btn-group .btn {
-  flex: 1;
-}
-
-/* Botón Cerrar a la derecha */
-.gestion-vehiculos .modal.modal-lista .btn-close {
-  flex: none;
-  margin-left: auto;
-}
-
+/* ======================= Botones de modales ======================= */
 .gestion-vehiculos .btn-add,
 .gestion-vehiculos .btn-close,
 .gestion-vehiculos .btn-edit,
 .gestion-vehiculos .btn-delete {
   background: #6d0b02;
   color: rgb(241, 227, 214);
-  margin-top: 12px;
-  margin-bottom: 8px;
   border: none;
   border-radius: 6px;
   padding: 8px 12px;
@@ -660,72 +775,19 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: #e85e4e;
 }
 
-.gestion-vehiculos .form-container {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.gestion-vehiculos .btn-group {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.gestion-vehiculos .form-container input,
-.gestion-vehiculos .form-container button {
+  justify-content: space-between;
   width: 100%;
-  height: 36px;
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid #4a0a0a;
-  box-sizing: border-box;
-  font-size: 16px;
+  margin-top: 10px;
+  gap: 5px;
 }
 
-.gestion-vehiculos .form-container button:hover {
-  background: #54012c;
+.gestion-vehiculos .btn-group .btn {
+  flex: 1;
 }
 
-.gestion-vehiculos input {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #750101;
-}
-
-.gestion-vehiculos .vehiculo-list {
-  list-style: none;
-  padding: 0;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.gestion-vehiculos .vehiculo-list li {
-  padding: 10px;
-  border-bottom: 1px solid #ffffff;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.gestion-vehiculos .vehiculo-list li:hover {
-  background: #ab0303;
-}
-
-.gestion-vehiculos .vehiculo-list li.selected {
-  background: hsl(2, 100%, 25%);
-}
-
-.gestion-vehiculos .vehiculo-info {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #690303;
-  border-radius: 8px;
-  background: #715dce;
-}
-
-/* === MODAL flotante centrado y compacto === */
+/* ======================= Modales ======================= */
 .gestion-vehiculos .modal-overlay {
   position: fixed;
   top: 0;
@@ -743,12 +805,11 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
-  width: 280px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
   animation: aparecer 0.3s ease-out;
   position: relative;
@@ -769,98 +830,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   line-height: 1.4;
 }
 
-.gestion-vehiculos .modal-editar input,
-.gestion-vehiculos .modal-agregar input {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestion-vehiculos .modal-editar input:focus,
-.gestion-vehiculos .modal-agregar input:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
-/* Inputs iguales */
-.gestion-vehiculos .input-busqueda-clientes,
-.gestion-vehiculos .input-busqueda-vehiculos {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestion-vehiculos .input-busqueda-clientes:focus,
-.gestion-vehiculos .input-busqueda-vehiculos:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
-/* Posicionamiento relativo de cada bloque */
-.selector-cliente,
-.selector-vehiculo {
-  position: relative;
-  width: 100%;
-  display: block;
-}
-
-/* Listas con estilo idéntico */
-.lista-clientes,
-.lista-vehiculos {
-  position: absolute;
-  top: calc(100% + 1px);
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #820000;
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 100;
-}
-
-/* Ítems iguales para ambas listas */
-.lista-clientes li,
-.lista-vehiculos li {
-  padding: 8px 10px;
-  color: #2e0000;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.lista-clientes li:hover,
-.lista-vehiculos li:hover {
-  background: #ffe5e5;
-}
-
-/* Asegura que el bloque del input de búsqueda ocupe todo el ancho del modal */
-.gestion-vehiculos .modal-agregar .selector-cliente,
-.gestion-vehiculos .modal-editar .selector-cliente {
-  width: 100%;
-  display: block;
-  position: relative;
-}
-
+/* ======================= Animación ======================= */
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -872,7 +842,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-/*=============================Gestion de Inventario=================================*/
+/*============================= Gestion de Inventario =================================*/
 .gestion-inventario {
   max-width: 600px;
   margin: 20px auto;
@@ -885,6 +855,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   color: #920303;
 }
 
+/*============================= Botones generales =================================*/
 .gestion-inventario .btn {
   padding: 8px 12px;
   border-radius: 6px;
@@ -892,34 +863,6 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   cursor: pointer;
   transition: background 0.2s;
   margin-right: 5px;
-}
-
-/* Botones para modales Agregar y Editar */
-.gestion-inventario .modal.modal-agregar .btn-group,
-.gestion-inventario .modal.modal-editar .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-}
-
-/* Botones para modal lista/detalle */
-.gestion-inventario .modal.modal-lista .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-  gap: 5px;
-}
-
-.gestion-inventario .modal.modal-lista .btn-group .btn {
-  flex: 1;
-}
-
-/* Botón Cerrar a la derecha */
-.gestion-inventario .modal.modal-lista .btn-close {
-  flex: none;
-  margin-left: auto;
 }
 
 .gestion-inventario .btn-add,
@@ -944,6 +887,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: #e85e4e;
 }
 
+/*============================= Formularios =================================*/
 .gestion-inventario .form-container {
   width: 100%;
   max-width: 400px;
@@ -977,6 +921,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   border: 1px solid #750101;
 }
 
+/*============================= Listas =================================*/
 .gestion-inventario .inventario-list {
   list-style: none;
   padding: 0;
@@ -1009,7 +954,100 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: #715dce;
 }
 
-/* === MODAL flotante centrado y compacto === */
+/* Listas de autocompletado */
+.lista-inventario,
+.lista-vehiculos {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #820000;
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+}
+
+.lista-inventario li,
+.lista-vehiculos li {
+  padding: 8px 10px;
+  color: #2e0000;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lista-inventario li:hover,
+.lista-vehiculos li:hover {
+  background: #ffe5e5;
+}
+
+.categoria {
+  list-style: none;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.inventario-list li {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.inventario-list li.selected {
+  background-color: #e6f0ff;
+  border-radius: 5px;
+}
+
+.inventario-list ul {
+  list-style: none;
+  padding-left: 15px;
+}
+
+/* Vehículos y repuestos */
+.vehiculo-item {
+  font-weight: bold;
+  color: #f5f5f5;
+  background-color: #8a0303;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.vehiculo-item:hover {
+  background: #b00404;
+}
+
+.vehiculo-item.selected {
+  background: hsl(2, 100%, 25%);
+}
+
+.vehiculo-repuestos {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.vehiculo-repuestos li {
+  padding: 8px;
+  border-bottom: 1px solid #ffffff;
+  color: #f1e3d6;
+  transition: background 0.2s;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.vehiculo-repuestos li:hover {
+  background: #ab0303;
+}
+
+/*============================= Modales =================================*/
 .gestion-inventario .modal-overlay {
   position: fixed;
   top: 0;
@@ -1074,120 +1112,30 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   outline: none;
 }
 
-/* Inputs iguales */
-.gestion-inventario .input-busqueda-inventario,
-.gestion-inventario .input-busqueda-vehiculos {
+/* Botones internos modal */
+.gestion-inventario .modal.modal-agregar .btn-group,
+.gestion-inventario .modal.modal-editar .btn-group {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestion-inventario .input-busqueda-inventario:focus,
-.gestion-inventario .input-busqueda-vehiculos:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
-/* Listas con estilo idéntico */
-.lista-inventario,
-.lista-vehiculos {
-  position: absolute;
-  top: calc(100% + 1px);
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #820000;
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 100;
-}
-
-/* Ítems iguales para ambas listas */
-.lista-inventario li,
-.lista-vehiculos li {
-  padding: 8px 10px;
-  color: #2e0000;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.lista-inventario li:hover,
-.lista-vehiculos li:hover {
-  background: #ffe5e5;
-}
-
-.categoria {
-  list-style: none;
   margin-top: 10px;
-  font-weight: bold;
 }
 
-.inventario-list li {
-  margin-left: 10px;
-  cursor: pointer;
+.gestion-inventario .modal.modal-lista .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
 }
 
-.inventario-list li.selected {
-  background-color: #e6f0ff;
-  border-radius: 5px;
+.gestion-inventario .modal.modal-lista .btn-group .btn {
+  flex: 1;
 }
 
-.inventario-list ul {
-  list-style: none;
-  padding-left: 15px;
-}
-
-
-.vehiculo-item {
-  font-weight: bold;
-  color: #f5f5f5;
-  background-color: #8a0303;
-  border-bottom: 1px solid #ffffff;
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-  border-radius: 5px;
-  margin-top: 5px;
-}
-
-.vehiculo-item:hover {
-  background: #b00404;
-}
-
-.vehiculo-item.selected {
-  background: hsl(2, 100%, 25%);
-}
-
-.vehiculo-repuestos {
-  list-style: none;
-  padding-left: 20px;
-  margin-top: 5px;
-}
-
-.vehiculo-repuestos li {
-  padding: 8px;
-  border-bottom: 1px solid #ffffff;
-  color: #f1e3d6;
-  transition: background 0.2s;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.vehiculo-repuestos li:hover {
-  background: #ab0303;
+.gestion-inventario .modal.modal-lista .btn-close {
+  flex: none;
+  margin-left: auto;
 }
 
 @keyframes aparecer {
@@ -1199,4 +1147,292 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/*============================= Barra de búsqueda + botón =================================*/
+.gestion-inventario .search-add-container {
+  display: flex;
+  gap: 10px; /* espacio entre input y botón */
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* se adapta a pantallas pequeñas */
+  align-items: center; /* centra verticalmente */
+}
+
+.gestion-inventario .search-add-container .search-bar {
+  flex: 1; /* ocupa todo el espacio disponible */
+  padding: 10px 12px; /* altura uniforme con el botón */
+  border-radius: 6px;
+  border: 1px solid #750101;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.gestion-inventario .search-add-container .btn-add {
+  flex: none; /* mantiene su tamaño natural */
+  padding: 10px 12px; /* altura igual que el input */
+  border-radius: 6px;
+  background-color: #6d0b02;
+  color: rgb(241, 227, 214);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-inventario .search-add-container .btn-add:hover {
+  background-color: #e85e4e;
+}
+
+/*============================= Gestión de Reportes Usuario =================================*/
+.reportes-usuario {
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.reportes-usuario h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #920303;
+}
+
+/* Botones de tipo */
+.reportes-usuario .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 5px;
+  background: #6d0b02;
+  color: rgb(241, 227, 214);
+}
+
+.reportes-usuario .btn:hover {
+  background: #e85e4e;
+}
+
+/* Botón seleccionado */
+.reportes-usuario .btn-selected {
+  background-color: hsl(2, 100%, 25%);
+  color: #fff;
+}
+
+/* Área de texto */
+.reportes-usuario textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #820000;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.reportes-usuario textarea:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* Botón enviar */
+.reportes-usuario .btn-enviar {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #6d0b02;
+  color: rgb(241, 227, 214);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reportes-usuario .btn-enviar:hover {
+  background: #e85e4e;
+}
+
+/*============================= Lista de Reportes - Administrador =================================*/
+.lista-reportes-admin {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+}
+
+/* Cada ítem de la lista */
+.lista-reportes-admin li {
+  font-weight: bold;
+  color: #f5f5f5;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.lista-reportes-admin li:hover {
+  background: #8a0303; /* 👈 fondo rojo al pasar el mouse */
+  color: #fff; /* texto más claro */
+}
+
+.lista-reportes-admin li.selected {
+  background: hsl(5, 10%, 21%); /* color distinto al estar seleccionado */
+}
+
+/* Categorías (Clientes, Vehículos, Inventario) */
+.categoria-reportes {
+  list-style: none;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #f1e3d6;
+}
+
+.categoria-titulo {
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+  color: #6d766c;
+  transition: background 0.2s;
+}
+
+
+.sublista-reportes {
+  list-style: none;
+  padding-left: 15px;
+  margin-top: 5px;
+}
+
+.sin-reportes {
+  color: #ddd;
+  font-weight: normal;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+/*============================= Modal de Detalle - Reportes Administrador =================================*/
+.reportes-admin .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.4);
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center;     /* centra verticalmente */
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.reportes-admin .modal {
+  position: relative;
+  background: rgba(80, 75, 75, 0.9);
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  color: #f1e3d6;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  animation: aparecer 0.3s ease-out;
+}
+
+.reportes-admin .modal h3 {
+  color: #ffb3b3;
+  font-size: 18px;
+  text-align: center; /* solo el título centrado */
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.reportes-admin .modal p {
+  margin: 10px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  border: none;
+  text-align: left; /* texto alineado */
+}
+
+/* Botón cerrar */
+.reportes-admin .btn-close {
+  align-self: center;
+  margin-top: 15px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #6d0b02;
+  color: #f1e3d6;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.reportes-admin .btn-close:hover {
+  background: #e85e4e;
+}
+
+/* Animación */
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===== Filtros de reportes ===== */
+.filtros-reportes {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Input de búsqueda */
+.filtro-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c; /* borde gris */
+  background-color: #f5f5f5; /* fondo gris claro */
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filtro-input:focus {
+  border-color: #920303; /* rojo al enfocar */
+  box-shadow: 0 0 5px rgba(146, 3, 3, 0.5);
+  outline: none;
+}
+
+/* Select de orden */
+.filtro-select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filtro-select:focus {
+  border-color: #920303;
+  box-shadow: 0 0 5px rgba(146, 3, 3, 0.5);
+  outline: none;
 }
