@@ -39,14 +39,14 @@ function RegistroAdministrador({ alValidar, onClose, api }) {
         {error && <p className="error">{error}</p>}
 
         <form onSubmit={manejarEnvio}>
-          <label>Usuario (código / correo / nombre)</label>
+          <label>Usuario (correo / nombre)</label>
           <input
             className="input"
             value={usuarioAdmin}
             onChange={(e) => setUsuarioAdmin(e.target.value)}
           />
 
-          <label>Contraseña</label>
+          <label>código / contraseña</label>
           <input
             className="input"
             type="password"
