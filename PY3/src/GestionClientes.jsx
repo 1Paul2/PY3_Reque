@@ -152,8 +152,29 @@ function GestionClientes({ session }) {
   /* === ELIMINAR CLIENTE === */
   const eliminarCliente = async (cedula) => {
     if (session.rol !== "admin") {
-      alert("No tienes permiso para eliminar clientes.");
+      try {
+      const reporte = {
+        usuario: session.nombre || "Desconocido",
+        tipo: "Clientes",
+        descripcion: `Intento de eliminar cliente con cédula ${cedula}`,
+        fecha: new Date().toISOString(),
+      };
+
+      const res = await fetch("/api/reportes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reporte),
+      });
+
+      if (!res.ok) throw new Error("Error al enviar reporte");
+
+      alert("Se ha enviado el reporte");
+      return; // No continuar con eliminación
+      } catch (err) {
+      console.error(err);
+      alert("No se pudo enviar el reporte.");
       return;
+      }
     }
 
     if (!confirm("¿Seguro que deseas eliminar este cliente?")) return;
