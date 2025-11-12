@@ -167,10 +167,10 @@ function Login({ onLogin, api }) {
         {err && <p className="error">{err}</p>}
 
         <form onSubmit={submit}>
-          <label>Codigo / Correo / Nombre</label>
+          <label>Correo / Nombre</label>
           <input className="input" value={key} onChange={e => setKey(e.target.value)} />
 
-          <label>Contraseña</label>
+          <label>Codigo / Contraseña</label>
           <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} />
 
           <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
@@ -496,7 +496,7 @@ function CreateUserModal({ onClose, api }) {
                     value={form.idioma}
                     onChange={e=>setForm({...form, idioma:e.target.value})}
                   >
-                    <option value="es">EspanoVehiculol (es)</option>
+                    <option value="es">Español (es)</option>
                     <option value="en">English (en)</option>
                   </select>
                 </div>
