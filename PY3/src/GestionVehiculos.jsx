@@ -144,21 +144,49 @@ function GestionVehiculos({ session }) {
   };
 
   /* === ELIMINAR VEHÍCULO === */
-  const eliminarVehiculo = async (placa) => {
-    if (!session || session.rol !== "admin") {
-      alert("No tienes permiso para eliminar vehículos.");
+  /* === ELIMINAR VEHÍCULO === */
+const eliminarVehiculo = async (vehiculo) => {
+  if (!session) return;
+
+  // Si no es admin, enviar reporte automático
+  if (session.rol !== "admin") {
+    try {
+      const reporte = {
+        usuario: session.nombre || "Desconocido",
+        tipo: "Vehiculos",
+        descripcion: `Intento de eliminar vehículo con placa ${vehiculo.placa}`,
+        fecha: new Date().toISOString(),
+      };
+
+      const res = await fetch("/api/reportes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reporte),
+      });
+
+      if (!res.ok) throw new Error("Error al enviar reporte");
+
+      alert("Se ha enviado el reporte");
+      return; // No continuar con eliminación
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo enviar el reporte.");
       return;
     }
-    if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+  }
 
-    try {
-      const updated = await apiVehiculos.remove(placa);
-      setVehiculos(updated);
-      setSelectedVehiculos(null);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+  // Admin puede eliminar
+  if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+
+  try {
+    const updated = await apiVehiculos.remove(vehiculo.placa);
+    setVehiculos(updated);
+    setSelectedVehiculos(null);
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
 
   /* === FILTRAR VEHÍCULOS === */
   const vehiculosFiltrados = vehiculos.filter(

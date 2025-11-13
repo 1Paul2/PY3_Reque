@@ -12,7 +12,7 @@ function ReportesUsuario({ session }) {
     }
 
     const reporte = {
-      usuario: session?.username || "Desconocido",
+      usuario: session?.nombre || "Desconocido",
       tipo: tipoReporte,
       descripcion: mensaje,
       fecha: new Date().toISOString(),
