@@ -530,3 +530,97 @@ app.delete("/api/reportes/:id", (req, res) => {
 
   return res.json({ ok: true, reportes });
 });
+
+/*======================================= Gestion Citas ========================================*/
+const DATA_FILE_CITAS = path.join(DATA_DIR, "citas.json");
+
+// 🗂️ Asegura que exista el archivo
+function ensureCitasFile() {
+  if (!fs.existsSync(DATA_FILE_CITAS)) {
+    fs.writeFileSync(DATA_FILE_CITAS, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureCitasFile();
+
+function readCitas() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_CITAS, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCitas(list) {
+  fs.writeFileSync(DATA_FILE_CITAS, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === POST: agregar nueva cita === */
+app.post("/api/citas", (req, res) => {
+  const nuevo = req.body || {};
+  const { clienteNombre, clienteCedula, vehiculo, fecha, hora, descripcion } = nuevo;
+
+  if (!clienteNombre || !clienteCedula || !vehiculo || !fecha || !hora) {
+    return res.status(400).json({ ok: false, error: "Faltan campos obligatorios" });
+  }
+
+  const citas = readCitas();
+  const id = Date.now();
+  const cita = {
+    id,
+    clienteNombre,
+    clienteCedula,
+    vehiculo,
+    fecha,
+    hora,
+    descripcion: descripcion || "",
+  };
+
+  citas.push(cita);
+  writeCitas(citas);
+
+  return res.json({ ok: true, cita });
+});
+
+/* === GET: listar y filtrar citas === */
+app.get("/api/citas", (req, res) => {
+  const { cliente, vehiculo, fecha } = req.query;
+  let citas = readCitas();
+
+  if (cliente) {
+    citas = citas.filter(c =>
+      c.clienteNombre.toLowerCase().includes(cliente.toLowerCase())
+    );
+  }
+
+  if (vehiculo) {
+    citas = citas.filter(c =>
+      c.vehiculo.toLowerCase().includes(vehiculo.toLowerCase())
+    );
+  }
+
+  if (fecha) {
+    citas = citas.filter(c => c.fecha === fecha);
+  }
+
+  // Ordenar por fecha y hora
+  citas.sort((a, b) => new Date(a.fecha + " " + a.hora) - new Date(b.fecha + " " + b.hora));
+
+  return res.json(citas);
+});
+
+/* === DELETE: eliminar cita === */
+app.delete("/api/citas/:id", (req, res) => {
+  const id = Number(req.params.id);
+  let citas = readCitas();
+
+  if (!citas.some(c => c.id === id)) {
+    return res.status(404).json({ ok: false, error: "Cita no encontrada" });
+  }
+
+  citas = citas.filter(c => c.id !== id);
+  writeCitas(citas);
+
+  return res.json({ ok: true, citas });
+});
