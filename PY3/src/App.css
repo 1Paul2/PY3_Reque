@@ -1436,3 +1436,197 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   box-shadow: 0 0 5px rgba(146, 3, 3, 0.5);
   outline: none;
 }
+/*============================= Gestion de Citas =================================*/
+.gestion-citas {
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.gestion-citas h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #920303; /* mismo color que clientes */
+}
+
+/* ================== Botones generales ================== */
+.gestion-citas .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-right: 5px;
+  color: rgb(241, 227, 214);
+}
+
+.gestion-citas .btn-add {
+  background: #6d0b02;
+}
+
+.gestion-citas .btn-edit {
+  background: #6d0b02;
+}
+
+.gestion-citas .btn-delete {
+  background: #6d0b02;
+}
+
+.gestion-citas .btn-close {
+  background: #6d0b02;
+}
+
+.gestion-citas .btn-add:hover,
+.gestion-citas .btn-edit:hover,
+.gestion-citas .btn-delete:hover,
+.gestion-citas .btn-close:hover {
+  background: #e85e4e;
+  transform: translateY(-1px);
+}
+
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.gestion-citas .busqueda-agregar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.gestion-citas .busqueda-agregar .search-bar {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-citas .busqueda-agregar .search-bar:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/*============================= Lista de Citas =================================*/
+.gestion-citas .cita-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+  margin-top: 10px;
+}
+
+.gestion-citas .cita-list li {
+  font-weight: bold;
+  color: #f5f5f5;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.gestion-citas .cita-list li:hover {
+  background: #8a0303;
+  color: #fff;
+}
+
+.gestion-citas .cita-list li.selected {
+  background: hsl(5, 10%, 21%);
+}
+
+/* ================== Formulario en modales ================== */
+.gestion-citas .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.gestion-citas .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-citas .modal h3 {
+  color: #820000;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-citas .modal input,
+.gestion-citas .modal select,
+.gestion-citas .modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-citas .modal input:focus,
+.gestion-citas .modal select:focus,
+.gestion-citas .modal textarea:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================== Grupos de botones en modales ================== */
+.gestion-citas .modal .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.gestion-citas .modal .btn-group .btn {
+  flex: 1;
+}
+
+.gestion-citas .modal .btn-close {
+  flex: none;
+  margin-left: auto;
+}
