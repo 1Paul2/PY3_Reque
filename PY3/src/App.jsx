@@ -6,6 +6,8 @@ import GestionInventariosAdmin from "./InventarioAdmin";
 import GestionInventariosUsuario from "./InventarioUsuario";
 import GestionReportesUsuario from "./ReportesUsuario";
 import GestioReportesAdministrador from "./ReportesAdministrador";
+import GestionCitas from "./GestionCitas"; 
+
 
 // otros imports: Login, AdminHome, UserHome, etc.
 
@@ -281,7 +283,7 @@ function AdminHome({ session, onLogout, api }) {
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
           {currentSection === "inventario" && <GestionInventariosAdmin session={session}/>}
-          {currentSection === "citas" && <div>Sección Citas</div>}
+          {currentSection === "citas" && <GestionCitas session={session}/>}
           {currentSection === "trabajos" && <div>Sección Trabajos</div>}
           {currentSection === "cotizacion" && <div>Sección Cotización</div>}
           {currentSection === "reportes" && <GestioReportesAdministrador session={session}/>}
@@ -348,7 +350,7 @@ function UserHome({ session, onLogout }) {
         {currentSection === "clientes" && <GestionClientes session={session} />}
         {currentSection === "vehiculos" && <GestionVehiculos session={session}/>}
         {currentSection === "inventario" && <GestionInventariosUsuario session={session}/>}
-        {currentSection === "citas" && <div>Sección Citas</div>}
+        {currentSection === "citas" && <GestionCitas session={session}/>}
         {currentSection === "trabajos" && <div>Sección Trabajos</div>}
         {currentSection === "cotizacion" && <div>Sección Cotización</div>}
         {currentSection === "reportes" && <GestionReportesUsuario session={session}/>}
