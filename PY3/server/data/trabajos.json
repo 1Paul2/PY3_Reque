@@ -1,0 +1,19 @@
+[
+  {
+    "codigoOrden": "OT-1763249169326",
+    "idCita": 1763183256778,
+    "clienteNombre": "Julian",
+    "clienteCedula": "111111111",
+    "placa": "1",
+    "fechaCita": "2025-11-14",
+    "horaCita": "23:01",
+    "descripcionCita": "12",
+    "observacionesIniciales": "xxx",
+    "tipoServicio": "",
+    "estado": "Pendiente",
+    "diagnostico": "no sirve",
+    "serviciosRealizados": "xnxx",
+    "repuestosUtilizados": "3",
+    "notasInternas": "fff"
+  }
+]
