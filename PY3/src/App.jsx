@@ -6,10 +6,9 @@ import GestionInventariosAdmin from "./InventarioAdmin";
 import GestionInventariosUsuario from "./InventarioUsuario";
 import GestionReportesUsuario from "./ReportesUsuario";
 import GestioReportesAdministrador from "./ReportesAdministrador";
-import GestionCitas from "./GestionCitas"; 
-
-
-// otros imports: Login, AdminHome, UserHome, etc.
+import GestionCitas from "./GestionCitas";
+import GestionCotizacion from "./GestionCotizacion";
+import GestionTrabajos from "./GestionTrabajos"; // ✅ NUEVO IMPORT
 
 /* ======================= API HTTP ======================= */
 const apiHttp = {
@@ -31,17 +30,20 @@ const apiHttp = {
     return data.users;
   },
   async changePassword(code, newPassword) {
-    const res = await fetch(`/api/usuarios/${encodeURIComponent(code)}/password`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newPassword }),
-    });
+    const res = await fetch(
+      `/api/usuarios/${encodeURIComponent(code)}/password`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword }),
+      }
+    );
     const data = await res.json();
     if (!res.ok || data.ok === false) {
       throw new Error(data.error || "No se pudo cambiar la contraseña");
     }
     return data.user;
-  }
+  },
 };
 
 /* ======================= APP ======================= */
@@ -64,70 +66,94 @@ function App() {
     })();
   }, []);
 
-  const api = useMemo(() => ({
-    // Login con regla de primer acceso (code + code)
-    login: (keyInput, password) => {
-      const list = users ?? [];
-      const key = (keyInput || "").trim();
-      const pass = (password || "").toString();
+  const api = useMemo(
+    () => ({
+      // Login con regla de primer acceso (code + code)
+      login: (keyInput, password) => {
+        const list = users ?? [];
+        const key = (keyInput || "").trim();
+        const pass = (password || "").toString();
 
-      // 1) si existe por code y requiere cambio, solo acepta code+code
-      const uByCode = list.find(x => String(x.code) === key);
+        // 1) si existe por code y requiere cambio, solo acepta code+code
+        const uByCode = list.find((x) => String(x.code) === key);
 
-      if (uByCode && uByCode.mustChangePassword) {
-        if (pass === String(uByCode.code)) {
-          return { ok: true, user: uByCode, needsPasswordChange: true };
+        if (uByCode && uByCode.mustChangePassword) {
+          if (pass === String(uByCode.code)) {
+            return { ok: true, user: uByCode, needsPasswordChange: true };
+          }
+          return {
+            ok: false,
+            error:
+              "Para el primer acceso use su codigo como usuario y contraseña",
+          };
         }
-        return { ok: false, error: "Para el primer acceso use su codigo como usuario y contraseña" };
-      }
 
-      // 2) login normal (code/correo/nombre + password)
-      const keyLower = key.trim().toLowerCase();
-      const u = list.find(x => {
-        const code = (x.code || "").toLowerCase();
-        const mail = (x.correo || "").toLowerCase();
-        const name = (x.nombre || "").toLowerCase();
-        return (code === keyLower || mail === keyLower || name === keyLower) && x.password === pass;
-      });
+        // 2) login normal (code/correo/nombre + password)
+        const keyLower = key.trim().toLowerCase();
+        const u = list.find((x) => {
+          const code = (x.code || "").toLowerCase();
+          const mail = (x.correo || "").toLowerCase();
+          const name = (x.nombre || "").toLowerCase();
+          return (
+            (code === keyLower || mail === keyLower || name === keyLower) &&
+            x.password === pass
+          );
+        });
 
-      return u ? { ok: true, user: u } : { ok: false, error: "Usuario o contraseña incorrectos" };
-    },
+        return u
+          ? { ok: true, user: u }
+          : { ok: false, error: "Usuario o contraseña incorrectos" };
+      },
 
-    existsByCedulaOrCorreo: (ced, mail) => {
-      const list = users ?? [];
-      const m = (mail || "").toLowerCase();
-      return list.some(u => (ced && u.cedula === ced) || (m && (u.correo || "").toLowerCase() === m));
-    },
+      existsByCedulaOrCorreo: (ced, mail) => {
+        const list = users ?? [];
+        const m = (mail || "").toLowerCase();
+        return list.some(
+          (u) =>
+            (ced && u.cedula === ced) ||
+            (m && (u.correo || "").toLowerCase() === m)
+        );
+      },
 
-    createUser: async (nuevo) => {
-      const updated = await apiHttp.create(nuevo); // guarda en server/data/usuarios.json
-      setUsers(updated);
-      return { ok: true };
-    },
+      createUser: async (nuevo) => {
+        const updated = await apiHttp.create(nuevo); // guarda en server/data/usuarios.json
+        setUsers(updated);
+        return { ok: true };
+      },
 
-    changePasswordLocal: async (code, newPassword) => {
-      const updatedUser = await apiHttp.changePassword(code, newPassword);
-      // refrescar lista en el estado
-      const arr = await apiHttp.getAll();
-      setUsers(arr);
-      return updatedUser;
-    },
+      changePasswordLocal: async (code, newPassword) => {
+        const updatedUser = await apiHttp.changePassword(code, newPassword);
+        // refrescar lista en el estado
+        const arr = await apiHttp.getAll();
+        setUsers(arr);
+        return updatedUser;
+      },
 
-    getAll: () => users ?? []
-  }), [users]);
-
-  if (users === null) return <div style={{ padding: 20 }}>Cargando...</div>;
-
-  if (!session) return (
-    <>
-      {loadErr && <div className="error" style={{padding:12, margin:12}}>{loadErr}</div>}
-      <Login onLogin={setSession} api={api} />
-    </>
+      getAll: () => users ?? [],
+    }),
+    [users]
   );
 
-  return session.rol === "admin"
-    ? <AdminHome session={session} onLogout={() => setSession(null)} api={api} />
-    : <UserHome  session={session} onLogout={() => setSession(null)} />;
+  if (users === null)
+    return <div style={{ padding: 20 }}>Cargando...</div>;
+
+  if (!session)
+    return (
+      <>
+        {loadErr && (
+          <div className="error" style={{ padding: 12, margin: 12 }}>
+            {loadErr}
+          </div>
+        )}
+        <Login onLogin={setSession} api={api} />
+      </>
+    );
+
+  return session.rol === "admin" ? (
+    <AdminHome session={session} onLogout={() => setSession(null)} api={api} />
+  ) : (
+    <UserHome session={session} onLogout={() => setSession(null)} />
+  );
 }
 
 /* ======================= LOGIN ======================= */
@@ -137,7 +163,8 @@ function Login({ onLogin, api }) {
   const [err, setErr] = useState("");
   const [forcePwd, setForcePwd] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [mostrarVerificacionAdmin, setMostrarVerificacionAdmin] = useState(false);
+  const [mostrarVerificacionAdmin, setMostrarVerificacionAdmin] =
+    useState(false);
 
   const submit = (e) => {
     e && e.preventDefault();
@@ -165,18 +192,38 @@ function Login({ onLogin, api }) {
     <div className="center-screen">
       <div className="card">
         <h2>Inicio de sesión</h2>
-        <p>Ingrese su <b>codigo</b>, <b>correo</b> o <b>nombre</b> y su contraseña</p>
+        <p>
+          Ingrese su <b>codigo</b>, <b>correo</b> o <b>nombre</b> y su
+          contraseña
+        </p>
         {err && <p className="error">{err}</p>}
 
         <form onSubmit={submit}>
           <label>Correo / Nombre</label>
-          <input className="input" value={key} onChange={e => setKey(e.target.value)} />
+          <input
+            className="input"
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+          />
 
           <label>Codigo / Contraseña</label>
-          <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} />
+          <input
+            className="input"
+            type="password"
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+          />
 
-          <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-            <button type="submit" className="btn-primary">Entrar</button>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              marginTop: "16px",
+            }}
+          >
+            <button type="submit" className="btn-primary">
+              Entrar
+            </button>
             <button
               type="button"
               className="btn-primary"
@@ -188,7 +235,8 @@ function Login({ onLogin, api }) {
         </form>
 
         <small style={{ display: "block", marginTop: 10 }}>
-          <b>Admin de prueba:</b><br/>
+          <b>Admin de prueba:</b>
+          <br />
           Codigo: admin01 — Contraseña: admin123
         </small>
       </div>
@@ -219,10 +267,7 @@ function Login({ onLogin, api }) {
 
       {/* Modal crear usuario (solo si admin verificado) */}
       {showCreate && (
-        <CreateUserModal
-          onClose={() => setShowCreate(false)}
-          api={api}
-        />
+        <CreateUserModal onClose={() => setShowCreate(false)} api={api} />
       )}
     </div>
   );
@@ -236,10 +281,19 @@ function AdminHome({ session, onLogout, api }) {
 
   const recordarCodigos = () => {
     const usuarios = api.getAll();
-    if (!usuarios.length) { alert("No hay usuarios"); return; }
+    if (!usuarios.length) {
+      alert("No hay usuarios");
+      return;
+    }
     const header = "Nombre | Codigo | Contraseña\n";
-    const body = usuarios.map(u => `${u.nombre} | ${u.code} | ${u.password}`).join("\n");
-    if (confirm("Este archivo incluira contraseñas en texto claro. Desea continuar?")) {
+    const body = usuarios
+      .map((u) => `${u.nombre} | ${u.code} | ${u.password}`)
+      .join("\n");
+    if (
+      confirm(
+        "Este archivo incluira contraseñas en texto claro. Desea continuar?"
+      )
+    ) {
       const blob = new Blob([header + body], { type: "text/plain" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -253,16 +307,56 @@ function AdminHome({ session, onLogout, api }) {
     <div className="home">
       {/* Menú */}
       <div className="menu-container">
-        <button className="btn-menu-toggle" onClick={() => setShowMenu(!showMenu)}>☰</button>
+        <button
+          className="btn-menu-toggle"
+          onClick={() => setShowMenu(!showMenu)}
+        >
+          ☰
+        </button>
         {showMenu && (
           <div className="dropdown-menu">
-            <button className="btn-menu" onClick={() => setCurrentSection("clientes")}>Gestión Clientes</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("trabajos")}>Gestion Trabajos</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("clientes")}
+            >
+              Gestión Clientes
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("vehiculos")}
+            >
+              Gestion Vehiculos
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("inventario")}
+            >
+              Gestion Inventario
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("citas")}
+            >
+              Gestion Citas
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("trabajos")}
+            >
+              Gestion Trabajos
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("cotizacion")}
+            >
+              Cotizacion
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("reportes")}
+            >
+              Reportes
+            </button>
           </div>
         )}
       </div>
@@ -273,20 +367,34 @@ function AdminHome({ session, onLogout, api }) {
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Rol: {session.rol}</div>
         </div>
-        <button className="btn-danger" onClick={() => setConfirmOut(true)}>Cerrar sesión</button>
+        <button className="btn-danger" onClick={() => setConfirmOut(true)}>
+          Cerrar sesión
+        </button>
       </div>
 
       {/* ===== CUADRO CENTRAL GRIS ===== */}
       <div className="center-panel">
         {/* Contenido principal según sección */}
         <div style={{ maxWidth: 800, margin: "16px auto" }}>
-          {currentSection === "clientes" && <GestionClientes session={session} />}
-          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
-          {currentSection === "inventario" && <GestionInventariosAdmin session={session}/>}
-          {currentSection === "citas" && <GestionCitas session={session}/>}
-          {currentSection === "trabajos" && <div>Sección Trabajos</div>}
-          {currentSection === "cotizacion" && <div>Sección Cotización</div>}
-          {currentSection === "reportes" && <GestioReportesAdministrador session={session}/>}
+          {currentSection === "clientes" && (
+            <GestionClientes session={session} />
+          )}
+          {currentSection === "vehiculos" && (
+            <GestionVehiculos session={session} />
+          )}
+          {currentSection === "inventario" && (
+            <GestionInventariosAdmin session={session} />
+          )}
+          {currentSection === "citas" && <GestionCitas session={session} />}
+          {currentSection === "trabajos" && (
+            <GestionTrabajos session={session} />
+          )}
+          {currentSection === "cotizacion" && (
+            <GestionCotizacion session={session} />
+          )}
+          {currentSection === "reportes" && (
+            <GestioReportesAdministrador session={session} />
+          )}
         </div>
       </div>
 
@@ -311,7 +419,6 @@ function UserHome({ session, onLogout }) {
 
   return (
     <div className="home">
-
       {/* Botón del submenú (esquina izquierda) */}
       <div className="menu-container">
         <button
@@ -323,13 +430,48 @@ function UserHome({ session, onLogout }) {
 
         {menuOpen && (
           <div className="dropdown-menu">
-            <button className="btn-menu" onClick={() => setCurrentSection("clientes")}>Gestión Clientes</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("vehiculos")}>Gestion Vehiculos</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("inventario")}>Gestion Inventario</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("citas")}>Gestion Citas</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("trabajos")}>Gestion Trabajos</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("cotizacion")}>Cotizacion</button>
-            <button className="btn-menu" onClick={() => setCurrentSection("reportes")}>Reportes</button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("clientes")}
+            >
+              Gestión Clientes
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("vehiculos")}
+            >
+              Gestion Vehiculos
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("inventario")}
+            >
+              Gestion Inventario
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("citas")}
+            >
+              Gestion Citas
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("trabajos")}
+            >
+              Gestion Trabajos
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("cotizacion")}
+            >
+              Cotizacion
+            </button>
+            <button
+              className="btn-menu"
+              onClick={() => setCurrentSection("reportes")}
+            >
+              Reportes
+            </button>
           </div>
         )}
       </div>
@@ -347,13 +489,25 @@ function UserHome({ session, onLogout }) {
 
       {/* Contenido principal según sección */}
       <div style={{ maxWidth: 800, margin: "16px auto" }}>
-        {currentSection === "clientes" && <GestionClientes session={session} />}
-        {currentSection === "vehiculos" && <GestionVehiculos session={session}/>}
-        {currentSection === "inventario" && <GestionInventariosUsuario session={session}/>}
-        {currentSection === "citas" && <GestionCitas session={session}/>}
-        {currentSection === "trabajos" && <div>Sección Trabajos</div>}
-        {currentSection === "cotizacion" && <div>Sección Cotización</div>}
-        {currentSection === "reportes" && <GestionReportesUsuario session={session}/>}
+        {currentSection === "clientes" && (
+          <GestionClientes session={session} />
+        )}
+        {currentSection === "vehiculos" && (
+          <GestionVehiculos session={session} />
+        )}
+        {currentSection === "inventario" && (
+          <GestionInventariosUsuario session={session} />
+        )}
+        {currentSection === "citas" && <GestionCitas session={session} />}
+        {currentSection === "trabajos" && (
+          <GestionTrabajos session={session} />
+        )}
+        {currentSection === "cotizacion" && (
+          <GestionCotizacion session={session} />
+        )}
+        {currentSection === "reportes" && (
+          <GestionReportesUsuario session={session} />
+        )}
       </div>
 
       {/* Confirmación de salida */}
@@ -372,23 +526,38 @@ function UserHome({ session, onLogout }) {
 /* ======================= MODAL: CREAR USUARIO (maquetado limpio) ======================= */
 function CreateUserModal({ onClose, api }) {
   const [form, setForm] = useState({
-    nombre: "", cedula: "", correo: "", telefono: "",
-    fechaNac: "", idioma: "es", rol: "usuario"
+    nombre: "",
+    cedula: "",
+    correo: "",
+    telefono: "",
+    fechaNac: "",
+    idioma: "es",
+    rol: "usuario",
   });
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(null); // { code, nombre }
   const [loading, setLoading] = useState(false);
 
   const genCode = (nombre, cedula) => {
-    const base = (nombre || "USR").trim().split(/\s+/).map(w=>w[0]).join("").toUpperCase().slice(0,3);
-    const d = new Date(); const y = String(d.getFullYear()).slice(-2); const m = String(d.getMonth()+1).padStart(2,"0");
-    const onlyDigits = (cedula || "").replace(/\D/g,"");
-    const tail = onlyDigits ? onlyDigits.slice(-3).padStart(3,"0") : String(Math.floor(Math.random()*999)).padStart(3,"0");
+    const base = (nombre || "USR")
+      .trim()
+      .split(/\s+/)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 3);
+    const d = new Date();
+    const y = String(d.getFullYear()).slice(-2);
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const onlyDigits = (cedula || "").replace(/\D/g, "");
+    const tail = onlyDigits
+      ? onlyDigits.slice(-3).padStart(3, "0")
+      : String(Math.floor(Math.random() * 999)).padStart(3, "0");
     return `${base}${y}${m}-${tail}`;
   };
 
-  const validateEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  const validatePhone = v => /^[0-9\-\+\s]{7,20}$/.test(v);
+  const validateEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const validatePhone = (v) => /^[0-9\-\+\s]{7,20}$/.test(v);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -396,12 +565,26 @@ function CreateUserModal({ onClose, api }) {
 
     const { nombre, cedula, correo, telefono, fechaNac, idioma, rol } = form;
 
-    if (!nombre.trim() || !cedula.trim() || !correo.trim() || !telefono.trim() || !fechaNac || !idioma || !rol) {
+    if (
+      !nombre.trim() ||
+      !cedula.trim() ||
+      !correo.trim() ||
+      !telefono.trim() ||
+      !fechaNac ||
+      !idioma ||
+      !rol
+    ) {
       setErr("Complete todos los campos requeridos");
       return;
     }
-    if (!validateEmail(correo)) { setErr("Correo inválido"); return; }
-    if (!validatePhone(telefono)) { setErr("Teléfono inválido"); return; }
+    if (!validateEmail(correo)) {
+      setErr("Correo inválido");
+      return;
+    }
+    if (!validatePhone(telefono)) {
+      setErr("Teléfono inválido");
+      return;
+    }
     if (api.existsByCedulaOrCorreo(cedula.trim(), correo.trim())) {
       setErr("Usuario ya registrado (cédula o correo existente)");
       return;
@@ -420,7 +603,7 @@ function CreateUserModal({ onClose, api }) {
       correo,
       telefono,
       fechaNac,
-      idioma
+      idioma,
     };
 
     try {
@@ -440,8 +623,15 @@ function CreateUserModal({ onClose, api }) {
         {!ok ? (
           <>
             <h3 className="modal-title">Crear usuario</h3>
-            <p className="modal-text">El sistema generará el código y la contraseña temporal (igual al código).</p>
-            {err && <p className="error" style={{marginTop:8}}>{err}</p>}
+            <p className="modal-text">
+              El sistema generará el código y la contraseña temporal (igual al
+              código).
+            </p>
+            {err && (
+              <p className="error" style={{ marginTop: 8 }}>
+                {err}
+              </p>
+            )}
 
             <form onSubmit={submit}>
               <div className="form-grid">
@@ -450,7 +640,9 @@ function CreateUserModal({ onClose, api }) {
                   <input
                     className="input"
                     value={form.nombre}
-                    onChange={e=>setForm({...form, nombre:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, nombre: e.target.value })
+                    }
                   />
                 </div>
 
@@ -459,7 +651,9 @@ function CreateUserModal({ onClose, api }) {
                   <input
                     className="input"
                     value={form.cedula}
-                    onChange={e=>setForm({...form, cedula:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, cedula: e.target.value })
+                    }
                   />
                 </div>
 
@@ -468,7 +662,9 @@ function CreateUserModal({ onClose, api }) {
                   <input
                     className="input"
                     value={form.correo}
-                    onChange={e=>setForm({...form, correo:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, correo: e.target.value })
+                    }
                   />
                 </div>
 
@@ -477,7 +673,9 @@ function CreateUserModal({ onClose, api }) {
                   <input
                     className="input"
                     value={form.telefono}
-                    onChange={e=>setForm({...form, telefono:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, telefono: e.target.value })
+                    }
                   />
                 </div>
 
@@ -487,7 +685,9 @@ function CreateUserModal({ onClose, api }) {
                     className="input"
                     type="date"
                     value={form.fechaNac}
-                    onChange={e=>setForm({...form, fechaNac:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, fechaNac: e.target.value })
+                    }
                   />
                 </div>
 
@@ -496,7 +696,9 @@ function CreateUserModal({ onClose, api }) {
                   <select
                     className="input"
                     value={form.idioma}
-                    onChange={e=>setForm({...form, idioma:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, idioma: e.target.value })
+                    }
                   >
                     <option value="es">Español (es)</option>
                     <option value="en">English (en)</option>
@@ -508,7 +710,9 @@ function CreateUserModal({ onClose, api }) {
                   <select
                     className="input"
                     value={form.rol}
-                    onChange={e=>setForm({...form, rol:e.target.value})}
+                    onChange={(e) =>
+                      setForm({ ...form, rol: e.target.value })
+                    }
                   >
                     <option value="usuario">Usuario normal</option>
                   </select>
@@ -538,12 +742,17 @@ function CreateUserModal({ onClose, api }) {
           <>
             <h3 className="modal-title">Creación exitosa</h3>
             <p className="modal-text">
-              Usuario <b>{ok.nombre}</b> registrado.<br/>
-              Código asignado: <b>{ok.code}</b><br/>
-              Nota: la contraseña temporal es el mismo código. El usuario deberá cambiarla en su primer acceso.
+              Usuario <b>{ok.nombre}</b> registrado.
+              <br />
+              Código asignado: <b>{ok.code}</b>
+              <br />
+              Nota: la contraseña temporal es el mismo código. El usuario deberá
+              cambiarla en su primer acceso.
             </p>
             <div className="modal-actions">
-              <button className="btn-primary" onClick={onClose}>Listo</button>
+              <button className="btn-primary" onClick={onClose}>
+                Listo
+              </button>
             </div>
           </>
         )}
@@ -562,8 +771,14 @@ function ChangePasswordModal({ user, onClose, onDone }) {
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
-    if (p1.trim().length < 4) { setErr("La contraseña debe tener al menos 4 caracteres"); return; }
-    if (p1 !== p2) { setErr("Las contraseñas no coinciden"); return; }
+    if (p1.trim().length < 4) {
+      setErr("La contraseña debe tener al menos 4 caracteres");
+      return;
+    }
+    if (p1 !== p2) {
+      setErr("Las contraseñas no coinciden");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -578,20 +793,49 @@ function ChangePasswordModal({ user, onClose, onDone }) {
 
   return (
     <div className="modal" role="dialog" aria-modal="true">
-      <div className="modal-card" style={{maxWidth:480}}>
+      <div className="modal-card" style={{ maxWidth: 480 }}>
         <h3 className="modal-title">Cambiar contraseña (primer acceso)</h3>
-        <p className="modal-text">Usuario: <b>{user.nombre}</b> — Código: <b>{user.code}</b></p>
-        {err && <p className="error" style={{marginTop:8}}>{err}</p>}
+        <p className="modal-text">
+          Usuario: <b>{user.nombre}</b> — Código: <b>{user.code}</b>
+        </p>
+        {err && (
+          <p className="error" style={{ marginTop: 8 }}>
+            {err}
+          </p>
+        )}
 
         <form onSubmit={submit}>
           <label>Nueva contraseña</label>
-          <input className="input" type="password" value={p1} onChange={e=>setP1(e.target.value)} />
+          <input
+            className="input"
+            type="password"
+            value={p1}
+            onChange={(e) => setP1(e.target.value)}
+          />
           <label>Confirmar contraseña</label>
-          <input className="input" type="password" value={p2} onChange={e=>setP2(e.target.value)} />
+          <input
+            className="input"
+            type="password"
+            value={p2}
+            onChange={(e) => setP2(e.target.value)}
+          />
 
-          <div className="modal-actions" style={{marginTop:12}}>
-            <button type="button" className="btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-            <button type="submit" className="btn-primary" disabled={loading}>{loading ? "Guardando..." : "Guardar y continuar"}</button>
+          <div className="modal-actions" style={{ marginTop: 12 }}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onClose}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : "Guardar y continuar"}
+            </button>
           </div>
         </form>
       </div>
@@ -613,8 +857,12 @@ function ConfirmDialog({ title, message, onCancel, onConfirm }) {
         <h3 className="modal-title">{title}</h3>
         <p className="modal-text">{message}</p>
         <div className="modal-actions">
-          <button className="btn-secondary" onClick={onCancel}>No</button>
-          <button className="btn-primary" onClick={onConfirm}>Sí</button>
+          <button className="btn-secondary" onClick={onCancel}>
+            No
+          </button>
+          <button className="btn-primary" onClick={onConfirm}>
+            Sí
+          </button>
         </div>
       </div>
     </div>
@@ -622,4 +870,3 @@ function ConfirmDialog({ title, message, onCancel, onConfirm }) {
 }
 
 export default App;
-

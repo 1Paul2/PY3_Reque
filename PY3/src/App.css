@@ -1630,3 +1630,200 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   flex: none;
   margin-left: auto;
 }
+
+/*============================= Gestion de Trabajos =================================*/
+.gestion-trabajos {
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.gestion-trabajos h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #920303; /* mismo tono que las otras secciones */
+}
+
+/* Botones generales */
+.gestion-trabajos .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-right: 5px;
+  color: rgb(241, 227, 214);
+}
+
+.gestion-trabajos .btn-add,
+.gestion-trabajos .btn-edit,
+.gestion-trabajos .btn-delete,
+.gestion-trabajos .btn-close {
+  background: #6d0b02;
+}
+
+.gestion-trabajos .btn-add:hover,
+.gestion-trabajos .btn-edit:hover,
+.gestion-trabajos .btn-delete:hover,
+.gestion-trabajos .btn-close:hover {
+  background: #e85e4e;
+  transform: translateY(-1px);
+}
+
+/* Barra de búsqueda + botón */
+.gestion-trabajos .busqueda-agregar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.gestion-trabajos .busqueda-agregar .search-bar {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-trabajos .busqueda-agregar .search-bar:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* Lista de trabajos */
+.gestion-trabajos .trabajo-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+  margin-top: 10px;
+}
+
+.gestion-trabajos .trabajo-list li {
+  font-weight: bold;
+  color: #f5f5f5;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.gestion-trabajos .trabajo-list li:hover {
+  background: #8a0303;
+  color: #fff;
+}
+
+.gestion-trabajos .trabajo-list li.selected {
+  background: hsl(5, 10%, 21%);
+}
+
+/* Modales */
+.gestion-trabajos .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.gestion-trabajos .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 280px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-trabajos .modal h3 {
+  color: #820000;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-trabajos .modal input,
+.gestion-trabajos .modal select,
+.gestion-trabajos .modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #820000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e0000;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-trabajos .modal input:focus,
+.gestion-trabajos .modal select:focus,
+.gestion-trabajos .modal textarea:focus {
+  border-color: #e85e4e;
+  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  outline: none;
+}
+
+/* Botones dentro del modal */
+.gestion-trabajos .modal .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-trabajos .modal .btn-group .btn {
+  flex: 1;
+}
+
+.gestion-trabajos .modal .btn-close {
+  flex: none;
+  margin-left: auto;
+}
+
+/* === Ajuste especifico para el modal de cotizacion (y trabajos) === */
+.gestion-trabajos .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;   /* ya NO centrado vertical */
+  padding-top: 80px;         /* baja el cuadro */
+  padding-bottom: 40px;      /* deja aire abajo */
+  z-index: 2000;
+}
+
+.gestion-trabajos .modal.modal-lista {
+  max-height: calc(100vh - 120px); /* evita que se pegue arriba/abajo */
+  overflow-y: auto;                /* scroll interno si se pasa */
+}

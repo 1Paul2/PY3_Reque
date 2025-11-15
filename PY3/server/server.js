@@ -623,3 +623,378 @@ app.delete("/api/citas/:id", (req, res) => {
 
   return res.json({ ok: true, citas });
 });
+
+/*======================================= Gestion Trabajos ========================================*/
+const DATA_FILE_TRABAJOS = path.join(DATA_DIR, "trabajos.json");
+
+// Crear archivo si no existe
+function ensureTrabajosFile() {
+  if (!fs.existsSync(DATA_FILE_TRABAJOS)) {
+    fs.writeFileSync(DATA_FILE_TRABAJOS, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureTrabajosFile();
+
+function readTrabajos() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_TRABAJOS, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeTrabajos(list) {
+  fs.writeFileSync(DATA_FILE_TRABAJOS, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === GET: listar ordenes de trabajo === */
+app.get("/api/trabajos", (_req, res) => {
+  const trabajos = readTrabajos();
+  // El front soporta tanto [] como { trabajos: [] }, le mandamos objeto
+  return res.json({ ok: true, trabajos });
+});
+
+/* === POST: crear OT desde una cita (CU-0028) === */
+app.post("/api/trabajos", (req, res) => {
+  const { codigoCita, observacionesIniciales } = req.body || {};
+
+  if (!codigoCita) {
+    return res
+      .status(400)
+      .json({ ok: false, error: "Debe enviar el codigo de la cita" });
+  }
+
+  const citas = readCitas();
+  const citaId = Number(codigoCita);
+  const cita = citas.find((c) => c.id === citaId);
+
+  if (!cita) {
+    return res
+      .status(404)
+      .json({ ok: false, error: "Cita no encontrada para ese codigo" });
+  }
+
+  // Evitar duplicar OT para la misma cita
+  const trabajos = readTrabajos();
+  const yaExiste = trabajos.find((t) => t.idCita === cita.id);
+  if (yaExiste) {
+    return res.status(409).json({
+      ok: false,
+      error: `Ya existe una orden de trabajo para la cita ${codigoCita}`,
+    });
+  }
+
+  const codigoOrden = `OT-${Date.now()}`;
+
+  const nuevoTrabajo = {
+    codigoOrden,                 // usado por el front
+    idCita: cita.id,
+    clienteNombre: cita.clienteNombre,
+    clienteCedula: cita.clienteCedula,
+    placa: cita.vehiculoPlaca,
+    fechaCita: cita.fecha,
+    horaCita: cita.hora,
+    descripcionCita: cita.descripcion || "",
+    observacionesIniciales: observacionesIniciales || "",
+    tipoServicio: "",            // lo podés rellenar luego
+    estado: "Pendiente",
+    diagnostico: "",
+    serviciosRealizados: "",
+    repuestosUtilizados: "",
+    notasInternas: "",
+  };
+
+  trabajos.push(nuevoTrabajo);
+  writeTrabajos(trabajos);
+
+  return res.json({
+    ok: true,
+    trabajo: nuevoTrabajo,
+    trabajos,
+  });
+});
+
+/* === PUT: actualizar detalle de la OT (CU-0031) === */
+app.put("/api/trabajos/:codigoOrden", (req, res) => {
+  const codigoOrden = String(req.params.codigoOrden || "");
+  const body = req.body || {};
+
+  const trabajos = readTrabajos();
+  const idx = trabajos.findIndex((t) => String(t.codigoOrden) === codigoOrden);
+
+  if (idx === -1) {
+    return res
+      .status(404)
+      .json({ ok: false, error: "Orden de trabajo no encontrada" });
+  }
+
+  // No permitimos cambiar codigoOrden ni idCita
+  const actualizado = {
+    ...trabajos[idx],
+    ...body,
+    codigoOrden: trabajos[idx].codigoOrden,
+    idCita: trabajos[idx].idCita,
+  };
+
+  trabajos[idx] = actualizado;
+  writeTrabajos(trabajos);
+
+  return res.json({ ok: true, trabajo: actualizado });
+});
+
+/* === PATCH: cambiar estado de la OT (CU-0032) === */
+app.patch("/api/trabajos/:codigoOrden/estado", (req, res) => {
+  const codigoOrden = String(req.params.codigoOrden || "");
+  const { estado } = req.body || {};
+
+  if (!estado) {
+    return res
+      .status(400)
+      .json({ ok: false, error: "Debe enviar el nuevo estado" });
+  }
+
+  const trabajos = readTrabajos();
+  const idx = trabajos.findIndex((t) => String(t.codigoOrden) === codigoOrden);
+
+  if (idx === -1) {
+    return res
+      .status(404)
+      .json({ ok: false, error: "Orden de trabajo no encontrada" });
+  }
+
+  trabajos[idx].estado = estado;
+  writeTrabajos(trabajos);
+
+  return res.json({ ok: true, trabajo: trabajos[idx] });
+});
+
+/*======================================= Gestion Cotizaciones ========================================*/
+const DATA_FILE_COTIZACIONES = path.join(DATA_DIR, "cotizaciones.json");
+
+// Crear archivo si no existe
+function ensureCotizacionesFile() {
+  if (!fs.existsSync(DATA_FILE_COTIZACIONES)) {
+    fs.writeFileSync(DATA_FILE_COTIZACIONES, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureCotizacionesFile();
+
+function readCotizaciones() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_COTIZACIONES, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCotizaciones(list) {
+  fs.writeFileSync(
+    DATA_FILE_COTIZACIONES,
+    JSON.stringify(list, null, 2),
+    "utf8"
+  );
+}
+
+// funcion comun para calcular totales
+function calcularTotalesCotizacion(cot) {
+  const IVA = 0.13;
+
+  let repuestos = Array.isArray(cot.repuestos) ? cot.repuestos : [];
+  let manoObra = Array.isArray(cot.manoObra) ? cot.manoObra : [];
+
+  let subtotalRepuestos = 0;
+  repuestos = repuestos.map((r) => {
+    const cantidad = Number(r.cantidad) || 0;
+    const precio = Number(r.precio) || 0;
+    const subtotal = cantidad * precio;
+    subtotalRepuestos += subtotal;
+    return { ...r, cantidad, precio, subtotal };
+  });
+
+  let subtotalManoObra = 0;
+  manoObra = manoObra.map((m) => {
+    const horas = Number(m.horas) || 0;
+    const tarifa = Number(m.tarifa) || 0;
+    const subtotal = horas * tarifa;
+    subtotalManoObra += subtotal;
+    return { ...m, horas, tarifa, subtotal };
+  });
+
+  let descuentoPorc = Number(cot.descuentoManoObra) || 0;
+  if (descuentoPorc < 0) descuentoPorc = 0;
+  if (descuentoPorc > 20) descuentoPorc = 20;
+
+  const descuentoMonto = subtotalManoObra * (descuentoPorc / 100);
+  const subtotalManoObraConDescuento = subtotalManoObra - descuentoMonto;
+
+  const base = subtotalRepuestos + subtotalManoObraConDescuento;
+  const iva = +(base * IVA).toFixed(2);
+  const total = +(base + iva).toFixed(2);
+
+  return {
+    ...cot,
+    repuestos,
+    manoObra,
+    descuentoManoObra: descuentoPorc,
+    descuentoMonto: +descuentoMonto.toFixed(2),
+    subtotalRepuestos: +subtotalRepuestos.toFixed(2),
+    subtotalManoObra: +subtotalManoObra.toFixed(2),
+    baseImponible: +base.toFixed(2),
+    iva,
+    total,
+  };
+}
+
+/* === GET: todas las cotizaciones / proformas === */
+app.get("/api/cotizaciones", (_req, res) => {
+  return res.json(readCotizaciones());
+});
+
+/* === POST: crear cotizacion nueva === */
+app.post("/api/cotizaciones", (req, res) => {
+  const body = req.body || {};
+  const {
+    clienteNombre,
+    clienteCedula,
+    vehiculoPlaca,
+    codigoOrden,
+    repuestos,
+    manoObra,
+    descuentoManoObra,
+    estado, // "borrador" o "aceptada" (opcional)
+  } = body;
+
+  if (!clienteNombre || !clienteCedula) {
+    return res
+      .status(400)
+      .json({ ok: false, error: "Cliente y cedula son obligatorios" });
+  }
+
+  const tieneItems =
+    (Array.isArray(repuestos) && repuestos.length > 0) ||
+    (Array.isArray(manoObra) && manoObra.length > 0);
+
+  if (!tieneItems) {
+    return res.status(400).json({
+      ok: false,
+      error: "Debe agregar al menos un repuesto o mano de obra",
+    });
+  }
+
+  const cotizaciones = readCotizaciones();
+
+  const timestamp = Date.now();
+  const codigo = `COT-${timestamp}`;
+
+  let nueva = {
+    codigo,
+    clienteNombre,
+    clienteCedula,
+    vehiculoPlaca,
+    codigoOrden: codigoOrden || "",
+    repuestos: repuestos || [],
+    manoObra: manoObra || [],
+    descuentoManoObra: descuentoManoObra || 0,
+    esProforma: false,
+    estado: estado || "borrador", // solo referencia visual
+    fechaCreacion: new Date().toISOString(),
+  };
+
+  nueva = calcularTotalesCotizacion(nueva);
+
+  cotizaciones.push(nueva);
+  writeCotizaciones(cotizaciones);
+
+  return res.json({ ok: true, cotizacion: nueva });
+});
+
+/* === PUT: modificar cotizacion (no proforma) === */
+app.put("/api/cotizaciones/:codigo", (req, res) => {
+  const codigo = String(req.params.codigo || "");
+  const body = req.body || {};
+
+  let cotizaciones = readCotizaciones();
+  const idx = cotizaciones.findIndex((c) => String(c.codigo) === codigo);
+
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Cotizacion no encontrada" });
+  }
+
+  if (cotizaciones[idx].esProforma) {
+    return res.status(400).json({
+      ok: false,
+      error: "No se puede editar una cotizacion convertida en proforma",
+    });
+  }
+
+  let actualizada = {
+    ...cotizaciones[idx],
+    ...body,
+    codigo, // no se cambia
+  };
+
+  actualizada = calcularTotalesCotizacion(actualizada);
+  cotizaciones[idx] = actualizada;
+  writeCotizaciones(cotizaciones);
+
+  return res.json({ ok: true, cotizacion: actualizada });
+});
+
+/* === PATCH: convertir a proforma === */
+app.patch("/api/cotizaciones/:codigo/proforma", (req, res) => {
+  const codigo = String(req.params.codigo || "");
+  let cotizaciones = readCotizaciones();
+  const idx = cotizaciones.findIndex((c) => String(c.codigo) === codigo);
+
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Cotizacion no encontrada" });
+  }
+
+  const actual = cotizaciones[idx];
+
+  if (actual.esProforma) {
+    return res
+      .status(400)
+      .json({ ok: false, error: "La cotizacion ya fue convertida en proforma" });
+  }
+
+  const proforma = {
+    ...calcularTotalesCotizacion(actual),
+    esProforma: true,
+    estado: "proforma",
+    fechaProforma: new Date().toISOString(),
+  };
+
+  cotizaciones[idx] = proforma;
+  writeCotizaciones(cotizaciones);
+
+  return res.json({ ok: true, cotizacion: proforma });
+});
+
+/* === DELETE: eliminar cotizacion === */
+app.delete("/api/cotizaciones/:codigo", (req, res) => {
+  const codigo = String(req.params.codigo || "");
+  let cotizaciones = readCotizaciones();
+  const idx = cotizaciones.findIndex((c) => String(c.codigo) === codigo);
+
+  if (idx === -1) {
+    return res.status(404).json({ ok: false, error: "Cotizacion no encontrada" });
+  }
+
+  if (cotizaciones[idx].esProforma) {
+    return res.status(400).json({
+      ok: false,
+      error:
+        "Las proformas no pueden eliminarse porque son documentos oficiales.",
+    });
+  }
+
+  cotizaciones = cotizaciones.filter((c) => String(c.codigo) !== codigo);
+  writeCotizaciones(cotizaciones);
+
+  return res.json({ ok: true });
+});
