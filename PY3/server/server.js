@@ -534,19 +534,14 @@ app.delete("/api/reportes/:id", (req, res) => {
 /*======================================= Gestion Citas ========================================*/
 const DATA_FILE_CITAS = path.join(DATA_DIR, "citas.json");
 
-// 🗂️ Asegura que exista el archivo
-function ensureCitasFile() {
-  if (!fs.existsSync(DATA_FILE_CITAS)) {
-    fs.writeFileSync(DATA_FILE_CITAS, JSON.stringify([], null, 2), "utf8");
-  }
+// Crear archivo si no existe
+if (!fs.existsSync(DATA_FILE_CITAS)) {
+  fs.writeFileSync(DATA_FILE_CITAS, JSON.stringify([], null, 2), "utf8");
 }
-ensureCitasFile();
 
 function readCitas() {
   try {
-    const raw = fs.readFileSync(DATA_FILE_CITAS, "utf8");
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
+    return JSON.parse(fs.readFileSync(DATA_FILE_CITAS, "utf8"));
   } catch {
     return [];
   }
@@ -559,55 +554,59 @@ function writeCitas(list) {
 /* === POST: agregar nueva cita === */
 app.post("/api/citas", (req, res) => {
   const nuevo = req.body || {};
-  const { clienteNombre, clienteCedula, vehiculo, fecha, hora, descripcion } = nuevo;
+  const { clienteNombre, clienteCedula, vehiculoPlaca, fecha, hora, descripcion } = nuevo;
 
-  if (!clienteNombre || !clienteCedula || !vehiculo || !fecha || !hora) {
+  if (!clienteNombre || !clienteCedula || !vehiculoPlaca || !fecha || !hora) {
     return res.status(400).json({ ok: false, error: "Faltan campos obligatorios" });
   }
 
   const citas = readCitas();
-  const id = Date.now();
+
   const cita = {
-    id,
+    id: Date.now(),
     clienteNombre,
     clienteCedula,
-    vehiculo,
+    vehiculoPlaca, // ← ahora se guarda por placa
     fecha,
     hora,
     descripcion: descripcion || "",
+    mecanico: "Sin Asignar",
+    estado: "En Espera"
   };
 
   citas.push(cita);
   writeCitas(citas);
 
-  return res.json({ ok: true, cita });
+  return res.json({ ok: true, citas });
 });
 
-/* === GET: listar y filtrar citas === */
+/* === GET: obtener citas === */
 app.get("/api/citas", (req, res) => {
-  const { cliente, vehiculo, fecha } = req.query;
   let citas = readCitas();
-
-  if (cliente) {
-    citas = citas.filter(c =>
-      c.clienteNombre.toLowerCase().includes(cliente.toLowerCase())
-    );
-  }
-
-  if (vehiculo) {
-    citas = citas.filter(c =>
-      c.vehiculo.toLowerCase().includes(vehiculo.toLowerCase())
-    );
-  }
-
-  if (fecha) {
-    citas = citas.filter(c => c.fecha === fecha);
-  }
-
-  // Ordenar por fecha y hora
-  citas.sort((a, b) => new Date(a.fecha + " " + a.hora) - new Date(b.fecha + " " + b.hora));
-
   return res.json(citas);
+});
+
+/* === PUT: actualizar cita === */
+app.put("/api/citas/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const body = req.body || {};
+
+  let citas = readCitas();
+  const index = citas.findIndex(c => c.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ ok: false, error: "Cita no encontrada" });
+  }
+
+  const actualizada = {
+    ...citas[index],
+    ...body
+  };
+
+  citas[index] = actualizada;
+  writeCitas(citas);
+
+  return res.json({ ok: true, cita: actualizada });
 });
 
 /* === DELETE: eliminar cita === */

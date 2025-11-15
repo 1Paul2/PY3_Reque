@@ -5,7 +5,7 @@
     "marca": "Ford",
     "modelo": "Ranger",
     "tipo": "Camioneta",
-    "anoVehiculo": "",
+    "anoVehiculo": "2021",
     "clienteCedula": "111111111",
     "clienteNombre": "Julian"
   },

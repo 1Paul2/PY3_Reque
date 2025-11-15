@@ -34,5 +34,17 @@
     "telefono": "86061157",
     "fechaNac": "2001-01-01",
     "idioma": "es"
+  },
+  {
+    "code": "D2511-614",
+    "password": "D2511-614",
+    "mustChangePassword": true,
+    "nombre": "dei",
+    "rol": "usuario",
+    "cedula": "74546123123614",
+    "correo": "dei@gmail.com",
+    "telefono": "4454561321",
+    "fechaNac": "2006-06-05",
+    "idioma": "es"
   }
 ]
