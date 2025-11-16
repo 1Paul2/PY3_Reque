@@ -116,6 +116,9 @@ function GestionCitas({ session }) {
       .includes(searchVehiculo.toLowerCase())
   );
 
+  // Verificar si no hay citas
+  const noHayCitas = citasFiltradas.length === 0;
+
   /* ====================== AGREGAR CITA ====================== */
   const agregarCita = async () => {
     if (!newCita.placa) return alert("Debe seleccionar un vehículo.");
@@ -125,7 +128,7 @@ function GestionCitas({ session }) {
       const enviar = {
         clienteCedula: newCita.clienteCedula,
         clienteNombre: newCita.clienteNombre,
-        vehiculoPlaca: newCita.placa,  // ← CORREGIDO AQUÍ
+        vehiculoPlaca: newCita.placa,
         fecha: newCita.fecha,
         hora: newCita.hora,
         descripcion: newCita.descripcion,
@@ -219,7 +222,7 @@ function GestionCitas({ session }) {
 
   /* ======================= RENDER ======================= */
   return (
-    <div className="gestion-vehiculos">
+    <div className="gestion-citas"> {/* 🔽 CAMBIADO A gestion-citas */}
       <h2>Gestión de Citas</h2>
 
       <div className="search-add-container">
@@ -235,17 +238,23 @@ function GestionCitas({ session }) {
         </button>
       </div>
 
-      {/* LISTA */}
-      <ul className="vehiculo-list">
-        {citasFiltradas.map((c) => (
-          <li
-            key={c.id}
-            className={selected?.id === c.id ? "selected" : ""}
-            onClick={() => setSelected(c)}
-          >
-            {c.clienteNombre} — {c.fecha.split("T")[0]} {c.hora}
+      {/* LISTA - USANDO CLASES CORRECTAS */}
+      <ul className="cita-list">
+        {noHayCitas ? (
+          <li className="no-citas">
+            No hay citas programadas
           </li>
-        ))}
+        ) : (
+          citasFiltradas.map((c) => (
+            <li
+              key={c.id}
+              className={selected?.id === c.id ? "selected" : ""}
+              onClick={() => setSelected(c)}
+            >
+              {c.clienteNombre} — {c.fecha.split("T")[0]} {c.hora}
+            </li>
+          ))
+        )}
       </ul>
 
       {/* DETALLE */}
@@ -364,6 +373,7 @@ function GestionCitas({ session }) {
               placeholder="Buscar vehículo..."
               value={searchVehiculo}
               onChange={(e) => setSearchVehiculo(e.target.value)}
+              className="search-bar"
             />
 
             <select

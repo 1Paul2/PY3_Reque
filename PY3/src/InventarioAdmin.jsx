@@ -129,6 +129,9 @@ function GestionInventario({ session }) {
       r.nombre.toLowerCase().includes(textoBusqueda)
     );
   };
+
+  // Verificar si no hay repuestos para mostrar
+  const noHayRepuestos = repuestosUniversales.length === 0 && vehiculosFiltrados.length === 0;
   
   // === AGREGAR REPUESTO ===
   const agregarRepuesto = async () => {
@@ -226,11 +229,6 @@ function GestionInventario({ session }) {
     }
   };
 
-  // === FILTRAR ===
-  const inventarioFiltrado = inventario.filter((r) =>
-    r.nombre.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
     <div className="gestion-inventario">
       <h2>Gestión de Inventario</h2>
@@ -238,7 +236,7 @@ function GestionInventario({ session }) {
       <div className="search-add-container">
         <input
           className="search-bar"
-          placeholder="Buscar repuesto..."
+          placeholder="Buscar repuesto o vehículo..."
           value={search}
           onChange={(e) => setSearchInventario(e.target.value)}
         />
@@ -254,51 +252,80 @@ function GestionInventario({ session }) {
         </button>
       </div>
 
-      {/* === LISTA AGRUPADA === */}
+      {/* === LISTA AGRUPADA (ESTILO IDÉNTICO A InventarioUsuarioNormal) === */}
       <ul className="inventario-list">
-        {/* 🔧 UNIVERSALES */}
-        <li className="categoria"><b>🔧 Repuestos Universales</b></li>
-        {repuestosUniversales.map((r) => (
-          <li
-            key={r.id}
-            onClick={() => setSelectedInventario(r)}
-            className={selected?.id === r.id ? "selected" : ""}
-          >
-            {r.nombre}
+        {noHayRepuestos ? (
+          // Mensaje cuando no hay repuestos
+          <li className="no-repuestos">
+            No hay repuestos agregados
           </li>
-        ))}
-
-        {/* VEHÍCULOS Y SUS REPUESTOS FILTRADOS */}
-        {vehiculosFiltrados.map((v) => {
-        const repuestos = repuestosPorVehiculo(v);
-
-        return (
-            <li key={v.id} className="categoria">
-            <div
-                onClick={() =>
-                setVehiculoExpandido((prev) => (prev === v.id ? null : v.id))
-                }
-                style={{ cursor: "pointer", color: "#6d766cff", marginTop: 10 }}
-            >
-                {v.marca} {v.modelo} ({v.tipo})
-            </div>
-
-            {vehiculoExpandido === v.id && (
-                <ul style={{ marginLeft: 20 }}>
-                {repuestos.map((r) => (
-                    <li
+        ) : (
+          <>
+            {/* 🔧 REPUESTOS UNIVERSALES */}
+            {repuestosUniversales.length > 0 && (
+              <>
+                <li className="categoria"><b>🔧 Repuestos Universales</b></li>
+                {repuestosUniversales.map((r) => (
+                  <li
                     key={r.id}
                     onClick={() => setSelectedInventario(r)}
-                    className={selected?.id === r.id ? "selected" : ""}
-                    >
+                    className={`item-sub-lista ${selected?.id === r.id ? "selected" : ""}`}
+                  >
                     {r.nombre}
-                    </li>
+                  </li>
                 ))}
-                </ul>
+              </>
             )}
-            </li>
-        );
-        })}
+
+            {/* 🚗 MODELOS - TÍTULO SEPARADOR */}
+            {vehiculosFiltrados.length > 0 && (
+              <li className="categoria" style={{ marginTop: '20px' }}><b>🚗 Modelos de Vehiculos</b></li>
+            )}
+
+            {/* VEHÍCULOS Y SUS REPUESTOS FILTRADOS */}
+            {vehiculosFiltrados.map((v) => {
+              const repuestos = repuestosPorVehiculo(v);
+
+              return (
+                <li key={v.id} className="categoria">
+                  <div
+                    onClick={() =>
+                      setVehiculoExpandido((prev) => (prev === v.id ? null : v.id))
+                    }
+                    className="item-principal"
+                    style={{ cursor: "pointer", marginTop: 10 }}
+                  >
+                    {v.marca} {v.modelo} ({v.tipo})
+                  </div>
+
+                  {vehiculoExpandido === v.id && (
+                    <ul className="sub-lista">
+                      {repuestos.length === 0 ? (
+                        // Mensaje cuando no hay repuestos para este vehículo
+                        <li className="no-repuestos-vehiculo">
+                          No hay repuestos disponibles para este vehículo
+                        </li>
+                      ) : (
+                        repuestos.map((r) => (
+                          <li
+                            key={r.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedInventario(r);
+                            }}
+                            className={`item-sub-lista ${selected?.id === r.id ? "selected" : ""}`}
+                          >
+                            {r.nombre}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </>
+        )}
       </ul>
 
       {/* MODAL AGREGAR VEHÍCULO */}
@@ -411,19 +438,20 @@ function GestionInventario({ session }) {
         </div>
       )}
 
-      {/*MODAL DETALLE*/ }
+      {/* MODAL DETALLE */}
       {selected && (
         <div className="modal-overlay" onClick={() => setSelectedInventario(null)}>
           <div className="modal modal-lista" onClick={(e) => e.stopPropagation()}>
-            <h3>Informacion del Repuesto</h3>
+            <h3>Información del Repuesto</h3>
             <p><b>Nombre:</b> {selected.nombre}</p>
             <p><b>Cantidad:</b> {selected.cantidad}</p>
             <p><b>Precio:</b> {selected.precio}</p>
+            <p><b>Descripción:</b> {selected.descripcion}</p>
             <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button
                 className="btn btn-edit"
                 onClick={() => {
-                  setEditandoRepuesto({ ...selected }); // copia el repuesto actual
+                  setEditandoRepuesto({ ...selected });
                   setShowFormEditar(true);
                 }}
               >
@@ -436,7 +464,7 @@ function GestionInventario({ session }) {
         </div>
       )}
 
-      {/*MODAL EDITAR*/}
+      {/* MODAL EDITAR */}
       {showFormEditar && editandoRepuesto && (
         <div className="modal-overlay" onClick={() => setShowFormEditar(false)}>
           <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
@@ -476,17 +504,11 @@ function GestionInventario({ session }) {
               }
             />
 
-            <div
-              className="btn-group"
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
+            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button className="btn btn-add" onClick={guardarEdicion}>
                 Guardar
               </button>
-              <button
-                className="btn btn-close"
-                onClick={() => setShowFormEditar(false)}
-              >
+              <button className="btn btn-close" onClick={() => setShowFormEditar(false)}>
                 Cancelar
               </button>
             </div>

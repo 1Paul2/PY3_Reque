@@ -42,17 +42,23 @@ function ReportesUsuario({ session }) {
     <div className="reportes-usuario">
       <h2>Reportes de Usuario</h2>
 
-      {/* Botones de tipo */}
-      <div style={{ marginBottom: 10 }}>
-        {["Clientes", "Vehiculos", "Inventario"].map((tipo) => (
-          <button
-            key={tipo}
-            className={`btn ${tipoReporte === tipo ? "btn-selected" : ""}`}
-            onClick={() => setTipoReporte(tipo)}
-          >
-            {tipo}
-          </button>
-        ))}
+      {/* Contenedor de botones - MISMA ESTRUCTURA QUE INVENTARIO */}
+      <div className="search-add-container">
+        {/* Espacio para búsqueda (opcional) */}
+        <div style={{ flex: 1 }}></div>
+        
+        {/* Botones de tipo */}
+        <div style={{ display: "flex", gap: "10px" }}>
+          {["Clientes", "Vehiculos", "Inventario"].map((tipo) => (
+            <button
+              key={tipo}
+              className={`btn ${tipoReporte === tipo ? "btn-selected" : ""}`}
+              onClick={() => setTipoReporte(tipo)}
+            >
+              {tipo}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Área de texto */}
@@ -63,9 +69,11 @@ function ReportesUsuario({ session }) {
       />
 
       {/* Botón enviar */}
-      <button className="btn-enviar" onClick={handleEnviar}>
-        Enviar Reporte
-      </button>
+      <div style={{ marginTop: "15px", textAlign: "center" }}>
+        <button className="btn-enviar" onClick={handleEnviar}>
+          Enviar Reporte
+        </button>
+      </div>
     </div>
   );
 }

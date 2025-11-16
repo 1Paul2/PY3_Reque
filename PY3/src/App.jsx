@@ -277,7 +277,7 @@ function Login({ onLogin, api }) {
 function AdminHome({ session, onLogout, api }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [currentSection, setCurrentSection] = useState("clientes"); // inicia en gestión clientes
+  const [currentSection, setCurrentSection] = useState("clientes");
 
   const recordarCodigos = () => {
     const usuarios = api.getAll();
@@ -289,6 +289,7 @@ function AdminHome({ session, onLogout, api }) {
     const body = usuarios
       .map((u) => `${u.nombre} | ${u.code} | ${u.password}`)
       .join("\n");
+
     if (
       confirm(
         "Este archivo incluira contraseñas en texto claro. Desea continuar?"
@@ -313,52 +314,35 @@ function AdminHome({ session, onLogout, api }) {
         >
           ☰
         </button>
-        {showMenu && (
-          <div className="dropdown-menu">
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("clientes")}
-            >
-              Gestión Clientes
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("vehiculos")}
-            >
-              Gestion Vehiculos
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("inventario")}
-            >
-              Gestion Inventario
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("citas")}
-            >
-              Gestion Citas
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("trabajos")}
-            >
-              Gestion Trabajos
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("cotizacion")}
-            >
-              Cotizacion
-            </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("reportes")}
-            >
-              Reportes
-            </button>
-          </div>
-        )}
+          {showMenu && (
+            <div className="dropdown-menu">
+              <button className="btn-menu btn-menu-clientes" onClick={() => setCurrentSection("clientes")}>
+                Gestión Clientes
+              </button>
+              <button className="btn-menu btn-menu-vehiculos" onClick={() => setCurrentSection("vehiculos")}>
+                Gestion Vehiculos
+              </button>
+              <button className="btn-menu btn-menu-inventario" onClick={() => setCurrentSection("inventario")}>
+                Gestion Inventario
+              </button>
+              <button className="btn-menu btn-menu-citas" onClick={() => setCurrentSection("citas")}>
+                Gestion Citas
+              </button>
+              <button className="btn-menu btn-menu-trabajos" onClick={() => setCurrentSection("trabajos")}>
+                Gestion Trabajos
+              </button>
+              <button className="btn-menu btn-menu-cotizacion" onClick={() => setCurrentSection("cotizacion")}>
+                Cotizacion
+              </button>
+              <button className="btn-menu btn-menu-reportes" onClick={() => setCurrentSection("reportes")}>
+                Reportes
+              </button>
+              {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
+              <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
+                Cerrar sesión
+              </button>
+            </div>
+          )}
       </div>
 
       {/* Encabezado */}
@@ -367,38 +351,23 @@ function AdminHome({ session, onLogout, api }) {
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Rol: {session.rol}</div>
         </div>
-        <button className="btn-danger" onClick={() => setConfirmOut(true)}>
-          Cerrar sesión
-        </button>
+        {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* ===== CUADRO CENTRAL GRIS ===== */}
+      {/* ===== CUADRO GRIS ===== */}
       <div className="center-panel">
-        {/* Contenido principal según sección */}
-        <div style={{ maxWidth: 800, margin: "16px auto" }}>
-          {currentSection === "clientes" && (
-            <GestionClientes session={session} />
-          )}
-          {currentSection === "vehiculos" && (
-            <GestionVehiculos session={session} />
-          )}
-          {currentSection === "inventario" && (
-            <GestionInventariosAdmin session={session} />
-          )}
+        <div className="panel-content">
+          {currentSection === "clientes" && <GestionClientes session={session} />}
+          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
+          {currentSection === "inventario" && <GestionInventariosAdmin session={session} />}
           {currentSection === "citas" && <GestionCitas session={session} />}
-          {currentSection === "trabajos" && (
-            <GestionTrabajos session={session} />
-          )}
-          {currentSection === "cotizacion" && (
-            <GestionCotizacion session={session} />
-          )}
-          {currentSection === "reportes" && (
-            <GestioReportesAdministrador session={session} />
-          )}
+          {currentSection === "trabajos" && <GestionTrabajos session={session} />}
+          {currentSection === "cotizacion" && <GestionCotizacion session={session} />}
+          {currentSection === "reportes" && <GestioReportesAdministrador session={session} />}
         </div>
       </div>
 
-      {/* Confirmación cerrar sesión */}
+      {/* Diálogo de salida */}
       {confirmOut && (
         <ConfirmDialog
           title="¿Seguro que desea cerrar sesión?"
@@ -414,12 +383,12 @@ function AdminHome({ session, onLogout, api }) {
 /* ======================= USER HOME ======================= */
 function UserHome({ session, onLogout }) {
   const [confirmOut, setConfirmOut] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // estado del submenú
-  const [currentSection, setCurrentSection] = useState("clientes"); // inicia en gestión clientes
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState("clientes");
 
   return (
     <div className="home">
-      {/* Botón del submenú (esquina izquierda) */}
+      {/* Menú */}
       <div className="menu-container">
         <button
           className="btn-menu-toggle"
@@ -430,47 +399,30 @@ function UserHome({ session, onLogout }) {
 
         {menuOpen && (
           <div className="dropdown-menu">
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("clientes")}
-            >
+            <button className="btn-menu btn-menu-clientes" onClick={() => setCurrentSection("clientes")}>
               Gestión Clientes
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("vehiculos")}
-            >
+            <button className="btn-menu btn-menu-vehiculos" onClick={() => setCurrentSection("vehiculos")}>
               Gestion Vehiculos
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("inventario")}
-            >
+            <button className="btn-menu btn-menu-inventario" onClick={() => setCurrentSection("inventario")}>
               Gestion Inventario
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("citas")}
-            >
+            <button className="btn-menu btn-menu-citas" onClick={() => setCurrentSection("citas")}>
               Gestion Citas
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("trabajos")}
-            >
+            <button className="btn-menu btn-menu-trabajos" onClick={() => setCurrentSection("trabajos")}>
               Gestion Trabajos
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("cotizacion")}
-            >
+            <button className="btn-menu btn-menu-cotizacion" onClick={() => setCurrentSection("cotizacion")}>
               Cotizacion
             </button>
-            <button
-              className="btn-menu"
-              onClick={() => setCurrentSection("reportes")}
-            >
+            <button className="btn-menu btn-menu-reportes" onClick={() => setCurrentSection("reportes")}>
               Reportes
+            </button>
+            {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
+            <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
+              Cerrar sesión
             </button>
           </div>
         )}
@@ -482,35 +434,23 @@ function UserHome({ session, onLogout }) {
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Código: {session.code}</div>
         </div>
-        <button className="btn-danger" onClick={() => setConfirmOut(true)}>
-          Cerrar sesión
-        </button>
+        {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* Contenido principal según sección */}
-      <div style={{ maxWidth: 800, margin: "16px auto" }}>
-        {currentSection === "clientes" && (
-          <GestionClientes session={session} />
-        )}
-        {currentSection === "vehiculos" && (
-          <GestionVehiculos session={session} />
-        )}
-        {currentSection === "inventario" && (
-          <GestionInventariosUsuario session={session} />
-        )}
-        {currentSection === "citas" && <GestionCitas session={session} />}
-        {currentSection === "trabajos" && (
-          <GestionTrabajos session={session} />
-        )}
-        {currentSection === "cotizacion" && (
-          <GestionCotizacion session={session} />
-        )}
-        {currentSection === "reportes" && (
-          <GestionReportesUsuario session={session} />
-        )}
+      {/* ===== CUADRO GRIS AGREGADO ===== */}
+      <div className="center-panel">
+        <div className="panel-content">
+          {currentSection === "clientes" && <GestionClientes session={session} />}
+          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
+          {currentSection === "inventario" && <GestionInventariosUsuario session={session} />}
+          {currentSection === "citas" && <GestionCitas session={session} />}
+          {currentSection === "trabajos" && <GestionTrabajos session={session} />}
+          {currentSection === "cotizacion" && <GestionCotizacion session={session} />}
+          {currentSection === "reportes" && <GestionReportesUsuario session={session} />}
+        </div>
       </div>
 
-      {/* Confirmación de salida */}
+      {/* Diálogo de salida */}
       {confirmOut && (
         <ConfirmDialog
           title="¿Seguro que desea cerrar sesión?"

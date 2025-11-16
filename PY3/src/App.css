@@ -1,220 +1,131 @@
-:root { font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; }
-/*fondo principal*/
+:root { 
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; 
+}
+
+/* ===== ESTILOS GENERALES ===== */
 body {
   margin: 0;
-  background: #0b0c10 url("old-car-at-shop-cmoqec8v43avgin8.jpg") no-repeat center center fixed;
+  background: #0b0c10 url("american racing-vf529-18x8-19x10-chrome-1970 chevrolet chevelle 29.png") no-repeat center center fixed;
   background-size: cover;
   color: #e5e7eb;
 }
-.center-screen { min-height:100vh; display:grid; place-items:center; padding:24px; }
-/*inicio de sesion*/
+
+h1, h2, h3 { 
+  margin: 0 0 10px; 
+}
+
+label { 
+  display: block; 
+  margin-top: 10px; 
+  margin-bottom: 6px; 
+  font-size: .9rem; 
+  color: #c1c5cc; 
+}
+
+.muted { 
+  color: #9aa4b2; 
+  font-size: .9rem; 
+}
+
+.error { 
+  color: #fca5a5; 
+  margin-top: 8px; 
+}
+
+.stack { 
+  display: flex; 
+  gap: 12px; 
+  margin-top: 16px; 
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.center-screen { 
+  min-height: 100vh; 
+  display: grid; 
+  place-items: center; 
+  padding: 24px; 
+}
+
+.home { 
+  max-width: none; /* Quitamos el límite */
+  width: 100%;
+  margin: 0;
+  padding: 24px 0; /* Sin padding lateral */
+}
+
+/* ===== CENTER PANEL - ANCHO COMPLETO ===== */
+.center-panel {
+  background: rgba(30, 30, 30, 0.9);
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 75%; /* MISMO ancho que home-head */
+  max-width: none;
+  margin: 0 auto 40px auto; /* MISMO centrado que home-head */
+  min-height: 600px;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.6);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.panel-content {
+  width: 100%;
+  margin: 16px auto;
+}
+
+/* ===== HOME HEAD ===== */
+.home-head {
+  width: 75%; /* MISMO ancho que center-panel */
+  max-width: none;
+  margin: 0 auto 10px auto; /* MISMO centrado que center-panel */
+  padding: 10px 0;
+  color: rgba(63, 60, 60, 0.85);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+}
+
+.home-head .muted {
+  color: #272424;
+  font-size: 14px;
+}
+
+/* ===== TARJETA DE LOGIN ===== */
 .card {
   background: rgba(22, 25, 29, 0.9);
-  padding: 24px;
+  padding: 36px 44px;
   border-radius: 12px;
-  max-width: 420px;
+  max-width: 380px;
   width: 100%;
   box-shadow: 0 8px 28px rgba(157, 36, 36, 0.5);
   border: 1px solid rgba(208, 9, 9, 0.02);
 }
-h1,h2,h3 { margin:0 0 10px; }
-label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; color:#c1c5cc; }
-
-.input {
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid #273342;
-  background:#0b1220;
-  color:#e5e7eb;
-}
-.input:focus { outline: none; border-color:#60a5fa; box-shadow:0 0 0 3px rgba(96,165,250,.2); }
-
-.btn-primary, .btn-secondary, .btn-danger, .btn-menu {
-  border:0; border-radius:12px; padding:10px 14px; cursor:pointer;
-}
-.btn-primary { background:#a62906; color:white; }
-.btn-menu { background:#f64b3b; color:white; }
-.btn-secondary { background:#334155; color:#e5e7eb; }
-.btn-danger { background:#ef4444; color:white; }
-
-.error { color:#fca5a5; margin-top:8px; }
-.muted { color:#9aa4b2; font-size:.9rem; }
-.home { max-width:980px; margin:0 auto; padding:24px; }
-.home-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.stack { display:flex; gap:12px; margin-top:16px; }
-
-.modal { position:fixed; inset:0; background:rgba(137, 4, 4, 0.6); display:grid; place-items:center; padding:24px; z-index:60; }
-.modal-card { max-width:680px; width:100%; background:#0f1724; border-radius:12px; padding:20px; border:1px solid rgba(255,255,255,0.02); }
-.modal-title { margin:0 0 6px; }
-.modal-text { margin:0 0 12px; color:#cbd5e1; }
-
-/* Grid del formulario del modal */
-.form-grid {
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:12px;
-  margin-top:8px;
-}
-.form-grid .col { display:flex; flex-direction:column; }
-.form-grid .col-span-2 { grid-column: 1 / -1; }
-
-/* Acciones del modal alineadas en fila y compactas */
-.modal-actions {
-  display:flex;
-  gap:10px;
-  justify-content:flex-end;
-  margin-top:14px;
-}
-.compact-actions { padding-top:6px; }
-.btn-compact { width:auto; min-width:140px; }
-
-/* ===== MEJOR ESPACIADO Y TAMAÑO DEL FORMULARIO ===== */
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px); /* efecto de desenfoque elegante */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px; /* más aire alrededor */
-  z-index: 100;
-}
-
-/* Cuadro principal del modal */
-.modal-card {
-  max-width: 980px;       /* más ancho */
-  width: 100%;
-  background: rgba(60, 57, 57, 0.65);
-  border-radius: 20px;
-  padding: 60px 70px;     /* más alto y ancho */
-  border: 1px solid rgba(20, 6, 80, 0.08);
-  box-shadow: 0 20px 60px rgba(81, 0, 0, 0.8);
-}
-
-/* === Ajuste de tamaño solo para el login === */
-.modal-card form .input {
-  background: #0600008e;       /* color de fondo del input */
-  color: #ffffff;            /* color del texto */
-  border: 1px solid #6c5e5e;    /* opcional: color del borde */
-}
-
-/* Títulos más grandes */
-.modal-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-.modal-text {
-  color: #cbd5e1;
-  font-size: 1rem;
-  margin-bottom: 32px;
-}
-
-/* === FORMULARIO === */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 40px;   /* más espacio horizontal */
-  row-gap: 34px;      /* más espacio vertical */
-  margin-top: 10px;
-}
-
-.form-grid .col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* espacio entre label e input */
-}
-
-.form-grid .col-span-2 {
-  grid-column: 1 / -1;
-}
-
-/* Inputs amplios */
-.input {
-  width: 100%;
-  padding: 16px 18px;
-  border-radius: 14px;
-  border: 1px solid #273342;
-  background: #0b1220;
-  color: #e5e7eb;
-  font-size: 1rem;
-}
-.input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
-}
-
-/* === BOTONES === */
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 18px;
-  margin-top: 40px; /* más separación con el formulario */
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 14px 28px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.btn-primary {
-  background-color: #9e0000;
-  color: rgb(255, 255, 255);
-}
-
-.btn-secondary {
-  background-color: #374151;
-  color: #e5e7eb;
-}
-
-.btn-primary:hover {
-  background: #cc0303;   /* color al pasar el mouse */
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 900px) {
-  .modal-card {
-    max-width: 95%;
-    padding: 40px 32px;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
-    row-gap: 26px;
-    column-gap: 0;
-  }
-}
-/* === Ajuste de tamaño solo para el login === */
-.card form .input {
-  padding: 10px 14px;        /* más compacto */
-  font-size: 0.95rem;
-  border-radius: 10px;
-  max-width: 350px;
-  
-  background: #231e1e;       /* color de fondo del input */
-  color: #ffffff;            /* color del texto */
-  border: 1px solid #6c5e5e;    /* opcional: color del borde */
-}
-
-.card form .input:focus {
-  border: 2px solid #ff0000;  /* borde rojo cuando el input está activo */
-  box-shadow: 0 0 4px #ff0000; /* opcional: resplandor rojo */
-}
-
-.card {
-  max-width: 380px;            /* cuadro un poco más angosto */
-  padding: 36px 44px;          /* menos padding para equilibrar */
-}
 
 .card h2 {
   font-size: 1.5rem;
+}
+
+.card p {
+  margin-bottom: 8px;
+}
+
+.card small {
+  font-size: 0.85rem;
+}
+
+.card form .input {
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  max-width: 350px;
+  background: #231e1e;
+  color: #ffffff;
+  border: 1px solid #6c5e5e;
+}
+
+.card form .input:focus {
+  border: 2px solid #ff0000;
+  box-shadow: 0 0 4px #ff0000;
 }
 
 .card button.btn-primary {
@@ -223,25 +134,50 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-top: 20px;
 }
 
-.card small {
-  font-size: 0.85rem;
-}
-
-.card p {
-  margin-bottom: 8px;
-}
-
-/* Espaciado entre campos más ajustado */
-.card label {
-  font-size: 0.95rem;
-  margin-bottom: 4px;
-}
-
 .card input + label {
   margin-top: 12px;
 }
 
- /*Sub menu*/
+/* ===== INPUTS GENERALES ===== */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #273342;
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+.input:focus { 
+  outline: none; 
+  border-color: #60a5fa; 
+  box-shadow: 0 0 0 3px rgba(96,165,250,.2); 
+}
+
+/* ===== BOTONES GENERALES ===== */
+.btn-primary, .btn-secondary, .btn-danger, .btn-menu {
+  border: 0; 
+  border-radius: 12px; 
+  padding: 10px 14px; 
+  cursor: pointer;
+}
+
+.btn-primary { 
+  background: #a62906; 
+  color: white; 
+}
+
+.btn-secondary { 
+  background: #334155; 
+  color: #e5e7eb; 
+}
+
+.btn-danger { 
+  background: #ef4444; 
+  color: white; 
+}
+
+/* ===== MENÚ DESPLEGABLE ===== */
 .menu-container {
   position: fixed;
   top: 20px;
@@ -249,14 +185,13 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   z-index: 1000;
 }
 
-/* Botón principal: mismo estilo, solo un poco más grande */
 .btn-menu-toggle {
   background: #222;
   color: white;
   border: none;
-  padding: 14px 20px; /* antes 10x14 */
-  font-size: 16px; /* antes más pequeño */
-  border-radius: 8px; /* leve aumento */
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -266,24 +201,23 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   transform: scale(1.05);
 }
 
-/* Submenú (sin cambios de posición) */
 .dropdown-menu {
   display: flex;
   flex-direction: column;
   margin-top: 8px;
   background: #333;
-  padding: 10px; /* un poco más amplio */
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   animation: fadeDown 0.25s ease-out;
 }
 
-/* Botones internos: un poco más grandes */
+/* ===== BOTONES DEL MENÚ ===== */
 .btn-menu {
-  background: #555;
+  background: #444;
   color: white;
   border: none;
-  padding: 10px 16px; /* antes 8x12 */
+  padding: 10px 16px;
   font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
@@ -292,11 +226,138 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 }
 
 .btn-menu:hover {
-  background: #777;
   transform: translateX(3px);
+  color: white;
+  opacity: 1;
 }
 
-/* Animación de aparición vertical */
+/* Colores al hover */
+.btn-menu-clientes:hover { background: #1f4f70 !important; }
+.btn-menu-vehiculos:hover { background: #7b2c25 !important; }
+.btn-menu-inventario:hover { background: #1e6b3a !important; }
+.btn-menu-citas:hover { background: #7a560c !important; }
+.btn-menu-trabajos:hover { background: #5e3a6b !important; }
+.btn-menu-cotizacion:hover { background: #11695c !important; }
+.btn-menu-reportes:hover { background: #34495e !important; }
+
+.btn-menu-danger {
+  background: #444 !important;
+  margin-top: 10px !important;
+  border-top: 1px solid #666 !important;
+  padding-top: 12px !important;
+}
+
+.btn-menu-danger:hover {
+  background: #6b1f1a !important;
+}
+
+/* ===== MODALES ===== */
+.modal-overlay-global {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal-global {
+  background: rgba(60, 60, 60, 0.95);
+  padding: 25px;
+  border-radius: 12px;
+  width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
+  border: 2px solid #1f4f70;
+}
+
+/* Modales grandes para formularios */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  z-index: 100;
+}
+
+.modal-card {
+  max-width: 980px;
+  width: 100%;
+  background: rgba(60, 57, 57, 0.65);
+  border-radius: 20px;
+  padding: 60px 70px;
+  border: 1px solid rgba(20, 6, 80, 0.08);
+  box-shadow: 0 20px 60px rgba(81, 0, 0, 0.8);
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.modal-text {
+  color: #cbd5e1;
+  font-size: 1rem;
+  margin-bottom: 32px;
+}
+
+/* Formularios en modales */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 40px;
+  row-gap: 34px;
+  margin-top: 10px;
+}
+
+.form-grid .col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-grid .col-span-2 {
+  grid-column: 1 / -1;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.compact-actions { 
+  padding-top: 6px; 
+}
+
+.btn-compact { 
+  width: auto; 
+  min-width: 140px; 
+}
+
+/* Inputs en modales grandes */
+.modal-card form .input {
+  background: #0600008e;
+  color: #ffffff;
+  border: 1px solid #6c5e5e;
+}
+
+/* ===== ANIMACIONES ===== */
 @keyframes fadeDown {
   from {
     opacity: 0;
@@ -308,82 +369,43 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-/*Cuadro grande*/
-.home-panel {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
-  background: rgba(30, 30, 30, 0.85); /* gris oscuro semi-transparente */
-  color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  font-family: Arial, sans-serif;
-}
-
-.center-panel {
-  background: rgba(30, 30, 30, 0.85); /* gris oscuro semi-transparente */
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 900px;   /* ancho máximo del cuadro */
-  margin: 40px auto;  /* margen arriba/abajo y centrado horizontal */
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  color: #fff;
-}
-
-/* Encabezado */
-.home-panel .home-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Botones */
-.home-panel button {
-  cursor: pointer;
-  border-radius: 6px;
-  border: none;
-  padding: 6px 12px;
-}
-
-/* Botón cerrar sesión */
-.home-panel .btn-danger {
-  background: #c0392b;
-  color: white;
-}
-.home-panel .btn-danger:hover {
-  background: #e74c3c;
-}
-
-/* Menú de secciones */
-.home-panel .section-menu {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-}
-.home-panel .section-menu button {
-  background: #555;
-  color: white;
-  padding: 6px 10px;
-}
-.home-panel .section-menu button:hover {
-  background: #777;
-}
-
-.section-modal .btn-close:hover {
-  background: #ad1414;
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .modal-card {
+    max-width: 95%;
+    padding: 40px 32px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    row-gap: 26px;
+    column-gap: 0;
+  }
+  
+  .center-panel {
+    padding: 30px 20px;
+  }
+  
+  .home-head {
+    padding: 10px 20px;
+  }
 }
 
 /*============================= Gestion de Clientes =================================*/
 .gestion-clientes {
-  max-width: 600px;
+  width: 100%; /* Ocupa todo el ancho disponible */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
 }
 
 .gestion-clientes h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  color: #920303; /* morado */
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
 }
 
 /* ================== Botones generales ================== */
@@ -400,7 +422,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes .btn-close,
 .gestion-clientes .btn-edit,
 .gestion-clientes .btn-delete {
-  background: #6d0b02;
+  background: #1f4f70; /* Azul oscuro profesional */
   color: rgb(241, 227, 214);
   margin-top: 12px;
   margin-bottom: 8px;
@@ -415,68 +437,93 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-clientes .btn-close:hover,
 .gestion-clientes .btn-edit:hover,
 .gestion-clientes .btn-delete:hover {
-  background: #e85e4e;
+  background: #2c6da0; /* Azul un poco más claro para hover */
   transform: translateY(-1px);
 }
 
 /* ================== Contenedor de barra de búsqueda + botón ================== */
 .gestion-clientes .busqueda-agregar {
   display: flex;
-  gap: 10px;            /* espacio entre input y botón */
+  gap: 10px;
   margin-bottom: 10px;
-  align-items: center;   /* alinea verticalmente */
+  align-items: center;
+  width: 100%;
 }
 
-/* Barra de búsqueda */
+/* Barra de búsqueda - tamaño normal */
 .gestion-clientes .busqueda-agregar .search-bar {
-  flex: 1;              /* ocupa el espacio restante */
+  flex: 1;
   padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #6d766c;
+  border: 1px solid #ffffff; /* 🔽 BORDE BLANCO */
   background-color: #f5f5f5;
   font-size: 15px;
   color: #333;
   transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
 }
 
-.gestion-clientes .busqueda-agregar .search-bar:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
+/* Botón Agregar Cliente - más grueso */
+.gestion-clientes .btn-add {
+  background: #1f4f70;
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 15px;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 120px;
+  margin-top: 9px;
+}
+
+.gestion-clientes .btn-add:hover {
+  background: #2c6da0;
+  transform: translateY(-1px);
 }
 
 /*============================= Lista de Clientes - Gestión =================================*/
 .gestion-clientes .cliente-list {
   list-style: none;
   padding: 0;
-  border: 1px solid #ffffff;    /* igual que reportes */
-  border-radius: 6px;           /* igual que reportes */
-  max-height: 400px;            /* mismo tamaño que reportes */
+  border: 1px solid #ffffff; /* BORDE BLANCO */
+  border-radius: 6px;
+  max-height: 400px;
   overflow-y: auto;
   background: none;
   margin-top: 10px;
+  width: 100%;
 }
 
 /* Cada ítem de la lista */
 .gestion-clientes .cliente-list li {
   font-weight: bold;
-  color: #f5f5f5;
-  border-bottom: 1px solid #ffffff;
-  padding: 10px;                /* igual que reportes */
+  color: #ffffff; /* TEXTO BLANCO */
+  border-bottom: 1px solid #ffffff; /* BORDE BLANCO */
+  padding: 10px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   border-radius: 5px;
   margin-top: 5px;
   text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .gestion-clientes .cliente-list li:hover {
-  background: #8a0303;          /* mismo hover que reportes */
+  background: #1f4f70; /* Azul oscuro profesional */
   color: #fff;
 }
 
 .gestion-clientes .cliente-list li.selected {
-  background: hsl(5, 10%, 21%); /* mismo seleccionado que reportes */
+  background: #2c6da0; /* Azul más claro para seleccionado */
 }
 
 /* ================== Formulario en modales ================== */
@@ -485,7 +532,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   max-width: 400px;
   margin: 0 auto;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff; /* BORDE BLANCO */
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -498,31 +545,89 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   height: 36px;
   padding: 6px 10px;
   border-radius: 4px;
-  border: 1px solid #4a0a0a;
+  border: 1px solid #ffffff; /* BORDE BLANCO */
   box-sizing: border-box;
   font-size: 16px;
 }
 
 .gestion-clientes .form-container button:hover {
-  background: #54012c;
+  background: #1a4260;
 }
 
 .gestion-clientes input {
   padding: 6px;
   border-radius: 4px;
-  border: 1px solid #750101;
+  border: 1px solid #ffffff; /* BORDE BLANCO */
 }
 
 /* ================== Información del cliente ================== */
 .gestion-clientes .cliente-info {
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid #690303;
+  border: 1px solid #ffffff; /* BORDE BLANCO */
   border-radius: 8px;
-  background: #715dce;
+  background: rgba(31, 79, 112, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* ================== Modales ================== */
+/* ======================= MODALES (ESTILO VEHÍCULOS CON AZUL) ======================= */
+/* Inputs de modales */
+.gestion-clientes .modal-editar input,
+.gestion-clientes .modal-agregar input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #1f4f70; /* AZUL OSCURO */
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f4f70; /* AZUL OSCURO */
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-clientes .modal-editar input:focus,
+.gestion-clientes .modal-agregar input:focus {
+  border-color: #2c6da0; /* AZUL MÁS CLARO */
+  box-shadow: 0 0 5px rgba(44, 109, 160, 0.6); /* AZUL MÁS CLARO */
+  outline: none;
+}
+
+/* Botones de modales */
+.gestion-clientes .btn-add,
+.gestion-clientes .btn-close,
+.gestion-clientes .btn-edit,
+.gestion-clientes .btn-delete {
+  background: #1f4f70; /* AZUL OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-clientes .btn-add:hover,
+.gestion-clientes .btn-close:hover,
+.gestion-clientes .btn-edit:hover,
+.gestion-clientes .btn-delete:hover {
+  background: #2c6da0; /* AZUL MÁS CLARO */
+}
+
+.gestion-clientes .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-clientes .btn-group .btn {
+  flex: 1;
+}
+
+/* Modales */
 .gestion-clientes .modal-overlay {
   position: fixed;
   top: 0;
@@ -540,20 +645,19 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
-  width: 280px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(31, 79, 112, 0.25); /* SOMBRA AZUL */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-clientes .modal h3 {
-  color: #820000;
+  color: #ffffff; /* 🔽 TÍTULOS BLANCO */
   font-size: 18px;
   text-align: center;
   width: 100%;
@@ -564,8 +668,10 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin: 5px 0;
   font-size: 15px;
   line-height: 1.4;
+  color: #ffffff; /* TEXTO BLANCO EN MODALES */
 }
 
+/* Animación */
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -577,29 +683,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-.gestion-clientes .modal-editar input,
-.gestion-clientes .modal-agregar input {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestion-clientes .modal-editar input:focus,
-.gestion-clientes .modal-agregar input:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
-/* ================== Grupos de botones en modales ================== */
-/* Agregar y editar */
+/* Grupos de botones en modales */
 .gestion-clientes .modal.modal-agregar .btn-group,
 .gestion-clientes .modal.modal-editar .btn-group {
   display: flex;
@@ -608,7 +692,6 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-top: 10px;
 }
 
-/* Detalle/lista */
 .gestion-clientes .modal.modal-lista .btn-group {
   display: flex;
   justify-content: space-between;
@@ -626,36 +709,69 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin-left: auto;
 }
 
-/*============================= Gestión de Vehículos =================================*/
+/*============================= Gestion de Vehiculos =================================*/
 .gestion-vehiculos {
-  max-width: 600px;
+  width: 100%; /* Ocupa todo el ancho disponible */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
 }
 
 .gestion-vehiculos h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  color: #920303;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
 }
 
-/* Contenedor para barra de búsqueda y botón */
+/* ================== Contenedor de barra de búsqueda + botón ================== */
 .gestion-vehiculos .search-add-container {
   display: flex;
-  gap: 10px; /* espacio entre input y botón */
+  gap: 10px;
   margin-bottom: 10px;
+  margin-top: 28px; /* 🔽 BAJA EL CONTENEDOR 3 PÍXELES MÁS */
+  align-items: center;
+  width: 100%;
 }
 
+/* Barra de búsqueda - tamaño normal */
 .gestion-vehiculos .search-add-container .search-bar {
-  flex: 1; /* ocupa todo el espacio disponible */
-  padding: 6px;
+  flex: 1;
+  padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #750101;
-  font-size: 16px;
+  border: 1px solid #ffffff;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
 }
 
+/* Botón Agregar Vehículo - más grueso */
 .gestion-vehiculos .search-add-container .btn-add {
-  flex: none; /* el botón mantiene su tamaño natural */
+  background: #7b2c25;
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 15px;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 120px;
+}
+
+.gestion-vehiculos .search-add-container .btn-add:hover {
+  background: #9a3a30;
+  transform: translateY(-1px);
 }
 
 /* ======================= Lista de Vehículos ======================= */
@@ -667,11 +783,13 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   max-height: 400px;
   overflow-y: auto;
   background: none;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .gestion-vehiculos .vehiculo-list li {
   font-weight: bold;
-  color: #f5f5f5;
+  color: #ffffff;
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -679,15 +797,17 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   border-radius: 5px;
   margin-top: 5px;
   text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .gestion-vehiculos .vehiculo-list li:hover {
-  background: #8a0303;
+  background: #7b2c25;
   color: #fff;
 }
 
 .gestion-vehiculos .vehiculo-list li.selected {
-  background: hsl(5, 10%, 21%);
+  background: #9a3a30;
 }
 
 /* ======================= Listas desplegables de clientes y vehículos ======================= */
@@ -704,7 +824,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   left: 0;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #820000;
+  border: 1px solid #7b2c25; /* 🔽 BORDE ROJO OSCURO */
   border-radius: 5px;
   max-height: 150px;
   overflow-y: auto;
@@ -712,13 +832,13 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   padding: 0;
   margin: 0;
   z-index: 100;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(123, 44, 37, 0.15); /* 🔽 SOMBRA ROJA */
 }
 
 .lista-clientes li,
 .lista-vehiculos li {
   padding: 8px 10px;
-  color: #2e0000;
+  color: #7b2c25; /* 🔽 TEXTO ROJO OSCURO */
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -736,10 +856,10 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
-  border: 1px solid #820000;
+  border: 1px solid #7b2c25; /* 🔽 BORDE ROJO OSCURO */
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
+  color: #7b2c25; /* 🔽 TEXTO ROJO OSCURO */
   font-size: 15px;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -749,8 +869,8 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos .modal-agregar input:focus,
 .gestion-vehiculos .input-busqueda-clientes:focus,
 .gestion-vehiculos .input-busqueda-vehiculos:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  border-color: #9a3a30; /* 🔽 ROJO MÁS CLARO */
+  box-shadow: 0 0 5px rgba(154, 58, 48, 0.6); /* 🔽 ROJO MÁS CLARO */
   outline: none;
 }
 
@@ -759,7 +879,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos .btn-close,
 .gestion-vehiculos .btn-edit,
 .gestion-vehiculos .btn-delete {
-  background: #6d0b02;
+  background: #7b2c25; /* 🔽 ROJO OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
@@ -772,7 +892,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-vehiculos .btn-close:hover,
 .gestion-vehiculos .btn-edit:hover,
 .gestion-vehiculos .btn-delete:hover {
-  background: #e85e4e;
+  background: #9a3a30; /* 🔽 ROJO MÁS CLARO */
 }
 
 .gestion-vehiculos .btn-group {
@@ -810,14 +930,14 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(123, 44, 37, 0.25); /* 🔽 SOMBRA ROJA */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-vehiculos .modal h3 {
-  color: #820000;
+  color: #ffffff; /* 🔽 TÍTULO BLANCO */
   font-size: 18px;
   text-align: center;
   width: 100%;
@@ -828,6 +948,7 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin: 5px 0;
   font-size: 15px;
   line-height: 1.4;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
 }
 
 /* ======================= Animación ======================= */
@@ -844,35 +965,214 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 
 /*============================= Gestion de Inventario =================================*/
 .gestion-inventario {
-  max-width: 600px;
+  width: 100%; /* Ocupa todo el ancho disponible */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
 }
 
 .gestion-inventario h2 {
-  text-align: center;
+  text-align: left; /* 🔽 ALINEADO A LA IZQUIERDA */
   margin-bottom: 20px;
-  color: #920303;
+  color: #ffffff; /* 🔽 COLOR BLANCO */
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
 }
 
-/*============================= Botones generales =================================*/
-.gestion-inventario .btn {
-  padding: 8px 12px;
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.gestion-inventario .search-add-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  margin-top: 28px; /* 🔽 MISMA SEPARACIÓN QUE VEHÍCULOS */
+  align-items: center;
+  width: 100%;
+}
+
+/* Barra de búsqueda - tamaño normal */
+.gestion-inventario .search-add-container .search-bar {
+  flex: 1;
+  padding: 8px 10px;
   border-radius: 6px;
+  border: 1px solid #ffffff; /* 🔽 BORDE BLANCO */
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px; /* 🔽 ALTURA FIJA */
+  box-sizing: border-box;
+}
+
+/* Botón Agregar Inventario - más grueso */
+.gestion-inventario .search-add-container .btn-add {
+  background: #1e6b3a; /* 🔽 VERDE OSCURO */
+  color: rgb(241, 227, 214);
   border: none;
+  border-radius: 6px;
+  padding: 12px 20px; /* 🔽 MÁS PADDING */
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap; /* 🔽 TEXTO EN UNA LÍNEA */
+  font-size: 15px;
+  height: 37px; /* 🔽 MÁS ALTO QUE LA BARRA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 120px; /* 🔽 ANCHO MÍNIMO */
+}
+
+.gestion-inventario .search-add-container .btn-add:hover {
+  background: #2a8c4d; /* 🔽 VERDE MÁS CLARO */
+  transform: translateY(-1px); /* 🔽 EFECTO HOVER */
+}
+
+.gestion-inventario .no-repuestos {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #164f2b;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/* ======================= Lista de Inventario ======================= */
+.gestion-inventario .inventario-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Elementos principales */
+.gestion-inventario .item-principal {
+  font-weight: bold;
+  color: #514f4f;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gestion-inventario .item-principal:hover {
+  background: #164f2b;
+  color: #fff;
+}
+
+.gestion-inventario .item-principal.selected {
+  background: #164f2b;
+  color: #696262;
+}
+
+/* Contenedor de sub-listas - FONDO VERDE */
+.gestion-inventario .sub-lista {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+  background: #164f2b; /* 🔽 FONDO VERDE PARA TODO EL SUBMENÚ */
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ffffff; /* 🔽 BORDE BLANCO AGREGADO */
+}
+
+/* Elementos de sub-listas - BORDES BLANCOS */
+.gestion-inventario .item-sub-lista {
+  font-weight: normal;
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff; /* 🔽 BORDE BLANCO */
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 3px;
+  margin-top: 3px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  background: none; /* 🔽 TRANSPARENTE POR DEFECTO */
+}
+
+.gestion-inventario .item-sub-lista:hover {
+  background:#036a29; /* 🔽 VERDE MÁS OSCURO PARA HOVER */
+  color: #fff;
+}
+
+.gestion-inventario .item-sub-lista.selected {
+  background: #036a29; /* 🔽 VERDE MÁS OSCURO PARA SELECCIONADO */
+  color: #fff;
+}
+
+/* Vehículos y repuestos */
+.vehiculo-item {
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #1e6b3a;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
   cursor: pointer;
   transition: background 0.2s;
-  margin-right: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
 }
 
+.vehiculo-item:hover {
+  background: #2a8c4d;
+}
+
+.vehiculo-item.selected {
+  background: #2a8c4d;
+}
+
+/* Elementos individuales de repuestos - BORDES BLANCOS */
+.vehiculo-repuestos {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+  background: #1e6b3a; /* 🔽 FONDO VERDE PARA TODO EL SUBMENÚ */
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ffffff; /* 🔽 BORDE BLANCO AGREGADO */
+}
+
+.vehiculo-repuestos li {
+  padding: 8px;
+  border-bottom: 1px solid #ffffff; /* 🔽 BORDE BLANCO */
+  color: #ffffff;
+  transition: background 0.2s;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-top: 3px;
+  background: none; /* 🔽 TRANSPARENTE POR DEFECTO */
+}
+
+.vehiculo-repuestos li:hover {
+  background: #164f2b; /* 🔽 VERDE MÁS OSCURO PARA HOVER */
+}
+
+.vehiculo-repuestos li.selected {
+  background: #164f2b; /* 🔽 VERDE MÁS OSCURO PARA SELECCIONADO */
+}
+
+/* ======================= Botones generales ======================= */
 .gestion-inventario .btn-add,
 .gestion-inventario .btn-close,
 .gestion-inventario .btn-edit,
 .gestion-inventario .btn-delete {
-  background: #6d0b02;
+  background: #1e6b3a; /* 🔽 VERDE OSCURO */
   color: rgb(241, 227, 214);
-  margin-top: 12px;
-  margin-bottom: 8px;
   border: none;
   border-radius: 6px;
   padding: 8px 12px;
@@ -884,170 +1184,44 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
 .gestion-inventario .btn-close:hover,
 .gestion-inventario .btn-edit:hover,
 .gestion-inventario .btn-delete:hover {
-  background: #e85e4e;
+  background: #2a8c4d; /* 🔽 VERDE MÁS CLARO */
 }
 
-/*============================= Formularios =================================*/
-.gestion-inventario .form-container {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.gestion-inventario .btn-group {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.gestion-inventario .form-container input,
-.gestion-inventario .form-container button {
+  justify-content: space-between;
   width: 100%;
-  height: 36px;
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid #4a0a0a;
-  box-sizing: border-box;
-  font-size: 16px;
-}
-
-.gestion-inventario .form-container button:hover {
-  background: #54012c;
-}
-
-.gestion-inventario input {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #750101;
-}
-
-/*============================= Listas =================================*/
-.gestion-inventario .inventario-list {
-  list-style: none;
-  padding: 0;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.gestion-inventario .inventario-list li {
-  padding: 10px;
-  border-bottom: 1px solid #ffffff;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.gestion-inventario .inventario-list li:hover {
-  background: #ab0303;
-}
-
-.gestion-inventario .inventario-list li.selected {
-  background: hsl(2, 100%, 25%);
-}
-
-.gestion-inventario .inventario-info {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #690303;
-  border-radius: 8px;
-  background: #715dce;
-}
-
-/* Listas de autocompletado */
-.lista-inventario,
-.lista-vehiculos {
-  position: absolute;
-  top: calc(100% + 1px);
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #820000;
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 100;
-}
-
-.lista-inventario li,
-.lista-vehiculos li {
-  padding: 8px 10px;
-  color: #2e0000;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.lista-inventario li:hover,
-.lista-vehiculos li:hover {
-  background: #ffe5e5;
-}
-
-.categoria {
-  list-style: none;
   margin-top: 10px;
-  font-weight: bold;
+  gap: 5px;
 }
 
-.inventario-list li {
-  margin-left: 10px;
-  cursor: pointer;
+.gestion-inventario .btn-group .btn {
+  flex: 1;
 }
 
-.inventario-list li.selected {
-  background-color: #e6f0ff;
+/* ======================= Inputs de modales ======================= */
+.gestion-inventario .modal-editar input,
+.gestion-inventario .modal-agregar input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #1e6b3a; /* 🔽 BORDE VERDE OSCURO */
   border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e6b3a; /* 🔽 TEXTO VERDE OSCURO */
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.inventario-list ul {
-  list-style: none;
-  padding-left: 15px;
+.gestion-inventario .modal-editar input:focus,
+.gestion-inventario .modal-agregar input:focus {
+  border-color: #2a8c4d; /* 🔽 VERDE MÁS CLARO */
+  box-shadow: 0 0 5px rgba(42, 140, 77, 0.6); /* 🔽 VERDE MÁS CLARO */
+  outline: none;
 }
 
-/* Vehículos y repuestos */
-.vehiculo-item {
-  font-weight: bold;
-  color: #f5f5f5;
-  background-color: #8a0303;
-  border-bottom: 1px solid #ffffff;
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-  border-radius: 5px;
-  margin-top: 5px;
-}
-
-.vehiculo-item:hover {
-  background: #b00404;
-}
-
-.vehiculo-item.selected {
-  background: hsl(2, 100%, 25%);
-}
-
-.vehiculo-repuestos {
-  list-style: none;
-  padding-left: 20px;
-  margin-top: 5px;
-}
-
-.vehiculo-repuestos li {
-  padding: 8px;
-  border-bottom: 1px solid #ffffff;
-  color: #f1e3d6;
-  transition: background 0.2s;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.vehiculo-repuestos li:hover {
-  background: #ab0303;
-}
-
-/*============================= Modales =================================*/
+/* ======================= Modales ======================= */
 .gestion-inventario .modal-overlay {
   position: fixed;
   top: 0;
@@ -1065,20 +1239,19 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
-  width: 280px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(30, 107, 58, 0.25); /* 🔽 SOMBRA VERDE */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-inventario .modal h3 {
-  color: #820000;
+  color: #ffffff; /* 🔽 TÍTULO BLANCO */
   font-size: 18px;
   text-align: center;
   width: 100%;
@@ -1089,55 +1262,10 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   margin: 5px 0;
   font-size: 15px;
   line-height: 1.4;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
 }
 
-.gestion-inventario .modal-editar input,
-.gestion-inventario .modal-agregar input {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestion-inventario .modal-editar input:focus,
-.gestion-inventario .modal-agregar input:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
-/* Botones internos modal */
-.gestion-inventario .modal.modal-agregar .btn-group,
-.gestion-inventario .modal.modal-editar .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.gestion-inventario .modal.modal-lista .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-  gap: 5px;
-}
-
-.gestion-inventario .modal.modal-lista .btn-group .btn {
-  flex: 1;
-}
-
-.gestion-inventario .modal.modal-lista .btn-close {
-  flex: none;
-  margin-left: auto;
-}
-
+/* ======================= Animación ======================= */
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -1149,71 +1277,73 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-/*============================= Barra de búsqueda + botón =================================*/
-.gestion-inventario .search-add-container {
-  display: flex;
-  gap: 10px; /* espacio entre input y botón */
-  margin-bottom: 15px;
-  flex-wrap: wrap; /* se adapta a pantallas pequeñas */
-  align-items: center; /* centra verticalmente */
-}
-
-.gestion-inventario .search-add-container .search-bar {
-  flex: 1; /* ocupa todo el espacio disponible */
-  padding: 10px 12px; /* altura uniforme con el botón */
-  border-radius: 6px;
-  border: 1px solid #750101;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-.gestion-inventario .search-add-container .btn-add {
-  flex: none; /* mantiene su tamaño natural */
-  padding: 10px 12px; /* altura igual que el input */
-  border-radius: 6px;
-  background-color: #6d0b02;
-  color: rgb(241, 227, 214);
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.gestion-inventario .search-add-container .btn-add:hover {
-  background-color: #e85e4e;
-}
-
 /*============================= Gestión de Reportes Usuario =================================*/
 .reportes-usuario {
-  max-width: 600px;
+  width: 100%; /* 🔽 OCUPA TODO EL ANCHO */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0;
 }
 
 .reportes-usuario h2 {
-  text-align: center;
+  text-align: left; /* 🔽 ALINEADO A LA IZQUIERDA */
   margin-bottom: 20px;
-  color: #920303;
+  color: #ffffff; /* 🔽 COLOR BLANCO */
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0;
 }
 
-/* Botones de tipo */
-.reportes-usuario .btn {
-  padding: 8px 12px;
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.reportes-usuario .search-add-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  margin-top: 28px;
+  align-items: center;
+  width: 100%;
+}
+
+/* Barra de búsqueda */
+.reportes-usuario .search-add-container .search-bar {
+  flex: 1;
+  padding: 8px 10px;
   border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-right: 5px;
-  background: #6d0b02;
+  border: 1px solid #ffffff;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+/* Botones */
+.reportes-usuario .btn {
+  background: #1f2d38; /* AZUL OSCURO */
   color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 15px;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 120px;
 }
 
 .reportes-usuario .btn:hover {
-  background: #e85e4e;
+  background: #2c3e50; /* AZUL MÁS CLARO */
+  transform: translateY(-1px);
 }
 
-/* Botón seleccionado */
 .reportes-usuario .btn-selected {
-  background-color: hsl(2, 100%, 25%);
+  background-color: #34495e; /* AZUL INTERMEDIO */
   color: #fff;
 }
 
@@ -1223,37 +1353,39 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   min-height: 100px;
   padding: 8px 10px;
   border-radius: 5px;
-  border: 1px solid #820000;
+  border: 1px solid #1f2d38;
   background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
+  color: #1f2d38;
   font-size: 15px;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .reportes-usuario textarea:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.6);
   outline: none;
 }
 
 /* Botón enviar */
 .reportes-usuario .btn-enviar {
-  padding: 8px 12px;
+  padding: 12px 30px;
   border: none;
   border-radius: 6px;
-  background: #6d0b02;
+  background: #1f2d38;
   color: rgb(241, 227, 214);
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .reportes-usuario .btn-enviar:hover {
-  background: #e85e4e;
+  background: #2c3e50;
 }
 
-/*============================= Lista de Reportes - Administrador =================================*/
-.lista-reportes-admin {
+/* ======================= Lista de Reportes ======================= */
+.reportes-usuario .lista-reportes-admin {
   list-style: none;
   padding: 0;
   border: 1px solid #ffffff;
@@ -1261,12 +1393,14 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   max-height: 400px;
   overflow-y: auto;
   background: none;
+  width: 100%;
+  margin-top: 20px;
 }
 
-/* Cada ítem de la lista */
-.lista-reportes-admin li {
+/* 🔽 ELEMENTOS PRINCIPALES - IGUAL QUE INVENTARIO */
+.reportes-usuario .item-principal {
   font-weight: bold;
-  color: #f5f5f5;
+  color: #514f4f; /* 🔽 MISMO COLOR GRIS QUE INVENTARIO */
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -1274,114 +1408,185 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   border-radius: 5px;
   margin-top: 5px;
   text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.lista-reportes-admin li:hover {
-  background: #8a0303; /* 👈 fondo rojo al pasar el mouse */
-  color: #fff; /* texto más claro */
+.reportes-usuario .item-principal:hover {
+  background: #1f2d38; /* 🔽 AZUL OSCURO AL HOVER */
+  color: #fff; /* 🔽 TEXTO BLANCO AL HOVER */
 }
 
-.lista-reportes-admin li.selected {
-  background: hsl(5, 10%, 21%); /* color distinto al estar seleccionado */
+.reportes-usuario .item-principal.selected {
+  background: #1f2d38; /* 🔽 AZUL OSCURO AL SELECCIONAR */
+  color: #696262;
 }
 
-/* Categorías (Clientes, Vehículos, Inventario) */
-.categoria-reportes {
+/* 🔽 CONTENEDOR DE SUB-LISTAS - FONDO MÁS CLARO */
+.reportes-usuario .sub-lista {
   list-style: none;
-  margin-top: 10px;
-  font-weight: bold;
-  color: #f1e3d6;
-}
-
-.categoria-titulo {
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 5px;
-  color: #6d766c;
-  transition: background 0.2s;
-}
-
-
-.sublista-reportes {
-  list-style: none;
-  padding-left: 15px;
+  padding-left: 20px;
   margin-top: 5px;
+  background: #1f2d38; /* 🔽 FONDO MÁS CLARO PARA SUB-LISTAS */
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ffffff;
 }
 
-.sin-reportes {
-  color: #ddd;
+/* 🔽 ELEMENTOS DE SUB-LISTAS - TRANSPARENTES COMO INVENTARIO */
+.reportes-usuario .item-sub-lista {
   font-weight: normal;
-  padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 3px;
+  margin-top: 3px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  background: none; /* 🔽 TRANSPARENTE POR DEFECTO - IGUAL QUE INVENTARIO */
 }
 
-/*============================= Modal de Detalle - Reportes Administrador =================================*/
-.reportes-admin .modal-overlay {
+.reportes-usuario .item-sub-lista:hover {
+  background: #34495e; /* 🔽 MÁS OSCURO AL HOVER */
+  color: #fff;
+}
+
+.reportes-usuario .item-sub-lista.selected {
+  background: #34495e; /* 🔽 MÁS OSCURO AL SELECCIONAR */
+  color: #fff;
+}
+
+/* 🔽 CATEGORÍAS - TÍTULOS EN BLANCO */
+.reportes-usuario .categoria {
+  font-weight: bold;
+  color: #ffffff; /* 🔽 BLANCO */
+  text-align: left;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Mensaje cuando no hay reportes */
+.reportes-usuario .no-reportes {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #1f2d38;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/* ===== Filtros de reportes ===== */
+.reportes-usuario .filtros-reportes {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Input de búsqueda */
+.reportes-usuario .filtro-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.reportes-usuario .filtro-input:focus {
+  border-color: #1f2d38;
+  box-shadow: 0 0 5px rgba(31, 45, 56, 0.5);
+  outline: none;
+}
+
+/* Select de orden */
+.reportes-usuario .filtro-select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #6d766c;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.reportes-usuario .filtro-select:focus {
+  border-color: #1f2d38;
+  box-shadow: 0 0 5px rgba(31, 45, 56, 0.5);
+  outline: none;
+}
+
+/* ======================= Modal de Reportes ======================= */
+.reportes-usuario .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.4);
+  background: rgba(30, 30, 30, 0.3);
   display: flex;
-  justify-content: center; /* centra horizontalmente */
-  align-items: center;     /* centra verticalmente */
+  align-items: center;
+  justify-content: center;
   z-index: 2000;
-  overflow: hidden;
 }
 
-.reportes-admin .modal {
-  position: relative;
-  background: rgba(80, 75, 75, 0.9);
-  padding: 25px 30px;
-  border-radius: 12px;
+.reportes-usuario .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
   width: 90%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  text-align: left;
-  color: #f1e3d6;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 12px rgba(31, 45, 56, 0.25); /* 🔽 SOMBRA AZUL */
   animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
 }
 
-.reportes-admin .modal h3 {
-  color: #ffb3b3;
+.reportes-usuario .modal h3 {
+  color: #ffffff;
   font-size: 18px;
-  text-align: center; /* solo el título centrado */
+  text-align: center;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-.reportes-admin .modal p {
-  margin: 10px 0;
+.reportes-usuario .modal p {
+  margin: 5px 0;
   font-size: 15px;
   line-height: 1.4;
-  border: none;
-  text-align: left; /* texto alineado */
+  color: #ffffff;
 }
 
-/* Botón cerrar */
-.reportes-admin .btn-close {
-  align-self: center;
-  margin-top: 15px;
-  padding: 8px 18px;
+/* Botones del modal */
+.reportes-usuario .btn-close {
+  background: #1f2d38;
+  color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
-  background: #6d0b02;
-  color: #f1e3d6;
-  font-weight: bold;
+  padding: 8px 12px;
   cursor: pointer;
-  transition: background 0.2s ease-in-out;
+  transition: background 0.2s;
+  align-self: center;
+  margin-top: 15px;
 }
 
-.reportes-admin .btn-close:hover {
-  background: #e85e4e;
+.reportes-usuario .btn-close:hover {
+  background: #2c3e50;
 }
 
-/* Animación */
+/* ======================= Animación ======================= */
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -1393,123 +1598,72 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-/* ===== Filtros de reportes ===== */
-.filtros-reportes {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  align-items: center;
-}
-
-/* Input de búsqueda */
-.filtro-input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #6d766c; /* borde gris */
-  background-color: #f5f5f5; /* fondo gris claro */
-  font-size: 15px;
-  color: #333;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.filtro-input:focus {
-  border-color: #920303; /* rojo al enfocar */
-  box-shadow: 0 0 5px rgba(146, 3, 3, 0.5);
-  outline: none;
-}
-
-/* Select de orden */
-.filtro-select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #6d766c;
-  background-color: #f5f5f5;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.filtro-select:focus {
-  border-color: #920303;
-  box-shadow: 0 0 5px rgba(146, 3, 3, 0.5);
-  outline: none;
-}
 /*============================= Gestion de Citas =================================*/
 .gestion-citas {
-  max-width: 600px;
+  width: 100%; /* Ocupa todo el ancho disponible */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
 }
 
 .gestion-citas h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  color: #920303; /* mismo color que clientes */
-}
-
-/* ================== Botones generales ================== */
-.gestion-citas .btn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-right: 5px;
-  color: rgb(241, 227, 214);
-}
-
-.gestion-citas .btn-add {
-  background: #6d0b02;
-}
-
-.gestion-citas .btn-edit {
-  background: #6d0b02;
-}
-
-.gestion-citas .btn-delete {
-  background: #6d0b02;
-}
-
-.gestion-citas .btn-close {
-  background: #6d0b02;
-}
-
-.gestion-citas .btn-add:hover,
-.gestion-citas .btn-edit:hover,
-.gestion-citas .btn-delete:hover,
-.gestion-citas .btn-close:hover {
-  background: #e85e4e;
-  transform: translateY(-1px);
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
 }
 
 /* ================== Contenedor de barra de búsqueda + botón ================== */
-.gestion-citas .busqueda-agregar {
+.gestion-citas .search-add-container {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  margin-top: 28px; /* 🔽 BAJA EL CONTENEDOR 3 PÍXELES MÁS */
   align-items: center;
+  width: 100%;
 }
 
-.gestion-citas .busqueda-agregar .search-bar {
+/* Barra de búsqueda - tamaño normal */
+.gestion-citas .search-add-container .search-bar {
   flex: 1;
   padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #6d766c;
+  border: 1px solid #ffffff;
   background-color: #f5f5f5;
   font-size: 15px;
   color: #333;
   transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
 }
 
-.gestion-citas .busqueda-agregar .search-bar:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
+/* Botón Agregar Cita - más grueso */
+.gestion-citas .search-add-container .btn-add {
+  background: #7a560c; /* 🔽 DORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 15px;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 120px;
 }
 
-/*============================= Lista de Citas =================================*/
+.gestion-citas .search-add-container .btn-add:hover {
+  background: #9a6d10; /* 🔽 DORADO MÁS CLARO */
+  transform: translateY(-1px);
+}
+
+/* ======================= Lista de Citas ======================= */
 .gestion-citas .cita-list {
   list-style: none;
   padding: 0;
@@ -1518,12 +1672,13 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   max-height: 400px;
   overflow-y: auto;
   background: none;
-  margin-top: 10px;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .gestion-citas .cita-list li {
   font-weight: bold;
-  color: #f5f5f5;
+  color: #ffffff;
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -1531,18 +1686,113 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   border-radius: 5px;
   margin-top: 5px;
   text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .gestion-citas .cita-list li:hover {
-  background: #8a0303;
+  background: #7a560c; /* 🔽 DORADO OSCURO */
   color: #fff;
 }
 
 .gestion-citas .cita-list li.selected {
-  background: hsl(5, 10%, 21%);
+  background: #9a6d10; /* 🔽 DORADO MÁS CLARO */
 }
 
-/* ================== Formulario en modales ================== */
+/* ======================= Listas desplegables ======================= */
+.selector-vehiculo {
+  position: relative;
+  width: 100%;
+}
+
+.lista-vehiculos {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #7a560c; /* 🔽 BORDE DORADO OSCURO */
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(122, 86, 12, 0.15); /* 🔽 SOMBRA DORADA */
+}
+
+.lista-vehiculos li {
+  padding: 8px 10px;
+  color: #7a560c; /* 🔽 TEXTO DORADO OSCURO */
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lista-vehiculos li:hover {
+  background: #fff8e1;
+}
+
+/* ======================= Inputs de modales ======================= */
+.gestion-citas .modal-editar input,
+.gestion-citas .modal-agregar input,
+.gestion-citas .modal select,
+.gestion-citas .modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #7a560c; /* 🔽 BORDE DORADO OSCURO */
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #7a560c; /* 🔽 TEXTO DORADO OSCURO */
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-citas .modal-editar input:focus,
+.gestion-citas .modal-agregar input:focus,
+.gestion-citas .modal select:focus,
+.gestion-citas .modal textarea:focus {
+  border-color: #9a6d10; /* 🔽 DORADO MÁS CLARO */
+  box-shadow: 0 0 5px rgba(154, 109, 16, 0.6); /* 🔽 DORADO MÁS CLARO */
+  outline: none;
+}
+
+/* ======================= Botones de modales ======================= */
+.gestion-citas .btn-add,
+.gestion-citas .btn-close,
+.gestion-citas .btn-edit,
+.gestion-citas .btn-delete {
+  background: #7a560c; /* 🔽 DORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gestion-citas .btn-add:hover,
+.gestion-citas .btn-close:hover,
+.gestion-citas .btn-edit:hover,
+.gestion-citas .btn-delete:hover {
+  background: #9a6d10; /* 🔽 DORADO MÁS CLARO */
+}
+
+.gestion-citas .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-citas .btn-group .btn {
+  flex: 1;
+}
+
+/* ======================= Modales ======================= */
 .gestion-citas .modal-overlay {
   position: fixed;
   top: 0;
@@ -1560,49 +1810,33 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
-  width: 280px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(122, 86, 12, 0.25); /* 🔽 SOMBRA DORADA */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-citas .modal h3 {
-  color: #820000;
+  color: #ffffff; /* 🔽 TÍTULO BLANCO */
   font-size: 18px;
   text-align: center;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.gestion-citas .modal input,
-.gestion-citas .modal select,
-.gestion-citas .modal textarea {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border: 1px solid #820000;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
+.gestion-citas .modal p {
+  margin: 5px 0;
   font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.4;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
 }
 
-.gestion-citas .modal input:focus,
-.gestion-citas .modal select:focus,
-.gestion-citas .modal textarea:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
-}
-
+/* ======================= Animación ======================= */
 @keyframes aparecer {
   from {
     transform: scale(0.8);
@@ -1614,21 +1848,15 @@ label { display:block; margin-top:10px; margin-bottom:6px; font-size:.9rem; colo
   }
 }
 
-/* ================== Grupos de botones en modales ================== */
-.gestion-citas .modal .btn-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.gestion-citas .modal .btn-group .btn {
-  flex: 1;
-}
-
-.gestion-citas .modal .btn-close {
-  flex: none;
-  margin-left: auto;
+/* Mensaje cuando no hay citas */
+.gestion-citas .no-citas {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #7a560c;
+  border-radius: 5px;
+  margin: 10px 0;
 }
 
 /*============================= Gestion de Trabajos =================================*/

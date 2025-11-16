@@ -33,15 +33,15 @@ function InventarioUsuarioNormal() {
     cargarDatos();
   }, []);
 
-    const textoBusqueda = search.toLowerCase();
+  const textoBusqueda = search.toLowerCase();
 
-    // Repuestos universales que coinciden con la búsqueda
-    const repuestosUniversales = inventario.filter(
+  // Repuestos universales que coinciden con la búsqueda
+  const repuestosUniversales = inventario.filter(
     (r) => !r.vehiculoId && r.nombre.toLowerCase().includes(textoBusqueda)
-    );
+  );
 
-    // Vehículos filtrados por búsqueda de marca/modelo/tipo o repuestos que coincidan
-    const vehiculosFiltrados = vehiculos.filter((v) => {
+  // Vehículos filtrados por búsqueda de marca/modelo/tipo o repuestos que coincidan
+  const vehiculosFiltrados = vehiculos.filter((v) => {
     const nombreVehiculo = `${v.marca} ${v.modelo} ${v.tipo}`.toLowerCase();
 
     // Todos los repuestos de este vehículo
@@ -49,15 +49,15 @@ function InventarioUsuarioNormal() {
 
     // ¿Algún repuesto coincide con la búsqueda?
     const repuestosCoinciden = repuestosDelVehiculo.some((r) =>
-        r.nombre.toLowerCase().includes(textoBusqueda)
+      r.nombre.toLowerCase().includes(textoBusqueda)
     );
 
     // Mostrar vehículo si: coincide la marca/modelo/tipo O algún repuesto coincide
     return nombreVehiculo.includes(textoBusqueda) || repuestosCoinciden;
-    });
+  });
 
-    // Función para obtener repuestos filtrados para un vehículo
-    const repuestosPorVehiculo = (v) => {
+  // Función para obtener repuestos filtrados para un vehículo
+  const repuestosPorVehiculo = (v) => {
     const nombreVehiculo = `${v.marca} ${v.modelo} ${v.tipo}`.toLowerCase();
     const todosRepuestos = inventario.filter((r) => r.vehiculoId === v.id);
 
@@ -66,10 +66,12 @@ function InventarioUsuarioNormal() {
 
     // Si no, mostramos solo los repuestos que coincidan con la búsqueda
     return todosRepuestos.filter((r) =>
-        r.nombre.toLowerCase().includes(textoBusqueda)
+      r.nombre.toLowerCase().includes(textoBusqueda)
     );
-    };
+  };
 
+  // Verificar si no hay repuestos para mostrar
+  const noHayRepuestos = repuestosUniversales.length === 0 && vehiculosFiltrados.length === 0;
 
   return (
     <div className="gestion-inventario">
@@ -85,49 +87,78 @@ function InventarioUsuarioNormal() {
       </div>
 
       <ul className="inventario-list">
-        {/* 🔧 UNIVERSALES */}
-        <li className="categoria"><b>🔧 Repuestos Universales</b></li>
-        {repuestosUniversales.map((r) => (
-          <li
-            key={r.id}
-            onClick={() => setSelectedInventario(r)}
-            className={selected?.id === r.id ? "selected" : ""}
-          >
-            {r.nombre}
+        {noHayRepuestos ? (
+          // Mensaje cuando no hay repuestos
+          <li className="no-repuestos">
+            No hay repuestos agregados
           </li>
-        ))}
-
-        {/* VEHÍCULOS Y SUS REPUESTOS FILTRADOS */}
-        {vehiculosFiltrados.map((v) => {
-        const repuestos = repuestosPorVehiculo(v);
-
-        return (
-            <li key={v.id} className="categoria">
-            <div
-                onClick={() =>
-                setVehiculoExpandido((prev) => (prev === v.id ? null : v.id))
-                }
-                style={{ cursor: "pointer", color: "#6d766cff", marginTop: 10 }}
-            >
-                {v.marca} {v.modelo} ({v.tipo})
-            </div>
-
-            {vehiculoExpandido === v.id && (
-                <ul style={{ marginLeft: 20 }}>
-                {repuestos.map((r) => (
-                    <li
+        ) : (
+          <>
+            {/* 🔧 REPUESTOS UNIVERSALES */}
+            {repuestosUniversales.length > 0 && (
+              <>
+                <li className="categoria"><b>🔧 Repuestos Universales</b></li>
+                {repuestosUniversales.map((r) => (
+                  <li
                     key={r.id}
                     onClick={() => setSelectedInventario(r)}
-                    className={selected?.id === r.id ? "selected" : ""}
-                    >
+                    className={`item-sub-lista ${selected?.id === r.id ? "selected" : ""}`}
+                  >
                     {r.nombre}
-                    </li>
+                  </li>
                 ))}
-                </ul>
+              </>
             )}
-            </li>
-        );
-        })}
+
+            {/* 🚗 MODELOS - TÍTULO SEPARADOR */}
+            {vehiculosFiltrados.length > 0 && (
+              <li className="categoria" style={{ marginTop: '20px' }}><b>🚗 Modelos de Vehiculos</b></li>
+            )}
+
+            {/* VEHÍCULOS Y SUS REPUESTOS FILTRADOS */}
+            {vehiculosFiltrados.map((v) => {
+              const repuestos = repuestosPorVehiculo(v);
+
+              return (
+                <li key={v.id} className="categoria">
+                  <div
+                    onClick={() =>
+                      setVehiculoExpandido((prev) => (prev === v.id ? null : v.id))
+                    }
+                    className="item-principal"
+                    style={{ cursor: "pointer", marginTop: 10 }}
+                  >
+                    {v.marca} {v.modelo} ({v.tipo})
+                  </div>
+
+                  {vehiculoExpandido === v.id && (
+                    <ul className="sub-lista">
+                      {repuestos.length === 0 ? (
+                        // Mensaje cuando no hay repuestos para este vehículo
+                        <li className="no-repuestos-vehiculo">
+                          No hay repuestos disponibles para este vehículo
+                        </li>
+                      ) : (
+                        repuestos.map((r) => (
+                          <li
+                            key={r.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedInventario(r);
+                            }}
+                            className={`item-sub-lista ${selected?.id === r.id ? "selected" : ""}`}
+                          >
+                            {r.nombre}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </>
+        )}
       </ul>
 
       {/* MODAL DETALLE */}

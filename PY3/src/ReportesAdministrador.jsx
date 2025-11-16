@@ -47,19 +47,11 @@ function ReportesAdministrador({ session }) {
     lista: reportes.filter((r) => r.tipo === tipo),
   }));
 
-  // Formatear fecha
-  const formatearFecha = (fecha) => {
-    const d = new Date(fecha);
-    if (isNaN(d)) return "Fecha inválida";
-    return d.toLocaleString("es-CR", {
-      dateStyle: "short",
-      timeStyle: "short",
-      hour12: false,
-    });
-  };
+  // Verificar si no hay reportes
+  const noHayReportes = reportes.length === 0;
 
   return (
-    <div className="reportes-admin">
+    <div className="reportes-usuario">
       <h2>Panel de Reportes</h2>
 
       {/* Filtros */}
@@ -82,60 +74,80 @@ function ReportesAdministrador({ session }) {
         </select>
       </div>
 
-      {/* Lista agrupada */}
+      {/* Lista agrupada - ESTILO IDÉNTICO A INVENTARIO */}
       <ul className="lista-reportes-admin">
-        {reportesPorTipo.map((grupo) => (
-          <li key={grupo.tipo} className="categoria-reportes">
-            <div
-              onClick={() =>
-                setTipoExpandido((prev) =>
-                  prev === grupo.tipo ? null : grupo.tipo
-                )
-              }
-              className="categoria-titulo"
-            >
-              {grupo.tipo} ({grupo.lista.length})
-            </div>
-
-            {tipoExpandido === grupo.tipo && (
-              <ul className="sublista-reportes">
-                {grupo.lista.length === 0 ? (
-                  <li className="sin-reportes">No hay reportes</li>
-                ) : (
-                  grupo.lista.map((r) => (
-                    <li
-                      key={r.id}
-                      onClick={() => setSelected(r)}
-                      className="reporte-item"
-                    >
-                    {r.usuario} — {formatearFecha(r.fecha)}
-                    </li>
-                  ))
-                )}
-              </ul>
-            )}
+        {noHayReportes ? (
+          // Mensaje cuando no hay reportes
+          <li className="no-reportes">
+            No hay reportes disponibles
           </li>
-        ))}
+        ) : (
+          reportesPorTipo.map((grupo) => (
+            <li key={grupo.tipo} className="categoria">
+              <div
+                onClick={() =>
+                  setTipoExpandido((prev) =>
+                    prev === grupo.tipo ? null : grupo.tipo
+                  )
+                }
+                className="item-principal"
+                style={{ cursor: "pointer", marginTop: 10 }}
+              >
+                {grupo.tipo} ({grupo.lista.length})
+              </div>
+
+              {tipoExpandido === grupo.tipo && (
+                <ul className="sub-lista">
+                  {grupo.lista.length === 0 ? (
+                    // Mensaje cuando no hay reportes para esta categoría
+                    <li className="no-reportes-vehiculo">
+                      No hay reportes en esta categoría
+                    </li>
+                  ) : (
+                    grupo.lista.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelected(r);
+                        }}
+                        className={`item-sub-lista ${selected?.id === r.id ? "selected" : ""}`}
+                      >
+                        {r.usuario} — {new Date(r.fecha).toLocaleString("es-CR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </li>
+          ))
+        )}
       </ul>
 
       {/* Modal Detalle */}
       {selected && (
-      <div className="modal-overlay" onClick={() => setSelected(null)}>
+        <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-          <h3>📄 Detalle del Reporte</h3>
-          <p><b>Tipo:</b> {selected.tipo}</p>
-          <p><b>Usuario:</b> {selected.usuario}</p>
-          <p><b>Reporte:</b> {selected.descripcion}</p>
-          <p><b>Fecha:</b> {new Date(selected.fecha).toLocaleString("es-CR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-          })}</p>
-          <button className="btn-close" onClick={() => setSelected(null)}>Cerrar</button>
+            <h3>📄 Detalle del Reporte</h3>
+            <p><b>Tipo:</b> {selected.tipo}</p>
+            <p><b>Usuario:</b> {selected.usuario}</p>
+            <p><b>Reporte:</b> {selected.descripcion}</p>
+            <p><b>Fecha:</b> {new Date(selected.fecha).toLocaleString("es-CR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            })}</p>
+            <button className="btn-close" onClick={() => setSelected(null)}>Cerrar</button>
           </div>
-      </div>
+        </div>
       )}
     </div>
   );
