@@ -279,6 +279,11 @@ function AdminHome({ session, onLogout, api }) {
   const [showMenu, setShowMenu] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
 
+  // Función para obtener la clase del panel según la sección
+  const getPanelClass = () => {
+    return `center-panel ${currentSection}`;
+  };
+
   const recordarCodigos = () => {
     const usuarios = api.getAll();
     if (!usuarios.length) {
@@ -354,8 +359,8 @@ function AdminHome({ session, onLogout, api }) {
         {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* ===== CUADRO GRIS ===== */}
-      <div className="center-panel">
+      {/* ===== CUADRO GRIS CON COLOR DINÁMICO ===== */}
+      <div className={getPanelClass()}>
         <div className="panel-content">
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
@@ -385,6 +390,11 @@ function UserHome({ session, onLogout }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
+
+  // Función para obtener la clase del panel según la sección
+  const getPanelClass = () => {
+    return `center-panel ${currentSection}`;
+  };
 
   return (
     <div className="home">
@@ -437,8 +447,8 @@ function UserHome({ session, onLogout }) {
         {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* ===== CUADRO GRIS AGREGADO ===== */}
-      <div className="center-panel">
+      {/* ===== CUADRO GRIS CON COLOR DINÁMICO ===== */}
+      <div className={getPanelClass()}>
         <div className="panel-content">
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}

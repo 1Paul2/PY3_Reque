@@ -222,7 +222,7 @@ function GestionCitas({ session }) {
 
   /* ======================= RENDER ======================= */
   return (
-    <div className="gestion-citas"> {/* 🔽 CAMBIADO A gestion-citas */}
+    <div className="gestion-citas">
       <h2>Gestión de Citas</h2>
 
       <div className="search-add-container">
@@ -272,25 +272,25 @@ function GestionCitas({ session }) {
             <p><b>Mecánico:</b> {selected.mecanico}</p>
             <p><b>Estado:</b> {selected.estado}</p>
 
-            {session.rol === "admin" && (
-              <>
-                <button
-                  className="btn btn-edit"
-                  onClick={() => {
-                    setMecanicoSeleccionado(selected.mecanico);
-                    setShowAsignar(true);
-                  }}
-                >
-                  Asignar Mecánico
-                </button>
-
-                <button className="btn btn-edit" onClick={abrirEditar}>
-                  Modificar
-                </button>
-              </>
-            )}
-
             <div className="btn-group">
+              {session.rol === "admin" && (
+                <>
+                  <button
+                    className="btn btn-edit"
+                    onClick={() => {
+                      setMecanicoSeleccionado(selected.mecanico);
+                      setShowAsignar(true);
+                    }}
+                  >
+                    Asignar Mecánico
+                  </button>
+
+                  <button className="btn btn-edit" onClick={abrirEditar}>
+                    Modificar
+                  </button>
+                </>
+              )}
+              
               <button className="btn btn-delete" onClick={() => eliminarCita(selected.id)}>
                 Eliminar
               </button>

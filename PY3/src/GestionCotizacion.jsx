@@ -277,24 +277,24 @@ function GestionCotizacion({ session }) {
   });
 
   return (
-    <div className="gestion-trabajos">
+    <div className="gestion-cotizaciones">
       <h2>Gestion de Cotizaciones</h2>
 
       {/* BUSQUEDA + NUEVA COTIZACION */}
-      <div className="busqueda-agregar">
+      <div className="search-add-container">
         <input
           className="search-bar"
           placeholder="Buscar por codigo, cliente o OT..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="btn btn-add" onClick={abrirNueva}>
+        <button className="btn-add" onClick={abrirNueva}>
           Nueva cotizacion
         </button>
       </div>
 
       {/* LISTA DE COTIZACIONES */}
-      <ul className="trabajo-list">
+      <ul className="cotizacion-list">
         {listaFiltrada.map((c) => (
           <li key={c.codigo} onClick={() => abrirEditar(c)}>
             <div>
@@ -379,7 +379,7 @@ function GestionCotizacion({ session }) {
             {!esSoloLectura && (
               <button
                 type="button"
-                className="btn btn-add"
+                className="btn-add"
                 onClick={agregarRepuesto}
                 style={{ marginBottom: 8 }}
               >
@@ -389,12 +389,7 @@ function GestionCotizacion({ session }) {
             {(form.repuestos || []).map((r, idx) => (
               <div
                 key={idx}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
-                  gap: 4,
-                  marginBottom: 4,
-                }}
+                className="item-grid"
               >
                 <input
                   placeholder="Codigo"
@@ -436,7 +431,7 @@ function GestionCotizacion({ session }) {
                 {!esSoloLectura && (
                   <button
                     type="button"
-                    className="btn btn-close"
+                    className="btn-close"
                     onClick={() => eliminarRepuesto(idx)}
                   >
                     X
@@ -452,7 +447,7 @@ function GestionCotizacion({ session }) {
             {!esSoloLectura && (
               <button
                 type="button"
-                className="btn btn-add"
+                className="btn-add"
                 onClick={agregarManoObra}
                 style={{ marginBottom: 8 }}
               >
@@ -462,12 +457,7 @@ function GestionCotizacion({ session }) {
             {(form.manoObra || []).map((m, idx) => (
               <div
                 key={idx}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 1fr 1fr auto",
-                  gap: 4,
-                  marginBottom: 4,
-                }}
+                className="mano-obra-grid"
               >
                 <input
                   placeholder="Descripcion"
@@ -501,7 +491,7 @@ function GestionCotizacion({ session }) {
                 {!esSoloLectura && (
                   <button
                     type="button"
-                    className="btn btn-close"
+                    className="btn-close"
                     onClick={() => eliminarManoObra(idx)}
                   >
                     X
@@ -548,34 +538,27 @@ function GestionCotizacion({ session }) {
               <b>Total:</b> {form.total != null ? form.total : 0}
             </p>
 
-            <div
-              className="btn-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 10,
-              }}
-            >
+            <div className="btn-group">
               {!esSoloLectura && (
-                <button className="btn btn-add" onClick={guardarCotizacion}>
+                <button className="btn-add" onClick={guardarCotizacion}>
                   Guardar cotizacion
                 </button>
               )}
 
               {editMode && !esSoloLectura && (
-                <button className="btn btn-edit" onClick={generarProforma}>
+                <button className="btn-edit" onClick={generarProforma}>
                   Generar proforma
                 </button>
               )}
 
               {editMode && (
-                <button className="btn btn-close" onClick={eliminarCotizacion}>
+                <button className="btn-close" onClick={eliminarCotizacion}>
                   Eliminar
                 </button>
               )}
 
               <button
-                className="btn btn-close"
+                className="btn-close"
                 onClick={() => setShowModal(false)}
               >
                 Cerrar

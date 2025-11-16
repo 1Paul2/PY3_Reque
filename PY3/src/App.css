@@ -53,18 +53,54 @@ label {
   padding: 24px 0; /* Sin padding lateral */
 }
 
-/* ===== CENTER PANEL - ANCHO COMPLETO ===== */
+/* Central Panel Base - COLOR ACTUAL */
 .center-panel {
-  background: rgba(30, 30, 30, 0.9);
+  background: rgba(43, 60, 59, 0.9);
   padding: 40px 30px;
   border-radius: 16px;
-  width: 75%; /* MISMO ancho que home-head */
+  width: 75%;
   max-width: none;
-  margin: 0 auto 40px auto; /* MISMO centrado que home-head */
+  margin: 0 auto 40px auto;
   min-height: 600px;
   box-shadow: 0 6px 25px rgba(0,0,0,0.6);
   color: #fff;
   transition: all 0.3s ease;
+}
+
+/* CLASES DE COLOR DINÁMICAS */
+.center-panel.clientes {
+  background: rgba(30, 51, 76, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.vehiculos {
+  background: rgba(59, 40, 36, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.inventario {
+  background: rgba(27, 51, 29, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.citas {
+  background: rgba(51, 50, 27, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.trabajos {
+  background: rgba(52, 39, 58, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.cotizacion {
+  background: rgba(51, 69, 66, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+}
+
+.center-panel.reportes {
+  background: rgba(31, 45, 56, 0.9);
+  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
 }
 
 .panel-content {
@@ -1054,7 +1090,7 @@ label {
 /* Elementos principales */
 .gestion-inventario .item-principal {
   font-weight: bold;
-  color: #514f4f;
+  color: #898888;
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -1400,7 +1436,7 @@ label {
 /* 🔽 ELEMENTOS PRINCIPALES - IGUAL QUE INVENTARIO */
 .reportes-usuario .item-principal {
   font-weight: bold;
-  color: #514f4f; /* 🔽 MISMO COLOR GRIS QUE INVENTARIO */
+  color: #989898;
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -1645,17 +1681,17 @@ label {
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
-  padding: 12px 20px;
+  padding: 10px 16px; /* 🔽 MÁS DELGADO */
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   white-space: nowrap;
-  font-size: 15px;
-  height: 37px;
+  font-size: 14px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 36px; /* 🔽 MISMA ALTURA QUE LA BARRA */
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  min-width: 120px;
+  min-width: 110px; /* 🔽 ANCHO MÍNIMO REDUCIDO */
 }
 
 .gestion-citas .search-add-container .btn-add:hover {
@@ -1699,43 +1735,10 @@ label {
   background: #9a6d10; /* 🔽 DORADO MÁS CLARO */
 }
 
-/* ======================= Listas desplegables ======================= */
-.selector-vehiculo {
-  position: relative;
-  width: 100%;
-}
-
-.lista-vehiculos {
-  position: absolute;
-  top: calc(100% + 1px);
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #7a560c; /* 🔽 BORDE DORADO OSCURO */
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 100;
-  box-shadow: 0 4px 8px rgba(122, 86, 12, 0.15); /* 🔽 SOMBRA DORADA */
-}
-
-.lista-vehiculos li {
-  padding: 8px 10px;
-  color: #7a560c; /* 🔽 TEXTO DORADO OSCURO */
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.lista-vehiculos li:hover {
-  background: #fff8e1;
-}
-
 /* ======================= Inputs de modales ======================= */
 .gestion-citas .modal-editar input,
 .gestion-citas .modal-agregar input,
+.gestion-citas .modal-lista input,
 .gestion-citas .modal select,
 .gestion-citas .modal textarea {
   width: 100%;
@@ -1752,6 +1755,7 @@ label {
 
 .gestion-citas .modal-editar input:focus,
 .gestion-citas .modal-agregar input:focus,
+.gestion-citas .modal-lista input:focus,
 .gestion-citas .modal select:focus,
 .gestion-citas .modal textarea:focus {
   border-color: #9a6d10; /* 🔽 DORADO MÁS CLARO */
@@ -1759,28 +1763,36 @@ label {
   outline: none;
 }
 
-/* ======================= Botones de modales ======================= */
-.gestion-citas .btn-add,
-.gestion-citas .btn-close,
-.gestion-citas .btn-edit,
-.gestion-citas .btn-delete {
+/* ======================= Botones de modales (SOLO DENTRO DE MODALS) ======================= */
+.gestion-citas .modal .btn-add,
+.gestion-citas .modal .btn-close,
+.gestion-citas .modal .btn-edit,
+.gestion-citas .modal .btn-delete {
   background: #7a560c; /* 🔽 DORADO OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 6px 10px; /* 🔽 MÁS DELGADO */
   cursor: pointer;
   transition: background 0.2s;
+  flex: 1; /* 🔽 PARA QUE LOS BOTONES SE EXPANDAN IGUAL */
+  font-size: 13px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 32px; /* 🔽 ALTURA FIJA MÁS BAJA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0; /* 🔽 PERMITE QUE SE AJUSTEN MEJOR */
 }
 
-.gestion-citas .btn-add:hover,
-.gestion-citas .btn-close:hover,
-.gestion-citas .btn-edit:hover,
-.gestion-citas .btn-delete:hover {
+.gestion-citas .modal .btn-add:hover,
+.gestion-citas .modal .btn-close:hover,
+.gestion-citas .modal .btn-edit:hover,
+.gestion-citas .modal .btn-delete:hover {
   background: #9a6d10; /* 🔽 DORADO MÁS CLARO */
 }
 
-.gestion-citas .btn-group {
+/* 🔽 GRUPO DE BOTONES CORREGIDO - SOLO EN MODALS */
+.gestion-citas .modal .btn-group {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -1788,8 +1800,9 @@ label {
   gap: 5px;
 }
 
-.gestion-citas .btn-group .btn {
-  flex: 1;
+.gestion-citas .modal .btn-group .btn {
+  flex: 1; /* 🔽 CADA BOTÓN OCUPA EL MISMO ESPACIO */
+  min-width: 0; /* 🔽 PERMITE QUE SE COMPRIMAN UNIFORMEMENTE */
 }
 
 /* ======================= Modales ======================= */
@@ -1861,69 +1874,70 @@ label {
 
 /*============================= Gestion de Trabajos =================================*/
 .gestion-trabajos {
-  max-width: 600px;
+  width: 100%; /* Ocupa todo el ancho disponible */
   margin: 20px auto;
   font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
 }
 
 .gestion-trabajos h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  color: #920303; /* mismo tono que las otras secciones */
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
 }
 
-/* Botones generales */
-.gestion-trabajos .btn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-right: 5px;
-  color: rgb(241, 227, 214);
-}
-
-.gestion-trabajos .btn-add,
-.gestion-trabajos .btn-edit,
-.gestion-trabajos .btn-delete,
-.gestion-trabajos .btn-close {
-  background: #6d0b02;
-}
-
-.gestion-trabajos .btn-add:hover,
-.gestion-trabajos .btn-edit:hover,
-.gestion-trabajos .btn-delete:hover,
-.gestion-trabajos .btn-close:hover {
-  background: #e85e4e;
-  transform: translateY(-1px);
-}
-
-/* Barra de búsqueda + botón */
-.gestion-trabajos .busqueda-agregar {
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.gestion-trabajos .search-add-container {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  margin-top: 28px; /* 🔽 BAJA EL CONTENEDOR 3 PÍXELES MÁS */
   align-items: center;
+  width: 100%;
 }
 
-.gestion-trabajos .busqueda-agregar .search-bar {
+/* Barra de búsqueda - tamaño normal */
+.gestion-trabajos .search-add-container .search-bar {
   flex: 1;
   padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #6d766c;
+  border: 1px solid #ffffff;
   background-color: #f5f5f5;
   font-size: 15px;
   color: #333;
   transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
 }
 
-.gestion-trabajos .busqueda-agregar .search-bar:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
-  outline: none;
+/* Botón Agregar Trabajo - más grueso */
+.gestion-trabajos .search-add-container .btn-add {
+  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px; /* 🔽 MÁS DELGADO */
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 14px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 36px; /* 🔽 MISMA ALTURA QUE LA BARRA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 130px; /* 🔽 ANCHO MÍNIMO REDUCIDO */
 }
 
-/* Lista de trabajos */
+.gestion-trabajos .search-add-container .btn-add:hover {
+  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  transform: translateY(-1px);
+}
+
+/* ======================= Lista de Trabajos ======================= */
 .gestion-trabajos .trabajo-list {
   list-style: none;
   padding: 0;
@@ -1932,12 +1946,13 @@ label {
   max-height: 400px;
   overflow-y: auto;
   background: none;
-  margin-top: 10px;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .gestion-trabajos .trabajo-list li {
   font-weight: bold;
-  color: #f5f5f5;
+  color: #ffffff;
   border-bottom: 1px solid #ffffff;
   padding: 10px;
   cursor: pointer;
@@ -1945,18 +1960,90 @@ label {
   border-radius: 5px;
   margin-top: 5px;
   text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .gestion-trabajos .trabajo-list li:hover {
-  background: #8a0303;
+  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
   color: #fff;
 }
 
 .gestion-trabajos .trabajo-list li.selected {
-  background: hsl(5, 10%, 21%);
+  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
 }
 
-/* Modales */
+/* ======================= Inputs de modales ======================= */
+.gestion-trabajos .modal-editar input,
+.gestion-trabajos .modal-agregar input,
+.gestion-trabajos .modal-lista input,
+.gestion-trabajos .modal select,
+.gestion-trabajos .modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #5e3a6b; /* 🔽 CAMBIO: TEXTO DORADO OSCURO → MORADO OSCURO */
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestion-trabajos .modal-editar input:focus,
+.gestion-trabajos .modal-agregar input:focus,
+.gestion-trabajos .modal-lista input:focus,
+.gestion-trabajos .modal select:focus,
+.gestion-trabajos .modal textarea:focus {
+  border-color: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  box-shadow: 0 0 5px rgba(122, 79, 138, 0.6); /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  outline: none;
+}
+
+/* ======================= Botones de modales (SOLO DENTRO DE MODALS) ======================= */
+.gestion-trabajos .modal .btn-add,
+.gestion-trabajos .modal .btn-close,
+.gestion-trabajos .modal .btn-edit,
+.gestion-trabajos .modal .btn-delete {
+  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px; /* 🔽 MÁS DELGADO */
+  cursor: pointer;
+  transition: background 0.2s;
+  flex: 1; /* 🔽 PARA QUE LOS BOTONES SE EXPANDAN IGUAL */
+  font-size: 13px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 32px; /* 🔽 ALTURA FIJA MÁS BAJA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0; /* 🔽 PERMITE QUE SE AJUSTEN MEJOR */
+}
+
+.gestion-trabajos .modal .btn-add:hover,
+.gestion-trabajos .modal .btn-close:hover,
+.gestion-trabajos .modal .btn-edit:hover,
+.gestion-trabajos .modal .btn-delete:hover {
+  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+}
+
+/* 🔽 GRUPO DE BOTONES CORREGIDO - SOLO EN MODALS */
+.gestion-trabajos .modal .btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.gestion-trabajos .modal .btn-group .btn {
+  flex: 1; /* 🔽 CADA BOTÓN OCUPA EL MISMO ESPACIO */
+  min-width: 0; /* 🔽 PERMITE QUE SE COMPRIMAN UNIFORMEMENTE */
+}
+
+/* ======================= Modales ======================= */
 .gestion-trabajos .modal-overlay {
   position: fixed;
   top: 0;
@@ -1974,51 +2061,214 @@ label {
   background: rgba(80, 75, 75, 0.7);
   padding: 20px;
   border-radius: 10px;
-  width: 280px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(94, 58, 107, 0.25); /* 🔽 CAMBIO: SOMBRA DORADA → SOMBRA MORADA */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
 }
 
 .gestion-trabajos .modal h3 {
-  color: #820000;
+  color: #ffffff; /* 🔽 TÍTULO BLANCO */
   font-size: 18px;
   text-align: center;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.gestion-trabajos .modal input,
-.gestion-trabajos .modal select,
-.gestion-trabajos .modal textarea {
+.gestion-trabajos .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
+}
+
+/* ======================= Animación ======================= */
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mensaje cuando no hay trabajos */
+.gestion-trabajos .no-trabajos {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/*============================= Gestion de Cotizaciones =================================*/
+.gestion-cotizaciones {
+  width: 100%; /* Ocupa todo el ancho disponible */
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  padding: 0; /* 🔽 ASEGURA PADDING CERO */
+}
+
+.gestion-cotizaciones h2 {
+  text-align: left;
+  margin-bottom: 20px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0; /* 🔽 ASEGURA MARGEN SUPERIOR CERO */
+}
+
+/* ================== Contenedor de barra de búsqueda + botón ================== */
+.gestion-cotizaciones .search-add-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  margin-top: 28px; /* 🔽 BAJA EL CONTENEDOR 3 PÍXELES MÁS */
+  align-items: center;
+  width: 100%;
+}
+
+/* Barra de búsqueda - tamaño normal */
+.gestion-cotizaciones .search-add-container .search-bar {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ffffff;
+  background-color: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+/* Botón Agregar Cotización - más grueso */
+.gestion-cotizaciones .search-add-container .btn-add {
+  background: #11695c; /* 🔽 COLOR VERDE PRINCIPAL */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px; /* 🔽 MÁS DELGADO */
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 14px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 36px; /* 🔽 MISMA ALTURA QUE LA BARRA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 140px; /* 🔽 ANCHO MÍNIMO REDUCIDO */
+}
+
+.gestion-cotizaciones .search-add-container .btn-add:hover {
+  background: #148571; /* 🔽 VERDE MÁS CLARO */
+  transform: translateY(-1px);
+}
+
+/* ======================= Lista de Cotizaciones ======================= */
+.gestion-cotizaciones .cotizacion-list {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: none;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.gestion-cotizaciones .cotizacion-list li {
+  font-weight: bold;
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gestion-cotizaciones .cotizacion-list li:hover {
+  background: #11695c; /* 🔽 COLOR VERDE PARA HOVER */
+  color: #fff;
+}
+
+.gestion-cotizaciones .cotizacion-list li.selected {
+  background: #148571; /* 🔽 VERDE MÁS CLARO */
+}
+
+/* ======================= Inputs de modales ======================= */
+.gestion-cotizaciones .modal-editar input,
+.gestion-cotizaciones .modal-agregar input,
+.gestion-cotizaciones .modal-lista input,
+.gestion-cotizaciones .modal select,
+.gestion-cotizaciones .modal textarea {
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
-  border: 1px solid #820000;
+  border: 1px solid #11695c; /* 🔽 BORDE VERDE */
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.9);
-  color: #2e0000;
+  color: #11695c; /* 🔽 TEXTO VERDE */
   font-size: 15px;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.gestion-trabajos .modal input:focus,
-.gestion-trabajos .modal select:focus,
-.gestion-trabajos .modal textarea:focus {
-  border-color: #e85e4e;
-  box-shadow: 0 0 5px rgba(232, 94, 78, 0.6);
+.gestion-cotizaciones .modal-editar input:focus,
+.gestion-cotizaciones .modal-agregar input:focus,
+.gestion-cotizaciones .modal-lista input:focus,
+.gestion-cotizaciones .modal select:focus,
+.gestion-cotizaciones .modal textarea:focus {
+  border-color: #148571; /* 🔽 VERDE MÁS CLARO */
+  box-shadow: 0 0 5px rgba(20, 133, 113, 0.6); /* 🔽 SOMBRA VERDE */
   outline: none;
 }
 
-/* Botones dentro del modal */
-.gestion-trabajos .modal .btn-group {
+/* ======================= Botones de modales (SOLO DENTRO DE MODALS) ======================= */
+.gestion-cotizaciones .modal .btn-add,
+.gestion-cotizaciones .modal .btn-close,
+.gestion-cotizaciones .modal .btn-edit,
+.gestion-cotizaciones .modal .btn-delete {
+  background: #11695c; /* 🔽 COLOR VERDE */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px; /* 🔽 MÁS DELGADO */
+  cursor: pointer;
+  transition: background 0.2s;
+  flex: 1; /* 🔽 PARA QUE LOS BOTONES SE EXPANDAN IGUAL */
+  font-size: 13px; /* 🔽 TEXTO MÁS PEQUEÑO */
+  height: 32px; /* 🔽 ALTURA FIJA MÁS BAJA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0; /* 🔽 PERMITE QUE SE AJUSTEN MEJOR */
+}
+
+.gestion-cotizaciones .modal .btn-add:hover,
+.gestion-cotizaciones .modal .btn-close:hover,
+.gestion-cotizaciones .modal .btn-edit:hover,
+.gestion-cotizaciones .modal .btn-delete:hover {
+  background: #148571; /* 🔽 VERDE MÁS CLARO */
+}
+
+/* 🔽 GRUPO DE BOTONES CORREGIDO - SOLO EN MODALS */
+.gestion-cotizaciones .modal .btn-group {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -2026,17 +2276,13 @@ label {
   gap: 5px;
 }
 
-.gestion-trabajos .modal .btn-group .btn {
-  flex: 1;
+.gestion-cotizaciones .modal .btn-group .btn {
+  flex: 1; /* 🔽 CADA BOTÓN OCUPA EL MISMO ESPACIO */
+  min-width: 0; /* 🔽 PERMITE QUE SE COMPRIMAN UNIFORMEMENTE */
 }
 
-.gestion-trabajos .modal .btn-close {
-  flex: none;
-  margin-left: auto;
-}
-
-/* === Ajuste especifico para el modal de cotizacion (y trabajos) === */
-.gestion-trabajos .modal-overlay {
+/* ======================= Modales ======================= */
+.gestion-cotizaciones .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -2044,14 +2290,111 @@ label {
   height: 100vh;
   background: rgba(30, 30, 30, 0.3);
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;   /* ya NO centrado vertical */
-  padding-top: 80px;         /* baja el cuadro */
-  padding-bottom: 40px;      /* deja aire abajo */
   z-index: 2000;
 }
 
-.gestion-trabajos .modal.modal-lista {
-  max-height: calc(100vh - 120px); /* evita que se pegue arriba/abajo */
-  overflow-y: auto;                /* scroll interno si se pasa */
+.gestion-cotizaciones .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px; /* 🔽 MÁS ANCHO PARA COTIZACIONES */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(17, 105, 92, 0.25); /* 🔽 SOMBRA VERDE */
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.gestion-cotizaciones .modal h3 {
+  color: #ffffff; /* 🔽 TÍTULO BLANCO */
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.gestion-cotizaciones .modal h4 {
+  color: #ffffff; /* 🔽 SUBTÍTULO BLANCO */
+  font-size: 16px;
+  margin: 15px 0 8px 0;
+  width: 100%;
+}
+
+.gestion-cotizaciones .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
+}
+
+.gestion-cotizaciones .modal label {
+  color: #ffffff; /* 🔽 ETIQUETAS BLANCAS */
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+  width: 100%;
+}
+
+.gestion-cotizaciones .modal hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #11695c; /* 🔽 LÍNEA VERDE */
+  margin: 15px 0;
+}
+
+/* ======================= Animación ======================= */
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mensaje cuando no hay cotizaciones */
+.gestion-cotizaciones .no-cotizaciones {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #11695c;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/* Estilos específicos para los grids de repuestos y mano de obra */
+.gestion-cotizaciones .modal .item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 4px;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.gestion-cotizaciones .modal .mano-obra-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 4px;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.gestion-cotizaciones .modal .item-grid input,
+.gestion-cotizaciones .modal .mano-obra-grid input {
+  margin-bottom: 0;
+  font-size: 14px;
+  padding: 6px 8px;
+}
+
+/* Botón para menú de cotizaciones */
+.btn-menu-cotizacion:hover {
+  background: #11695c !important;
 }

@@ -7,7 +7,7 @@ const apiTrabajos = {
   getAll: async () => {
     const res = await fetch("/api/trabajos");
     if (!res.ok) throw new Error("No se pudo cargar trabajos");
-    return res.json(); // tu backend puede devolver { ok, trabajos } o solo []
+    return res.json();
   },
 
   createFromCita: async (payload) => {
@@ -20,7 +20,6 @@ const apiTrabajos = {
     if (!res.ok || data.ok === false) {
       throw new Error(data.error || "No se pudo crear la orden de trabajo");
     }
-    // asumo que el backend devuelve la lista actualizada o la OT nueva
     return data.trabajos || data.trabajo;
   },
 
@@ -75,7 +74,6 @@ function GestionTrabajos({ session }) {
     (async () => {
       try {
         const arr = await apiTrabajos.getAll();
-        // si el backend devuelve { trabajos: [...] }
         const lista = Array.isArray(arr) ? arr : arr.trabajos || [];
         setTrabajos(lista);
       } catch (e) {
@@ -100,11 +98,9 @@ function GestionTrabajos({ session }) {
         observacionesIniciales: observacionesIniciales.trim(),
       });
 
-      // si devuelve lista actualizada
       if (Array.isArray(resultado)) {
         setTrabajos(resultado);
       } else if (resultado && resultado.codigoOrden) {
-        // si devuelve solo 1 OT
         setTrabajos((prev) => [...prev, resultado]);
       }
 
@@ -121,7 +117,6 @@ function GestionTrabajos({ session }) {
   const guardarDetalleTrabajo = async () => {
     if (!selected) return;
 
-    // validaciones basicas: que exista diagnostico o servicios antes de Finalizar
     if (
       selected.estado === "Finalizada" &&
       (!selected.diagnostico || !selected.diagnostico.trim())
@@ -159,8 +154,6 @@ function GestionTrabajos({ session }) {
   };
 
   const validarTransicionEstado = (estadoActual, nuevoEstado) => {
-    // ejemplo sencillo de reglas:
-    // - no se puede pasar de Finalizada/Cancelada a Pendiente
     if (
       (estadoActual === "Finalizada" || estadoActual === "Cancelada") &&
       nuevoEstado === "Pendiente"
@@ -179,7 +172,6 @@ function GestionTrabajos({ session }) {
 
     if (!validarTransicionEstado(estadoActual, nuevoEstado)) return;
 
-    // si usuario normal quiere cancelar -> envia reporte en vez de cambiar
     if (nuevoEstado === "Cancelada" && session?.rol !== "admin") {
       try {
         const reporte = {
@@ -240,8 +232,8 @@ function GestionTrabajos({ session }) {
     <div className="gestion-trabajos">
       <h2>Gestion de Trabajos</h2>
 
-      {/* BUSQUEDA + NUEVA ORDEN */}
-      <div className="busqueda-agregar">
+      {/* BUSQUEDA + NUEVA ORDEN - CLASES CORREGIDAS */}
+      <div className="search-add-container">
         <input
           className="search-bar"
           placeholder="Buscar orden por codigo, placa o cliente..."
@@ -249,7 +241,7 @@ function GestionTrabajos({ session }) {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button
-          className="btn btn-add"
+          className="btn-add"
           onClick={() => setShowModalNuevaOT(true)}
         >
           Nueva Orden desde Cita
@@ -308,15 +300,12 @@ function GestionTrabajos({ session }) {
               />
             </label>
 
-            <div
-              className="btn-group"
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <button className="btn btn-add" onClick={crearOrdenDesdeCita}>
+            <div className="btn-group">
+              <button className="btn-add" onClick={crearOrdenDesdeCita}>
                 Crear Orden
               </button>
               <button
-                className="btn btn-close"
+                className="btn-close"
                 onClick={() => setShowModalNuevaOT(false)}
               >
                 Cancelar
@@ -401,25 +390,18 @@ function GestionTrabajos({ session }) {
               />
             </label>
 
-            <div
-              className="btn-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 10,
-              }}
-            >
-              <button className="btn btn-add" onClick={guardarDetalleTrabajo}>
+            <div className="btn-group">
+              <button className="btn-add" onClick={guardarDetalleTrabajo}>
                 Guardar cambios
               </button>
               <button
-                className="btn btn-edit"
+                className="btn-edit"
                 onClick={() => abrirModalEstado(selected)}
               >
                 Cambiar estado
               </button>
               <button
-                className="btn btn-close"
+                className="btn-close"
                 onClick={() => setShowModalDetalle(false)}
               >
                 Cerrar
@@ -464,19 +446,12 @@ function GestionTrabajos({ session }) {
               </p>
             )}
 
-            <div
-              className="btn-group"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 10,
-              }}
-            >
-              <button className="btn btn-add" onClick={guardarNuevoEstado}>
+            <div className="btn-group">
+              <button className="btn-add" onClick={guardarNuevoEstado}>
                 Guardar estado
               </button>
               <button
-                className="btn btn-close"
+                className="btn-close"
                 onClick={() => setShowModalEstado(false)}
               >
                 Cancelar
