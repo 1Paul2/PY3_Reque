@@ -9,7 +9,6 @@ const apiTrabajos = {
     if (!res.ok) throw new Error("No se pudo cargar trabajos");
     return res.json();
   },
-
   createFromCita: async (payload) => {
     const res = await fetch("/api/trabajos", {
       method: "POST",
@@ -22,7 +21,6 @@ const apiTrabajos = {
     }
     return data.trabajos || data.trabajo;
   },
-
   update: async (codigoOrden, trabajo) => {
     const res = await fetch(`/api/trabajos/${codigoOrden}`, {
       method: "PUT",
@@ -35,7 +33,6 @@ const apiTrabajos = {
     }
     return data.trabajo;
   },
-
   updateEstado: async (codigoOrden, nuevoEstado) => {
     const res = await fetch(`/api/trabajos/${codigoOrden}/estado`, {
       method: "PATCH",
@@ -50,9 +47,30 @@ const apiTrabajos = {
   },
 };
 
-/* ======================= Gestion Trabajos ======================= */
+/* ======================= API INVENTARIO ======================= */
+const apiInventario = {
+  getAll: async () => {
+    const res = await fetch("/api/inventario");
+    if (!res.ok) throw new Error("No se pudo cargar inventario");
+    return res.json();
+  },
+  updateCantidad: async (codigo, nuevaCantidad) => {
+    const res = await fetch(`/api/inventario/${codigo}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cantidad: nuevaCantidad }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.ok === false)
+      throw new Error(data.error || "No se pudo actualizar inventario");
+    return data;
+  },
+};
+
+/* ======================= COMPONENTE ======================= */
 function GestionTrabajos({ session }) {
   const [trabajos, setTrabajos] = useState([]);
+  const [inventario, setInventario] = useState([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
 
@@ -65,30 +83,55 @@ function GestionTrabajos({ session }) {
     observacionesIniciales: "",
   });
 
-  const [estadoSeleccionado, setEstadoSeleccionado] = useState("");
+  const [estadoSeleccionado, setEstadoSeleccionado] = useState("Pendiente");
+
+  const [repSeleccionado, setRepSeleccionado] = useState("");
+  const [cantidadRep, setCantidadRep] = useState(1);
 
   const ESTADOS = ["Pendiente", "En proceso", "Finalizada", "Cancelada"];
 
-  /* === CARGAR TRABAJOS AL INICIO === */
+  /* === CARGAR TRABAJOS E INVENTARIO AL INICIO === */
   useEffect(() => {
     (async () => {
       try {
-        const arr = await apiTrabajos.getAll();
-        const lista = Array.isArray(arr) ? arr : arr.trabajos || [];
-        setTrabajos(lista);
+        const arrTrabajos = await apiTrabajos.getAll();
+        const trabajosLista = Array.isArray(arrTrabajos)
+          ? arrTrabajos
+          : arrTrabajos.trabajos || [];
+
+        // FILTRAR SEGÚN USUARIO
+        let trabajosFiltrados = trabajosLista;
+        if (session.rol !== "admin") {
+          const resCitas = await fetch("/api/citas");
+          if (!resCitas.ok) throw new Error("No se pudieron cargar las citas");
+          const citasArr = await resCitas.json();
+          const citasLista = Array.isArray(citasArr) ? citasArr : citasArr.citas || [];
+          const nombreUsuario = session?.nombre?.trim() || "";
+
+          trabajosFiltrados = trabajosLista.filter((trabajo) => {
+            const cita = citasLista.find((c) => String(c.id) === String(trabajo.idCita));
+            if (!cita) return false;
+            return cita.mecanico?.trim() === nombreUsuario;
+          });
+        }
+
+        setTrabajos(trabajosFiltrados);
+
+        // CARGAR INVENTARIO
+        const inv = await apiInventario.getAll();
+        setInventario(inv);
       } catch (e) {
         console.error(e);
-        alert("No se pudieron cargar las ordenes de trabajo del servidor.");
+        alert("Error al cargar datos.");
       }
     })();
   }, []);
 
-  /* ==================== CREAR ORDEN DESDE CITA (CU-0028) ==================== */
+  /* ==================== CREAR ORDEN DESDE CITA ==================== */
   const crearOrdenDesdeCita = async () => {
     const { codigoCita, observacionesIniciales } = newOT;
-
     if (!codigoCita.trim()) {
-      alert("Debe ingresar el codigo de la cita.");
+      alert("Debe ingresar el código de la cita.");
       return;
     }
 
@@ -97,12 +140,9 @@ function GestionTrabajos({ session }) {
         codigoCita: codigoCita.trim(),
         observacionesIniciales: observacionesIniciales.trim(),
       });
-
-      if (Array.isArray(resultado)) {
-        setTrabajos(resultado);
-      } else if (resultado && resultado.codigoOrden) {
+      if (Array.isArray(resultado)) setTrabajos(resultado);
+      else if (resultado && resultado.codigoOrden)
         setTrabajos((prev) => [...prev, resultado]);
-      }
 
       setNewOT({ codigoCita: "", observacionesIniciales: "" });
       setShowModalNuevaOT(false);
@@ -113,23 +153,40 @@ function GestionTrabajos({ session }) {
     }
   };
 
-  /* ==================== GUARDAR DIAGNOSTICO / SERVICIOS (CU-0031) ==================== */
-  const guardarDetalleTrabajo = async () => {
-    if (!selected) return;
-
-    if (
-      selected.estado === "Finalizada" &&
-      (!selected.diagnostico || !selected.diagnostico.trim())
-    ) {
-      if (
-        !window.confirm(
-          "La orden esta Finalizada pero no tiene diagnostico. Desea guardar igual?"
-        )
-      ) {
-        return;
-      }
+  /* ==================== GUARDAR DETALLE / DIAGNOSTICO / REPUESTOS ==================== */
+  const agregarRepuestoTrabajo = () => {
+    if (!repSeleccionado) return;
+    const rep = inventario.find((r) => r.codigo === repSeleccionado);
+    if (!rep) return;
+    if (cantidadRep > rep.cantidad) {
+      alert("No hay suficiente stock de este repuesto.");
+      return;
     }
 
+    setSelected((prev) => ({
+      ...prev,
+      repuestosUtilizados: [
+        ...(prev.repuestosUtilizados || []),
+        { codigo: rep.codigo, nombre: rep.nombre, cantidad: cantidadRep },
+      ],
+    }));
+
+    setInventario((prev) =>
+      prev.map((r) =>
+        r.codigo === rep.codigo ? { ...r, cantidad: r.cantidad - cantidadRep } : r
+      )
+    );
+
+    apiInventario
+      .updateCantidad(rep.codigo, rep.cantidad - cantidadRep)
+      .catch((e) => alert("Error al actualizar inventario: " + e.message));
+
+    setRepSeleccionado("");
+    setCantidadRep(1);
+  };
+
+  const guardarDetalleTrabajo = async () => {
+    if (!selected) return;
     try {
       const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
       setTrabajos((prev) =>
@@ -137,7 +194,6 @@ function GestionTrabajos({ session }) {
           t.codigoOrden === actualizado.codigoOrden ? actualizado : t
         )
       );
-      setSelected(actualizado);
       setShowModalDetalle(false);
       alert("Orden actualizada correctamente.");
     } catch (e) {
@@ -146,62 +202,19 @@ function GestionTrabajos({ session }) {
     }
   };
 
-  /* ==================== CAMBIAR ESTADO OT (CU-0032) ==================== */
+  /* ==================== CAMBIO DE ESTADO ==================== */
   const abrirModalEstado = (trabajo) => {
     setSelected(trabajo);
     setEstadoSeleccionado(trabajo.estado || "Pendiente");
     setShowModalEstado(true);
   };
 
-  const validarTransicionEstado = (estadoActual, nuevoEstado) => {
-    if (
-      (estadoActual === "Finalizada" || estadoActual === "Cancelada") &&
-      nuevoEstado === "Pendiente"
-    ) {
-      alert("Cambio de estado no permitido segun las politicas del taller.");
-      return false;
-    }
-    return true;
-  };
-
   const guardarNuevoEstado = async () => {
     if (!selected) return;
-
-    const estadoActual = selected.estado || "Pendiente";
-    const nuevoEstado = estadoSeleccionado;
-
-    if (!validarTransicionEstado(estadoActual, nuevoEstado)) return;
-
-    if (nuevoEstado === "Cancelada" && session?.rol !== "admin") {
-      try {
-        const reporte = {
-          usuario: session?.nombre || "Desconocido",
-          tipo: "Trabajos",
-          descripcion: `Usuario normal solicito cancelar OT ${selected.codigoOrden}`,
-          fecha: new Date().toISOString(),
-        };
-
-        const res = await fetch("/api/reportes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(reporte),
-        });
-
-        if (!res.ok) throw new Error("Error al enviar reporte");
-        alert("Solicitud enviada al administrador para cancelar la orden.");
-        setShowModalEstado(false);
-        return;
-      } catch (err) {
-        console.error(err);
-        alert("No se pudo enviar el reporte.");
-        return;
-      }
-    }
-
     try {
       const actualizado = await apiTrabajos.updateEstado(
         selected.codigoOrden,
-        nuevoEstado
+        estadoSeleccionado
       );
       setTrabajos((prev) =>
         prev.map((t) =>
@@ -217,7 +230,7 @@ function GestionTrabajos({ session }) {
     }
   };
 
-  /* ==================== FILTRO BUSQUEDA (CU-0029) ==================== */
+  /* ==================== FILTRO BUSQUEDA ==================== */
   const trabajosFiltrados = trabajos.filter((t) => {
     const s = search.toLowerCase();
     return (
@@ -230,25 +243,20 @@ function GestionTrabajos({ session }) {
 
   return (
     <div className="gestion-trabajos">
-      <h2>Gestion de Trabajos</h2>
+      <h2>Gestión de Trabajos</h2>
 
-      {/* BUSQUEDA + NUEVA ORDEN - CLASES CORREGIDAS */}
       <div className="search-add-container">
         <input
           className="search-bar"
-          placeholder="Buscar orden por codigo, placa o cliente..."
+          placeholder="Buscar orden por código, placa o cliente..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button
-          className="btn-add"
-          onClick={() => setShowModalNuevaOT(true)}
-        >
+        <button className="btn-add" onClick={() => setShowModalNuevaOT(true)}>
           Nueva Orden desde Cita
         </button>
       </div>
 
-      {/* LISTA DE TRABAJOS */}
       <ul className="trabajo-list">
         {trabajosFiltrados.map((t) => (
           <li
@@ -267,47 +275,34 @@ function GestionTrabajos({ session }) {
         ))}
       </ul>
 
-      {/* MODAL NUEVA ORDEN DESDE CITA (CU-0028) */}
+      {/* MODAL NUEVA OT */}
       {showModalNuevaOT && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowModalNuevaOT(false)}
-        >
-          <div className="modal modal-agregar" onClick={(e) => e.stopPropagation()}>
-            <h3>Generar Orden de Trabajo desde Cita</h3>
+        <div className="modal-overlay" onClick={() => setShowModalNuevaOT(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Generar Orden desde Cita</h3>
             <label>
-              Codigo de Cita:
+              Código de Cita:
               <input
-                placeholder="Codigo de cita pendiente"
                 value={newOT.codigoCita}
                 onChange={(e) =>
                   setNewOT({ ...newOT, codigoCita: e.target.value })
                 }
               />
             </label>
-
             <label>
-              Observaciones iniciales (opcional):
+              Observaciones iniciales:
               <textarea
-                placeholder="Diagnostico inicial, observaciones..."
                 value={newOT.observacionesIniciales}
                 onChange={(e) =>
-                  setNewOT({
-                    ...newOT,
-                    observacionesIniciales: e.target.value,
-                  })
+                  setNewOT({ ...newOT, observacionesIniciales: e.target.value })
                 }
               />
             </label>
-
             <div className="btn-group">
               <button className="btn-add" onClick={crearOrdenDesdeCita}>
                 Crear Orden
               </button>
-              <button
-                className="btn-close"
-                onClick={() => setShowModalNuevaOT(false)}
-              >
+              <button className="btn-close" onClick={() => setShowModalNuevaOT(false)}>
                 Cancelar
               </button>
             </div>
@@ -315,95 +310,74 @@ function GestionTrabajos({ session }) {
         </div>
       )}
 
-      {/* MODAL DETALLE / DIAGNOSTICO / SERVICIOS (CU-0031) */}
+      {/* MODAL DETALLE */}
       {showModalDetalle && selected && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowModalDetalle(false)}
-        >
-          <div className="modal modal-lista" onClick={(e) => e.stopPropagation()}>
-            <h3>Orden de Trabajo #{selected.codigoOrden}</h3>
-
+        <div className="modal-overlay" onClick={() => setShowModalDetalle(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Orden #{selected.codigoOrden}</h3>
             <p>
               <b>Cliente:</b> {selected.clienteNombre} ({selected.clienteCedula})
             </p>
             <p>
-              <b>Vehiculo:</b> {selected.vehiculo || ""} / Placa: {selected.placa}
+              <b>Placa:</b> {selected.placa}
             </p>
-            <p>
-              <b>Servicio:</b> {selected.tipoServicio || "N/A"}
-            </p>
-            <p>
-              <b>Estado actual:</b> {selected.estado || "Pendiente"}
-            </p>
-
             <label>
-              <b>Diagnostico:</b>
+              Diagnóstico:
               <textarea
                 value={selected.diagnostico || ""}
                 onChange={(e) =>
                   setSelected({ ...selected, diagnostico: e.target.value })
                 }
-                placeholder="Escriba el diagnostico del vehiculo..."
               />
             </label>
-
             <label>
-              <b>Servicios realizados / por realizar:</b>
+              Servicios realizados:
               <textarea
                 value={selected.serviciosRealizados || ""}
                 onChange={(e) =>
-                  setSelected({
-                    ...selected,
-                    serviciosRealizados: e.target.value,
-                  })
+                  setSelected({ ...selected, serviciosRealizados: e.target.value })
                 }
-                placeholder="Detalle los servicios realizados y pendientes..."
               />
             </label>
-
             <label>
-              <b>Repuestos utilizados:</b>
-              <textarea
-                value={selected.repuestosUtilizados || ""}
-                onChange={(e) =>
-                  setSelected({
-                    ...selected,
-                    repuestosUtilizados: e.target.value,
-                  })
-                }
-                placeholder="Lista de repuestos utilizados y cantidades..."
+              Repuestos utilizados:
+              <ul>
+                {(selected.repuestosUtilizados || []).map((r, idx) => (
+                  <li key={idx}>
+                    {r.nombre} ({r.cantidad})
+                  </li>
+                ))}
+              </ul>
+              <input
+                list="repuestos-list"
+                value={repSeleccionado}
+                onChange={(e) => setRepSeleccionado(e.target.value)}
+                placeholder="Buscar repuesto..."
               />
-            </label>
-
-            <label>
-              <b>Notas internas:</b>
-              <textarea
-                value={selected.notasInternas || ""}
-                onChange={(e) =>
-                  setSelected({
-                    ...selected,
-                    notasInternas: e.target.value,
-                  })
-                }
-                placeholder="Notas internas de taller..."
+              <datalist id="repuestos-list">
+                {inventario.map((r) => (
+                  <option key={r.codigo} value={r.codigo}>
+                    {r.nombre} (Disponible: {r.cantidad})
+                  </option>
+                ))}
+              </datalist>
+              <input
+                type="number"
+                min="1"
+                value={cantidadRep}
+                onChange={(e) => setCantidadRep(Number(e.target.value))}
               />
+              <button onClick={agregarRepuestoTrabajo}>Agregar Repuesto</button>
             </label>
 
             <div className="btn-group">
               <button className="btn-add" onClick={guardarDetalleTrabajo}>
-                Guardar cambios
+                Guardar Cambios
               </button>
-              <button
-                className="btn-edit"
-                onClick={() => abrirModalEstado(selected)}
-              >
-                Cambiar estado
+              <button className="btn-edit" onClick={() => abrirModalEstado(selected)}>
+                Cambiar Estado
               </button>
-              <button
-                className="btn-close"
-                onClick={() => setShowModalDetalle(false)}
-              >
+              <button className="btn-close" onClick={() => setShowModalDetalle(false)}>
                 Cerrar
               </button>
             </div>
@@ -411,49 +385,26 @@ function GestionTrabajos({ session }) {
         </div>
       )}
 
-      {/* MODAL CAMBIO DE ESTADO (CU-0032) */}
+      {/* MODAL ESTADO */}
       {showModalEstado && selected && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowModalEstado(false)}
-        >
-          <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={() => setShowModalEstado(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Cambiar estado OT #{selected.codigoOrden}</h3>
-
-            <p>
-              <b>Estado actual:</b> {selected.estado || "Pendiente"}
-            </p>
-
-            <label>
-              <b>Nuevo estado:</b>
-              <select
-                value={estadoSeleccionado}
-                onChange={(e) => setEstadoSeleccionado(e.target.value)}
-              >
-                {ESTADOS.map((est) => (
-                  <option key={est} value={est}>
-                    {est}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            {estadoSeleccionado === "Cancelada" && session?.rol !== "admin" && (
-              <p style={{ marginTop: 10, color: "red", fontSize: "0.9rem" }}>
-                Como usuario normal, al solicitar Cancelada se enviara un reporte
-                al administrador para que revise la orden (no se cambia de
-                inmediato).
-              </p>
-            )}
-
+            <select
+              value={estadoSeleccionado}
+              onChange={(e) => setEstadoSeleccionado(e.target.value)}
+            >
+              {ESTADOS.map((est) => (
+                <option key={est} value={est}>
+                  {est}
+                </option>
+              ))}
+            </select>
             <div className="btn-group">
               <button className="btn-add" onClick={guardarNuevoEstado}>
-                Guardar estado
+                Guardar Estado
               </button>
-              <button
-                className="btn-close"
-                onClick={() => setShowModalEstado(false)}
-              >
+              <button className="btn-close" onClick={() => setShowModalEstado(false)}>
                 Cancelar
               </button>
             </div>
