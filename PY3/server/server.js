@@ -649,47 +649,54 @@ function writeTrabajos(list) {
   fs.writeFileSync(DATA_FILE_TRABAJOS, JSON.stringify(list, null, 2), "utf8");
 }
 
-/* === GET: listar ordenes de trabajo === */
-app.get("/api/trabajos", (_req, res) => {
+/* === GET: listar ordenes de trabajo (filtrado por mecánico si aplica) === */
+app.get("/api/trabajos", (req, res) => {
+  const usuario = req.query.usuario || null; 
   const trabajos = readTrabajos();
-  // El front soporta tanto [] como { trabajos: [] }, le mandamos objeto
+
+  if (usuario) {
+    const citas = readCitas();
+
+    const filtrados = trabajos.filter((t) => {
+      const cita = citas.find((c) => c.id === t.idCita);
+      return cita && cita.mecanico === usuario;
+    });
+
+    return res.json({ ok: true, trabajos: filtrados });
+  }
+
   return res.json({ ok: true, trabajos });
 });
 
 /* === POST: crear OT desde una cita (CU-0028) === */
 app.post("/api/trabajos", (req, res) => {
-  const { codigoCita, observacionesIniciales } = req.body || {};
+  const { codigoCita, servicio = "N/A", repuestosUtilizados = [], observacionesIniciales } = req.body || {};
 
-  if (!codigoCita) {
-    return res
-      .status(400)
-      .json({ ok: false, error: "Debe enviar el codigo de la cita" });
-  }
+  if (!codigoCita) return res.status(400).json({ ok: false, error: "Debe enviar el codigo de la cita" });
 
   const citas = readCitas();
   const citaId = Number(codigoCita);
   const cita = citas.find((c) => c.id === citaId);
+  if (!cita) return res.status(404).json({ ok: false, error: "Cita no encontrada" });
 
-  if (!cita) {
-    return res
-      .status(404)
-      .json({ ok: false, error: "Cita no encontrada para ese codigo" });
-  }
-
-  // Evitar duplicar OT para la misma cita
   const trabajos = readTrabajos();
-  const yaExiste = trabajos.find((t) => t.idCita === cita.id);
-  if (yaExiste) {
-    return res.status(409).json({
-      ok: false,
-      error: `Ya existe una orden de trabajo para la cita ${codigoCita}`,
-    });
+  if (trabajos.find((t) => t.idCita === cita.id))
+    return res.status(409).json({ ok: false, error: `Ya existe una orden de trabajo para la cita ${codigoCita}` });
+
+  // ✅ restar inventario
+  const inventario = readInventario();
+  for (const r of repuestosUtilizados) {
+    const idx = inventario.findIndex((i) => i.codigo === r.codigo);
+    if (idx === -1 || inventario[idx].cantidad < r.cantidad) {
+      return res.status(400).json({ ok: false, error: `No hay suficiente stock de ${r.nombre}` });
+    }
+    inventario[idx].cantidad -= r.cantidad;
   }
+  writeInventario(inventario);
 
   const codigoOrden = `OT-${Date.now()}`;
-
   const nuevoTrabajo = {
-    codigoOrden,                 // usado por el front
+    codigoOrden,
     idCita: cita.id,
     clienteNombre: cita.clienteNombre,
     clienteCedula: cita.clienteCedula,
@@ -698,28 +705,28 @@ app.post("/api/trabajos", (req, res) => {
     horaCita: cita.hora,
     descripcionCita: cita.descripcion || "",
     observacionesIniciales: observacionesIniciales || "",
-    tipoServicio: "",            // lo podés rellenar luego
+    tipoServicio: "",
+    servicio,
     estado: "Pendiente",
     diagnostico: "",
     serviciosRealizados: "",
-    repuestosUtilizados: "",
-    notasInternas: "",
+    repuestosUtilizados,
   };
 
   trabajos.push(nuevoTrabajo);
   writeTrabajos(trabajos);
 
-  return res.json({
-    ok: true,
-    trabajo: nuevoTrabajo,
-    trabajos,
-  });
+  return res.json({ ok: true, trabajo: nuevoTrabajo });
 });
+
 
 /* === PUT: actualizar detalle de la OT (CU-0031) === */
 app.put("/api/trabajos/:codigoOrden", (req, res) => {
   const codigoOrden = String(req.params.codigoOrden || "");
   const body = req.body || {};
+
+  // ❌ Eliminar del body cualquier intento de enviar notas internas
+  delete body.notasInternas;
 
   const trabajos = readTrabajos();
   const idx = trabajos.findIndex((t) => String(t.codigoOrden) === codigoOrden);
@@ -730,7 +737,6 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
       .json({ ok: false, error: "Orden de trabajo no encontrada" });
   }
 
-  // No permitimos cambiar codigoOrden ni idCita
   const actualizado = {
     ...trabajos[idx],
     ...body,
