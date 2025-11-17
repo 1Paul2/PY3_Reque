@@ -138,5 +138,12 @@
     "marca": "Kawasaki",
     "modelo": "Ninja 400",
     "anoVehiculo": 2022
+  },
+  {
+    "id": 1763332839366,
+    "tipo": "Automóvil",
+    "marca": "Toyota",
+    "modelo": "Yaris",
+    "anoVehiculo": "2007"
   }
 ]
