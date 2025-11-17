@@ -16,7 +16,7 @@
     "password": "Julian0216",
     "mustChangePassword": false,
     "nombre": "Julian",
-    "rol": "usuario",
+    "rol": "admin",
     "cedula": "119280911",
     "correo": "j@gmail.com",
     "telefono": "63861313",
@@ -44,6 +44,18 @@
     "cedula": "74546123123614",
     "correo": "dei@gmail.com",
     "telefono": "4454561321",
+    "fechaNac": "2006-06-05",
+    "idioma": "es"
+  },
+  {
+    "code": "G2511-567",
+    "password": "G2511-567",
+    "mustChangePassword": true,
+    "nombre": "Gabriel",
+    "rol": "usuario",
+    "cedula": "745674567",
+    "correo": "g@gmail.com",
+    "telefono": "78967896",
     "fechaNac": "2006-06-05",
     "idioma": "es"
   }
