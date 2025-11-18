@@ -1899,7 +1899,7 @@ label {
   width: 100%;
 }
 
-/* Barra de búsqueda - tamaño normal */
+/* Barra de búsqueda - tamaño normal (GRIS) */
 .gestion-trabajos .search-add-container .search-bar {
   flex: 1;
   padding: 8px 10px;
@@ -1913,9 +1913,9 @@ label {
   box-sizing: border-box;
 }
 
-/* Botón Agregar Trabajo - más grueso */
+/* Botón Agregar Trabajo - más grueso (MORADO) */
 .gestion-trabajos .search-add-container .btn-add {
-  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  background: #5e3a6b; /* 🔽 MORADO OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
@@ -1929,11 +1929,11 @@ label {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  min-width: 130px; /* 🔽 ANCHO MÍNIMO REDUCIDO */
+  min-width: 180px; /* 🔽 ANCHO PARA EL TEXTO MÁS LARGO */
 }
 
 .gestion-trabajos .search-add-container .btn-add:hover {
-  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  background: #7a4f8a; /* 🔽 MORADO MÁS CLARO */
   transform: translateY(-1px);
 }
 
@@ -1945,7 +1945,7 @@ label {
   border-radius: 6px;
   max-height: 400px;
   overflow-y: auto;
-  background: none;
+  background: none; /* 🔽 GRIS TRANSPARENTE */
   width: 100%;
   margin-top: 20px;
 }
@@ -1965,48 +1965,54 @@ label {
 }
 
 .gestion-trabajos .trabajo-list li:hover {
-  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  background: #5e3a6b; /* 🔽 MORADO OSCURO */
   color: #fff;
 }
 
 .gestion-trabajos .trabajo-list li.selected {
-  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  background: #7a4f8a; /* 🔽 MORADO MÁS CLARO */
 }
 
-/* ======================= Inputs de modales ======================= */
-.gestion-trabajos .modal-editar input,
-.gestion-trabajos .modal-agregar input,
-.gestion-trabajos .modal-lista input,
+.gestion-trabajos .trabajo-list .no-items {
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  font-style: italic;
+  background: #5e3a6b; /* 🔽 MORADO OSCURO */
+  border-radius: 5px;
+  margin: 10px;
+}
+
+/* ======================= Inputs de modales (GRIS con bordes MORADOS) ======================= */
+.gestion-trabajos .modal input,
 .gestion-trabajos .modal select,
 .gestion-trabajos .modal textarea {
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
-  border: 1px solid #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  border: 1px solid #5e3a6b; /* 🔽 BORDE MORADO OSCURO */
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #5e3a6b; /* 🔽 CAMBIO: TEXTO DORADO OSCURO → MORADO OSCURO */
+  background: rgba(255, 255, 255, 0.9); /* 🔽 FONDO GRIS CLARO */
+  color: #5e3a6b; /* 🔽 TEXTO MORADO OSCURO */
   font-size: 15px;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.gestion-trabajos .modal-editar input:focus,
-.gestion-trabajos .modal-agregar input:focus,
-.gestion-trabajos .modal-lista input:focus,
+.gestion-trabajos .modal input:focus,
 .gestion-trabajos .modal select:focus,
 .gestion-trabajos .modal textarea:focus {
-  border-color: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
-  box-shadow: 0 0 5px rgba(122, 79, 138, 0.6); /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  border-color: #7a4f8a; /* 🔽 MORADO MÁS CLARO */
+  box-shadow: 0 0 5px rgba(122, 79, 138, 0.6); /* 🔽 SOMBRA MORADA */
   outline: none;
 }
 
-/* ======================= Botones de modales (SOLO DENTRO DE MODALS) ======================= */
+/* ======================= Botones de modales (SOLO DENTRO DE MODALS - MORADO) ======================= */
 .gestion-trabajos .modal .btn-add,
 .gestion-trabajos .modal .btn-close,
 .gestion-trabajos .modal .btn-edit,
 .gestion-trabajos .modal .btn-delete {
-  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
+  background: #5e3a6b; /* 🔽 MORADO OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
@@ -2026,7 +2032,7 @@ label {
 .gestion-trabajos .modal .btn-close:hover,
 .gestion-trabajos .modal .btn-edit:hover,
 .gestion-trabajos .modal .btn-delete:hover {
-  background: #7a4f8a; /* 🔽 CAMBIO: DORADO MÁS CLARO → MORADO MÁS CLARO */
+  background: #7a4f8a; /* 🔽 MORADO MÁS CLARO */
 }
 
 /* 🔽 GRUPO DE BOTONES CORREGIDO - SOLO EN MODALS */
@@ -2043,14 +2049,14 @@ label {
   min-width: 0; /* 🔽 PERMITE QUE SE COMPRIMAN UNIFORMEMENTE */
 }
 
-/* ======================= Modales ======================= */
+/* ======================= Modales (GRIS como en Citas) ======================= */
 .gestion-trabajos .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.3);
+  background: rgba(30, 30, 30, 0.3); /* 🔽 GRIS OSCURO TRANSPARENTE */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2058,7 +2064,7 @@ label {
 }
 
 .gestion-trabajos .modal {
-  background: rgba(80, 75, 75, 0.7);
+  background: rgba(80, 75, 75, 0.7); /* 🔽 GRIS COMO EN CITAS */
   padding: 20px;
   border-radius: 10px;
   width: 90%;
@@ -2066,7 +2072,7 @@ label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 0 4px 12px rgba(94, 58, 107, 0.25); /* 🔽 CAMBIO: SOMBRA DORADA → SOMBRA MORADA */
+  box-shadow: 0 4px 12px rgba(94, 58, 107, 0.25); /* 🔽 SOMBRA MORADA */
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
@@ -2087,6 +2093,14 @@ label {
   color: #ffffff; /* 🔽 TEXTO BLANCO */
 }
 
+.gestion-trabajos .modal label {
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  width: 100%;
+}
+
 /* ======================= Animación ======================= */
 @keyframes aparecer {
   from {
@@ -2099,15 +2113,305 @@ label {
   }
 }
 
-/* Mensaje cuando no hay trabajos */
-.gestion-trabajos .no-trabajos {
-  text-align: center;
+/* ======================= ESTILOS ESPECÍFICOS PARA GESTIÓN DE TRABAJOS ======================= */
+
+/* Modal de detalle más grande (GRIS) - SIN SCROLLBAR */
+.gestion-trabajos .modal-detalle-trabajo {
+  max-width: 650px; /* 🔽 MÁS PEQUEÑO */
+  max-height: 90vh; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(80, 75, 75, 0.9); /* 🔽 GRIS MÁS OPACO */
+  overflow: hidden; /* 🔽 EVITA SCROLLBAR EN EL MODAL PRINCIPAL */
+  padding: 15px; /* 🔽 MENOS PADDING */
+}
+
+/* Modal de nota (GRIS) */
+.gestion-trabajos .modal-nota {
+  max-width: 450px; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(88, 47, 47, 0.9); /* 🔽 GRIS MÁS OPACO */
+}
+
+/* Secciones dentro del modal de detalle (MORADO TRANSPARENTE) */
+.gestion-trabajos .info-cliente {
+  padding: 10px; /* 🔽 MENOS PADDING */
+  border-radius: 6px;
+  margin-bottom: 12px; /* 🔽 MENOS MARGEN */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gestion-trabajos .info-cliente p {
+  margin: 5px 0; /* 🔽 MENOS MARGEN */
+  font-size: 15px; /* 🔽 TEXTO MÁS PEQUEÑO */
+}
+
+.gestion-trabajos .seccion-diagnostico,
+.gestion-trabajos .seccion-servicios,
+.gestion-trabajos .seccion-repuestos {
+  width: 100%;
+  margin-bottom: 12px; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-trabajos .seccion-diagnostico label,
+.gestion-trabajos .seccion-servicios label,
+.gestion-trabajos .seccion-repuestos label {
   color: #ffffff;
-  padding: 20px;
+  font-weight: bold;
+  margin-bottom: 6px; /* 🔽 MENOS MARGEN */
+  display: block;
+  font-size: 14px; /* 🔽 TEXTO MÁS PEQUEÑO */
+}
+
+/* User info en modal nueva OT (MORADO TRANSPARENTE) */
+.gestion-trabajos .user-info {
+  padding: 10px; /* 🔽 MENOS PADDING */
+  border-radius: 6px;
+  margin-bottom: 12px; /* 🔽 MENOS MARGEN */
+  width: 100%;
+}
+
+.gestion-trabajos .user-info p {
+  margin: 4px 0; /* 🔽 MENOS MARGEN */
+  font-size: 13px; /* 🔽 TEXTO MÁS PEQUEÑO */
+}
+
+.gestion-trabajos .info-text,
+.gestion-trabajos .warning-text {
   font-style: italic;
-  background: #5e3a6b; /* 🔽 CAMBIO: DORADO OSCURO → MORADO OSCURO */
-  border-radius: 5px;
-  margin: 10px 0;
+  color: #e0d1e8 !important; /* 🔽 MORADO MUY CLARO */
+  font-size: 12px !important; /* 🔽 MÁS PEQUEÑO */
+  margin-top: 3px !important; /* 🔽 MENOS MARGEN */
+}
+
+/* ESTILOS PARA CONTENEDORES SCROLLABLES (MORADO OSCURO TRANSLÚCIDO) */
+.gestion-trabajos .contenedor-scrollable {
+  max-height: 80px; /* 🔽 MUCHO MÁS PEQUEÑO */
+  overflow-y: auto;
+  border: 1px solid #7a4f8a; /* 🔽 BORDE MORADO CLARO */
+  border-radius: 4px;
+  padding: 6px; /* 🔽 MENOS PADDING */
+  background-color: rgba(94, 58, 107, 0.7); /* 🔽 MORADO OSCURO TRANSLÚCIDO */
+  margin-bottom: 8px; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-trabajos .contenedor-scrollable-nota {
+  max-height: 150px; /* 🔽 MÁS PEQUEÑO */
+  overflow-y: auto;
+  border: 1px solid #7a4f8a; /* 🔽 BORDE MORADO CLARO */
+  border-radius: 4px;
+  padding: 10px; /* 🔽 MENOS PADDING */
+  background-color: rgba(94, 58, 107, 0.7); /* 🔽 MORADO OSCURO TRANSLÚCIDO */
+  margin: 6px 0; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-trabajos .lista-notas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* 🔽 MENOS ESPACIO */
+}
+
+.gestion-trabajos .lista-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* 🔽 MENOS ESPACIO */
+}
+
+/* Estilos para la scrollbar (MORADO CLARO) */
+.gestion-trabajos .contenedor-scrollable::-webkit-scrollbar,
+.gestion-trabajos .contenedor-scrollable-nota::-webkit-scrollbar {
+  width: 5px; /* 🔽 MÁS DELGADO */
+}
+
+.gestion-trabajos .contenedor-scrollable::-webkit-scrollbar-track,
+.gestion-trabajos .contenedor-scrollable-nota::-webkit-scrollbar-track {
+  background: rgba(122, 79, 138, 0.3); /* 🔽 MORADO CLARO TRANSPARENTE */
+  border-radius: 2px;
+}
+
+.gestion-trabajos .contenedor-scrollable::-webkit-scrollbar-thumb,
+.gestion-trabajos .contenedor-scrollable-nota::-webkit-scrollbar-thumb {
+  background: #7a4f8a; /* 🔽 MORADO CLARO */
+  border-radius: 2px;
+}
+
+.gestion-trabajos .contenedor-scrollable::-webkit-scrollbar-thumb:hover,
+.gestion-trabajos .contenedor-scrollable-nota::-webkit-scrollbar-thumb:hover {
+  background: #8a5a9a; /* 🔽 MORADO MÁS CLARO */
+}
+
+/* Estilos para los items (MORADO TRANSLÚCIDO) */
+.gestion-trabajos .item-nota {
+  border: 1px solid rgba(122, 79, 138, 0.5); /* 🔽 BORDE MORADO CLARO TRANSPARENTE */
+  border-radius: 3px;
+  padding: 6px; /* 🔽 MENOS PADDING */
+  background-color: rgba(122, 79, 138, 0.3); /* 🔽 MORADO CLARO TRANSPARENTE */
+  transition: background-color 0.2s;
+}
+
+.gestion-trabajos .item-nota:hover {
+  background-color: rgba(122, 79, 138, 0.5); /* 🔽 MORADO CLARO MÁS OPACO */
+}
+
+.gestion-trabajos .item-lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px; /* 🔽 MENOS PADDING */
+  border: 1px solid rgba(122, 79, 138, 0.5); /* 🔽 BORDE MORADO CLARO TRANSPARENTE */
+  border-radius: 3px;
+  background-color: rgba(122, 79, 138, 0.3); /* 🔽 MORADO CLARO TRANSPARENTE */
+  transition: background-color 0.2s;
+}
+
+.gestion-trabajos .item-lista:hover {
+  background-color: rgba(122, 79, 138, 0.5); /* 🔽 MORADO CLARO MÁS OPACO */
+}
+
+.gestion-trabajos .nota-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-trabajos .nota-fecha {
+  font-size: 0.7em; /* 🔽 MÁS PEQUEÑO */
+  color: #e0d1e8; /* 🔽 MORADO MUY CLARO */
+  font-weight: bold;
+}
+
+.gestion-trabajos .nota-acciones {
+  display: flex;
+  gap: 4px; /* 🔽 MENOS ESPACIO */
+}
+
+.gestion-trabajos .nota-resumen {
+  cursor: pointer;
+  padding: 3px; /* 🔽 MENOS PADDING */
+  border-radius: 2px;
+  transition: background-color 0.2s;
+  color: #ffffff; /* 🔽 TEXTO BLANCO */
+  line-height: 1.2;
+  font-size: 16px; /* 🔽 MÁS PEQUEÑO */
+}
+
+.gestion-trabajos .nota-resumen:hover {
+  background-color: rgba(122, 79, 138, 0.4); /* 🔽 MORADO CLARO */
+}
+
+.gestion-trabajos .btn-ver, 
+.gestion-trabajos .btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 4px; /* 🔽 MENOS PADDING */
+  border-radius: 2px;
+  font-size: 11px; /* 🔽 MÁS PEQUEÑO */
+  transition: background-color 0.2s;
+  color: #e0d1e8; /* 🔽 MORADO MUY CLARO */
+}
+
+.gestion-trabajos .btn-ver:hover {
+  background-color: rgba(122, 79, 138, 0.5);
+  color: #ffffff;
+}
+
+.gestion-trabajos .btn-eliminar:hover {
+  background-color: rgba(255, 107, 107, 0.3);
+  color: #ffffff;
+}
+
+/* BOTONES AGREGAR (MISMO FORMATO QUE LOS OTROS BOTONES) */
+.gestion-trabajos .agregar-nota button {
+  background: #5e3a6b; /* 🔽 MISMO MORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px; /* 🔽 MISMO TAMAÑO */
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 13px; /* 🔽 MISMO TEXTO */
+  height: 58px; /* 🔽 MISMA ALTURA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: 80px; /* 🔽 ANCHO MÍNIMO */
+  margin-top: -10px;
+
+}
+.gestion-trabajos .agregar-item button {
+  background: #5e3a6b; /* 🔽 MISMO MORADO OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px; /* 🔽 MISMO TAMAÑO */
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 13px; /* 🔽 MISMO TEXTO */
+  height: 30px; /* 🔽 MISMA ALTURA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: 80px; /* 🔽 ANCHO MÍNIMO */
+  margin-top: -10px;
+}
+
+.gestion-trabajos .agregar-nota button:hover,
+.gestion-trabajos .agregar-item button:hover {
+  background: #7a4f8a; /* 🔽 MISMO MORADO CLARO */
+}
+
+.gestion-trabajos .agregar-nota button:disabled,
+.gestion-trabajos .agregar-item button:disabled {
+  background: #4a2c55; /* 🔽 MORADO MÁS OSCURO */
+  color: #a08fa8;
+  cursor: not-allowed;
+}
+
+/* Controles para agregar items (COMPACTOS) */
+.gestion-trabajos .agregar-nota, 
+.gestion-trabajos .agregar-item {
+  display: flex;
+  gap: 6px; /* 🔽 MENOS ESPACIO */
+  margin-top: 8px; /* 🔽 MENOS MARGEN */
+  width: 100%;
+  align-items: center;
+}
+
+.gestion-trabajos .agregar-nota textarea {
+  flex: 1;
+  border: 1px solid #5e3a6b; /* 🔽 BORDE MORADO OSCURO */
+  border-radius: 4px;
+  padding: 6px; /* 🔽 MENOS PADDING */
+  font-size: 12px; /* 🔽 MÁS PEQUEÑO */
+  resize: vertical;
+  min-height: 50px; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(255, 255, 255, 0.9); /* 🔽 FONDO GRIS CLARO */
+  color: #5e3a6b; /* 🔽 TEXTO MORADO */
+}
+
+.gestion-trabajos .agregar-item input {
+  flex: 1;
+  border: 1px solid #5e3a6b; /* 🔽 BORDE MORADO OSCURO */
+  border-radius: 4px;
+  padding: 5px 6px; /* 🔽 MENOS PADDING */
+  font-size: 15px; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(255, 255, 255, 0.9); /* 🔽 FONDO GRIS CLARO */
+  color: #5e3a6b; /* 🔽 TEXTO MORADO */
+}
+
+.gestion-trabajos .agregar-item input[type="number"] {
+  width: 60px; /* 🔽 MÁS PEQUEÑO */
+  flex: none;
+}
+
+/* Item info styles (MORADO CLARO) */
+.gestion-trabajos .item-info {
+  color: #e0d1e8; /* 🔽 MORADO MUY CLARO */
+  font-weight: bold;
+  flex: 1;
+  font-size: 15px;
 }
 
 /*============================= Gestion de Cotizaciones =================================*/
@@ -2137,7 +2441,7 @@ label {
   width: 100%;
 }
 
-/* Barra de búsqueda - tamaño normal */
+/* Barra de búsqueda - tamaño normal (GRIS) */
 .gestion-cotizaciones .search-add-container .search-bar {
   flex: 1;
   padding: 8px 10px;
@@ -2151,9 +2455,9 @@ label {
   box-sizing: border-box;
 }
 
-/* Botón Agregar Cotización - más grueso */
+/* Botón Agregar Cotización - más grueso (VERDE) */
 .gestion-cotizaciones .search-add-container .btn-add {
-  background: #11695c; /* 🔽 COLOR VERDE PRINCIPAL */
+  background: #11695c; /* 🔽 VERDE OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
@@ -2183,7 +2487,7 @@ label {
   border-radius: 6px;
   max-height: 400px;
   overflow-y: auto;
-  background: none;
+  background: none; /* 🔽 GRIS TRANSPARENTE */
   width: 100%;
   margin-top: 20px;
 }
@@ -2203,7 +2507,7 @@ label {
 }
 
 .gestion-cotizaciones .cotizacion-list li:hover {
-  background: #11695c; /* 🔽 COLOR VERDE PARA HOVER */
+  background: #11695c; /* 🔽 VERDE OSCURO */
   color: #fff;
 }
 
@@ -2211,27 +2515,23 @@ label {
   background: #148571; /* 🔽 VERDE MÁS CLARO */
 }
 
-/* ======================= Inputs de modales ======================= */
-.gestion-cotizaciones .modal-editar input,
-.gestion-cotizaciones .modal-agregar input,
-.gestion-cotizaciones .modal-lista input,
+/* ======================= Inputs de modales (GRIS con bordes VERDES) ======================= */
+.gestion-cotizaciones .modal input,
 .gestion-cotizaciones .modal select,
 .gestion-cotizaciones .modal textarea {
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
-  border: 1px solid #11695c; /* 🔽 BORDE VERDE */
+  border: 1px solid #11695c; /* 🔽 BORDE VERDE OSCURO */
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #11695c; /* 🔽 TEXTO VERDE */
+  background: rgba(255, 255, 255, 0.9); /* 🔽 FONDO GRIS CLARO */
+  color: #11695c; /* 🔽 TEXTO VERDE OSCURO */
   font-size: 15px;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.gestion-cotizaciones .modal-editar input:focus,
-.gestion-cotizaciones .modal-agregar input:focus,
-.gestion-cotizaciones .modal-lista input:focus,
+.gestion-cotizaciones .modal input:focus,
 .gestion-cotizaciones .modal select:focus,
 .gestion-cotizaciones .modal textarea:focus {
   border-color: #148571; /* 🔽 VERDE MÁS CLARO */
@@ -2239,12 +2539,12 @@ label {
   outline: none;
 }
 
-/* ======================= Botones de modales (SOLO DENTRO DE MODALS) ======================= */
+/* ======================= Botones de modales (SOLO DENTRO DE MODALS - VERDE) ======================= */
 .gestion-cotizaciones .modal .btn-add,
 .gestion-cotizaciones .modal .btn-close,
 .gestion-cotizaciones .modal .btn-edit,
 .gestion-cotizaciones .modal .btn-delete {
-  background: #11695c; /* 🔽 COLOR VERDE */
+  background: #11695c; /* 🔽 VERDE OSCURO */
   color: rgb(241, 227, 214);
   border: none;
   border-radius: 6px;
@@ -2281,14 +2581,14 @@ label {
   min-width: 0; /* 🔽 PERMITE QUE SE COMPRIMAN UNIFORMEMENTE */
 }
 
-/* ======================= Modales ======================= */
+/* ======================= Modales (GRIS como en Trabajos) ======================= */
 .gestion-cotizaciones .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.3);
+  background: rgba(30, 30, 30, 0.3); /* 🔽 GRIS OSCURO TRANSPARENTE */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2296,11 +2596,11 @@ label {
 }
 
 .gestion-cotizaciones .modal {
-  background: rgba(80, 75, 75, 0.7);
+  background: rgba(80, 75, 75, 0.7); /* 🔽 GRIS COMO EN TRABAJOS */
   padding: 20px;
   border-radius: 10px;
   width: 90%;
-  max-width: 500px; /* 🔽 MÁS ANCHO PARA COTIZACIONES */
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -2318,13 +2618,6 @@ label {
   margin-bottom: 10px;
 }
 
-.gestion-cotizaciones .modal h4 {
-  color: #ffffff; /* 🔽 SUBTÍTULO BLANCO */
-  font-size: 16px;
-  margin: 15px 0 8px 0;
-  width: 100%;
-}
-
 .gestion-cotizaciones .modal p {
   margin: 5px 0;
   font-size: 15px;
@@ -2333,18 +2626,11 @@ label {
 }
 
 .gestion-cotizaciones .modal label {
-  color: #ffffff; /* 🔽 ETIQUETAS BLANCAS */
-  font-size: 14px;
+  color: #ffffff;
+  font-weight: bold;
   margin-bottom: 5px;
   display: block;
   width: 100%;
-}
-
-.gestion-cotizaciones .modal hr {
-  width: 100%;
-  border: 0;
-  border-top: 1px solid #11695c; /* 🔽 LÍNEA VERDE */
-  margin: 15px 0;
 }
 
 /* ======================= Animación ======================= */
@@ -2359,42 +2645,297 @@ label {
   }
 }
 
-/* Mensaje cuando no hay cotizaciones */
-.gestion-cotizaciones .no-cotizaciones {
-  text-align: center;
-  color: #ffffff;
-  padding: 20px;
-  font-style: italic;
+/* ======================= ESTILOS ESPECÍFICOS PARA GESTIÓN DE COTIZACIONES ======================= */
+
+/* Modal de detalle más grande (GRIS) - CON SCROLLBAR */
+.gestion-cotizaciones .modal-cotizacion {
+  max-width: 650px; /* 🔽 MÁS PEQUEÑO */
+  max-height: 90vh; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(80, 75, 75, 0.9); /* 🔽 GRIS MÁS OPACO */
+  padding: 15px; /* 🔽 MENOS PADDING */
+  overflow: hidden; /* 🔽 EVITA SCROLLBAR EN EL MODAL PRINCIPAL */
+}
+
+/* 🔽 NUEVO: Contenedor con scroll para el contenido del modal */
+.gestion-cotizaciones .modal-cotizacion .modal-content {
+  max-height: calc(90vh - 30px); /* 🔽 ALTURA MÁXIMA MENOS PADDING */
+  overflow-y: auto;
+  width: 100%;
+  padding-right: 10px; /* 🔽 ESPACIO PARA EL SCROLLBAR */
+}
+
+/* 🔽 NUEVO: Scrollbar personalizado para el modal */
+.gestion-cotizaciones .modal-cotizacion .modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.gestion-cotizaciones .modal-cotizacion .modal-content::-webkit-scrollbar-track {
+  background: rgba(17, 105, 92, 0.1);
+  border-radius: px;
+}
+
+.gestion-cotizaciones .modal-cotizacion .modal-content::-webkit-scrollbar-thumb {
   background: #11695c;
-  border-radius: 5px;
-  margin: 10px 0;
+  border-radius: 4px;
 }
 
-/* Estilos específicos para los grids de repuestos y mano de obra */
-.gestion-cotizaciones .modal .item-grid {
+.gestion-cotizaciones .modal-cotizacion .modal-content::-webkit-scrollbar-thumb:hover {
+  background: #148571;
+}
+
+/* Secciones dentro del modal de detalle (VERDE TRANSPARENTE) */
+.gestion-cotizaciones .info-cliente {
+  padding: 10px; /* 🔽 MENOS PADDING */
+  border-radius: 6px;
+  margin-bottom: 12px; /* 🔽 MENOS MARGEN */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gestion-cotizaciones .info-cliente p {
+  margin: 5px 0; /* 🔽 MENOS MARGEN */
+  font-size: 15px; /* 🔽 TEXTO MÁS PEQUEÑO */
+}
+
+.gestion-cotizaciones .seccion-repuestos,
+.gestion-cotizaciones .seccion-mano-obra {
+  width: 100%;
+  margin-bottom: 12px; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-cotizaciones .seccion-repuestos label,
+.gestion-cotizaciones .seccion-mano-obra label {
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 6px; /* 🔽 MENOS MARGEN */
+  display: block;
+  font-size: 14px; /* 🔽 TEXTO MÁS PEQUEÑO */
+}
+
+.gestion-cotizaciones .info-text,
+.gestion-cotizaciones .warning-text {
+  font-style: italic;
+  color: #b8e0d8 !important; /* 🔽 VERDE MUY CLARO */
+  font-size: 12px !important; /* 🔽 MÁS PEQUEÑO */
+  margin-top: 3px !important; /* 🔽 MENOS MARGEN */
+}
+
+/* ESTILOS PARA CONTENEDORES SCROLLABLES (VERDE OSCURO TRANSLÚCIDO) */
+.gestion-cotizaciones .contenedor-scrollable {
+  max-height: 80px; /* 🔽 MUCHO MÁS PEQUEÑO */
+  overflow-y: auto;
+  border: 1px solid #148571; /* 🔽 BORDE VERDE CLARO */
+  border-radius: 4px;
+  padding: 6px; /* 🔽 MENOS PADDING */
+  background-color: rgba(17, 105, 92, 0.7); /* 🔽 VERDE OSCURO TRANSLÚCIDO */
+  margin-bottom: 8px; /* 🔽 MENOS MARGEN */
+}
+
+.gestion-cotizaciones .lista-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* 🔽 MENOS ESPACIO */
+}
+
+/* Estilos para la scrollbar (VERDE CLARO) */
+.gestion-cotizaciones .contenedor-scrollable::-webkit-scrollbar {
+  width: 5px; /* 🔽 MÁS DELGADO */
+}
+
+.gestion-cotizaciones .contenedor-scrollable::-webkit-scrollbar-track {
+  background: rgba(20, 133, 113, 0.3); /* 🔽 VERDE CLARO TRANSPARENTE */
+  border-radius: 2px;
+}
+
+.gestion-cotizaciones .contenedor-scrollable::-webkit-scrollbar-thumb {
+  background: #148571; /* 🔽 VERDE CLARO */
+  border-radius: 2px;
+}
+
+.gestion-cotizaciones .contenedor-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #169980; /* 🔽 VERDE MÁS CLARO */
+}
+
+/* Estilos para los items (VERDE TRANSLÚCIDO) */
+.gestion-cotizaciones .item-lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px; /* 🔽 MENOS PADDING */
+  border: 1px solid rgba(20, 133, 113, 0.5); /* 🔽 BORDE VERDE CLARO TRANSPARENTE */
+  border-radius: 3px;
+  background-color: rgba(20, 133, 113, 0.3); /* 🔽 VERDE CLARO TRANSPARENTE */
+  transition: background-color 0.2s;
+}
+
+.gestion-cotizaciones .item-lista:hover {
+  background-color: rgba(20, 133, 113, 0.5); /* 🔽 VERDE CLARO MÁS OPACO */
+}
+
+.gestion-cotizaciones .btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 4px; /* 🔽 MENOS PADDING */
+  border-radius: 2px;
+  font-size: 11px; /* 🔽 MÁS PEQUEÑO */
+  transition: background-color 0.2s;
+  color: #b8e0d8; /* 🔽 VERDE MUY CLARO */
+}
+
+.gestion-cotizaciones .btn-eliminar:hover {
+  background-color: rgba(255, 107, 107, 0.3);
+  color: #ffffff;
+}
+
+/* BOTONES AGREGAR (MISMO FORMATO QUE LOS OTROS BOTONES) */
+.gestion-cotizaciones .agregar-item button {
+  background: #11695c; /* 🔽 MISMO VERDE OSCURO */
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px; /* 🔽 MISMO TAMAÑO */
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 13px; /* 🔽 MISMO TEXTO */
+  height: 30px; /* 🔽 MISMA ALTURA */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: 80px; /* 🔽 ANCHO MÍNIMO */
+  margin-top: -10px;
+}
+
+.gestion-cotizaciones .agregar-item button:hover {
+  background: #148571; /* 🔽 MISMO VERDE CLARO */
+}
+
+.gestion-cotizaciones .agregar-item button:disabled {
+  background: #0d5248; /* 🔽 VERDE MÁS OSCURO */
+  color: #8fb3ac;
+  cursor: not-allowed;
+}
+
+/* Controles para agregar items (COMPACTOS) */
+.gestion-cotizaciones .agregar-item {
+  display: flex;
+  gap: 6px; /* 🔽 MENOS ESPACIO */
+  margin-top: 8px; /* 🔽 MENOS MARGEN */
+  width: 100%;
+  align-items: center;
+}
+
+.gestion-cotizaciones .agregar-item input {
+  flex: 1;
+  border: 1px solid #11695c; /* 🔽 BORDE VERDE OSCURO */
+  border-radius: 4px;
+  padding: 5px 6px; /* 🔽 MENOS PADDING */
+  font-size: 15px; /* 🔽 MÁS PEQUEÑO */
+  background: rgba(255, 255, 255, 0.9); /* 🔽 FONDO GRIS CLARO */
+  color: #11695c; /* 🔽 TEXTO VERDE */
+}
+
+.gestion-cotizaciones .agregar-item input[type="number"] {
+  width: 60px; /* 🔽 MÁS PEQUEÑO */
+  flex: none;
+}
+
+/* Item info styles (VERDE CLARO) */
+.gestion-cotizaciones .item-info {
+  color: #b8e0d8; /* 🔽 VERDE MUY CLARO */
+  font-weight: bold;
+  flex: 1;
+  font-size: 15px;
+}
+
+/* Form grid para cotizaciones */
+.gestion-cotizaciones .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr auto;
-  gap: 4px;
-  margin-bottom: 4px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
   width: 100%;
 }
 
-.gestion-cotizaciones .modal .mano-obra-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+.gestion-cotizaciones .form-grid label {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
-  margin-bottom: 4px;
-  width: 100%;
+  font-size: 0.9em;
+  font-weight: 500;
 }
 
-.gestion-cotizaciones .modal .item-grid input,
-.gestion-cotizaciones .modal .mano-obra-grid input {
-  margin-bottom: 0;
-  font-size: 14px;
-  padding: 6px 8px;
+.gestion-cotizaciones .form-grid input {
+  padding: 8px;
+  border: 1px solid #11695c; /* 🔽 BORDE VERDE */
+  border-radius: 4px;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.9);
+  color: #11695c;
 }
 
-/* Botón para menú de cotizaciones */
-.btn-menu-cotizacion:hover {
-  background: #11695c !important;
+/* Resumen de totales */
+.gestion-cotizaciones .resumen-totales {
+  background: rgba(17, 105, 92, 0.1); /* 🔽 VERDE TRANSPARENTE */
+  padding: 12px;
+  border-radius: 4px;
+  margin: 16px 0;
+  border: 1px solid #11695c; /* 🔽 BORDE VERDE */
+}
+
+.gestion-cotizaciones .resumen-totales p {
+  margin: 4px 0;
+  font-size: 0.9em;
+}
+
+.gestion-cotizaciones .total-final {
+  font-size: 1.1em !important;
+  font-weight: bold;
+  color: #148571; /* 🔽 VERDE CLARO */
+  border-top: 1px solid #11695c; /* 🔽 BORDE VERDE */
+  padding-top: 8px;
+  margin-top: 8px !important;
+}
+
+/* Sección header */
+.gestion-cotizaciones .seccion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.gestion-cotizaciones .seccion-header h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gestion-cotizaciones .modal-cotizacion {
+    max-width: 95vw;
+    margin: 20px auto;
+  }
+  
+  .gestion-cotizaciones .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .gestion-cotizaciones .agregar-item {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .gestion-cotizaciones .agregar-item input {
+    width: 100%;
+  }
+  
+  .gestion-cotizaciones .btn-group {
+    flex-direction: column;
+  }
+  
+  .gestion-cotizaciones .btn-group button {
+    width: 100%;
+  }
 }

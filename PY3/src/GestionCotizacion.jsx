@@ -1,5 +1,5 @@
 // src/GestionCotizacion.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./App.css";
 
 /* ======================= API COTIZACIONES ======================= */
@@ -60,12 +60,40 @@ const apiCotizaciones = {
   },
 };
 
+/* ======================= API VEHÍCULOS ======================= */
+const apiVehiculos = {
+  getAll: async () => {
+    const res = await fetch("/api/vehiculos");
+    if (!res.ok) throw new Error("No se pudieron cargar los vehículos");
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  },
+};
+
+/* ======================= API INVENTARIO ======================= */
+const apiInventario = {
+  getAll: async () => {
+    const res = await fetch("/api/inventario");
+    if (!res.ok) throw new Error("No se pudo cargar inventario");
+    return res.json();
+  },
+};
+
+/* ======================= API MANO DE OBRA ======================= */
+const apiManoDeObra = {
+  getAll: async () => {
+    const res = await fetch("/api/mano_de_obra");
+    if (!res.ok) throw new Error("No se pudo cargar mano de obra");
+    const data = await res.json();
+    return data.manoObra || [];
+  },
+};
+
 const emptyForm = {
   codigo: "",
   clienteNombre: "",
   clienteCedula: "",
   vehiculoPlaca: "",
-  codigoOrden: "",
   descuentoManoObra: 0,
   repuestos: [],
   manoObra: [],
@@ -76,74 +104,170 @@ const emptyForm = {
 /* ======================= Gestion Cotizacion ======================= */
 function GestionCotizacion({ session }) {
   const [cotizaciones, setCotizaciones] = useState([]);
+  const [vehiculos, setVehiculos] = useState([]);
+  const [inventario, setInventario] = useState([]);
+  const [manoDeObra, setManoDeObra] = useState([]);
   const [search, setSearch] = useState("");
+  const [searchVehiculo, setSearchVehiculo] = useState("");
   const [form, setForm] = useState(emptyForm);
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false); // false = nueva, true = editar
 
+  // Estados para agregar items (igual que en trabajos)
+  const [repSeleccionado, setRepSeleccionado] = useState("");
+  const [cantidadRep, setCantidadRep] = useState(1);
+  const [servicioSeleccionado, setServicioSeleccionado] = useState("");
+
   useEffect(() => {
     (async () => {
       try {
-        const arr = await apiCotizaciones.getAll();
-        setCotizaciones(arr);
+        const [cotizacionesData, vehiculosData, inventarioData, manoDeObraData] = await Promise.all([
+          apiCotizaciones.getAll(),
+          apiVehiculos.getAll(),
+          apiInventario.getAll(),
+          apiManoDeObra.getAll()
+        ]);
+        setCotizaciones(cotizacionesData);
+        setVehiculos(vehiculosData);
+        setInventario(inventarioData);
+        setManoDeObra(manoDeObraData);
       } catch (e) {
         console.error(e);
-        alert("No se pudieron cargar las cotizaciones del servidor.");
+        alert("No se pudieron cargar los datos del servidor.");
       }
     })();
   }, []);
 
   const esSoloLectura = form.esProforma === true;
 
-  /* ===== helpers de arrays ===== */
+  /* ===== CÁLCULO DE TOTALES EN TIEMPO REAL ===== */
+  const calculoTotales = useMemo(() => {
+    // Calcular subtotal de repuestos
+    const subtotalRepuestos = (form.repuestos || []).reduce((total, repuesto) => {
+      return total + (repuesto.cantidad * repuesto.precio);
+    }, 0);
+
+    // Calcular subtotal de mano de obra
+    const subtotalManoObra = (form.manoObra || []).reduce((total, servicio) => {
+      return total + (servicio.horas * servicio.tarifa);
+    }, 0);
+
+    // Calcular descuento (solo aplica a mano de obra)
+    const descuentoPorcentaje = Number(form.descuentoManoObra) || 0;
+    const descuentoMonto = (subtotalManoObra * descuentoPorcentaje) / 100;
+
+    // Calcular subtotal después de descuento
+    const subtotalDespuesDescuento = (subtotalRepuestos + subtotalManoObra) - descuentoMonto;
+
+    // Calcular IVA (19%)
+    const iva = subtotalDespuesDescuento * 0.13;
+
+    // Calcular total final
+    const total = subtotalDespuesDescuento + iva;
+
+    return {
+      subtotalRepuestos,
+      subtotalManoObra,
+      descuentoMonto,
+      iva,
+      total
+    };
+  }, [form.repuestos, form.manoObra, form.descuentoManoObra]);
+
+  /* ===== FORMATO DE MONEDA ===== */
+  const formatoMoneda = (valor) => {
+    return '₡' + new Intl.NumberFormat('es-CO').format(valor);
+  };
+
+  /* ===== BUSCAR Y SELECCIONAR VEHÍCULO ===== */
+  const vehiculosFiltrados = vehiculos.filter(v =>
+    `${v.placa} ${v.marca} ${v.modelo} ${v.clienteNombre} ${v.clienteCedula}`
+      .toLowerCase()
+      .includes(searchVehiculo.toLowerCase())
+  );
+
+  const manejarSeleccionVehiculo = (placaSeleccionada) => {
+    const vehiculoSeleccionado = vehiculos.find(v => v.placa === placaSeleccionada);
+    if (!vehiculoSeleccionado) return;
+
+    setForm({
+      ...form,
+      vehiculoPlaca: vehiculoSeleccionado.placa,
+      clienteCedula: vehiculoSeleccionado.clienteCedula,
+      clienteNombre: vehiculoSeleccionado.clienteNombre
+    });
+  };
+
+  /* ===== FUNCIONES PARA REPUESTOS (IGUAL QUE TRABAJOS) ===== */
   const agregarRepuesto = () => {
+    if (!repSeleccionado) return;
+    
+    const rep = inventario.find((r) => r.codigo === repSeleccionado);
+    if (!rep) {
+      alert("Repuesto no encontrado.");
+      return;
+    }
+
+    if (cantidadRep < 1) {
+      alert("La cantidad debe ser al menos 1.");
+      return;
+    }
+
     setForm((f) => ({
       ...f,
       repuestos: [
         ...(f.repuestos || []),
-        { codigo: "", nombre: "", cantidad: 1, precio: 0 },
+        { 
+          codigo: rep.codigo, 
+          nombre: rep.nombre, 
+          cantidad: cantidadRep,
+          precio: rep.precio
+        },
       ],
     }));
+
+    // Limpiar campos después de agregar
+    setRepSeleccionado("");
+    setCantidadRep(1);
   };
 
-  const actualizarRepuesto = (idx, campo, valor) => {
+  const eliminarRepuesto = (index) => {
     setForm((f) => {
       const rep = [...(f.repuestos || [])];
-      rep[idx] = { ...rep[idx], [campo]: valor };
+      rep.splice(index, 1);
       return { ...f, repuestos: rep };
     });
   };
 
-  const eliminarRepuesto = (idx) => {
-    setForm((f) => {
-      const rep = [...(f.repuestos || [])];
-      rep.splice(idx, 1);
-      return { ...f, repuestos: rep };
-    });
-  };
-
+  /* ===== FUNCIONES PARA MANO DE OBRA (IGUAL QUE TRABAJOS) ===== */
   const agregarManoObra = () => {
+    if (!servicioSeleccionado) return;
+    
+    const servicio = manoDeObra.find((s) => s.codigo === servicioSeleccionado);
+    if (!servicio) return;
+
     setForm((f) => ({
       ...f,
       manoObra: [
         ...(f.manoObra || []),
-        { descripcion: "", horas: 1, tarifa: 0 },
+        { 
+          codigo: servicio.codigo,
+          nombre: servicio.nombre,
+          descripcion: servicio.descripcion,
+          horas: 1,
+          tarifa: servicio.precio
+        },
       ],
     }));
+
+    // Limpiar campos después de agregar
+    setServicioSeleccionado("");
   };
 
-  const actualizarManoObra = (idx, campo, valor) => {
+  const eliminarManoObra = (index) => {
     setForm((f) => {
       const mo = [...(f.manoObra || [])];
-      mo[idx] = { ...mo[idx], [campo]: valor };
-      return { ...f, manoObra: mo };
-    });
-  };
-
-  const eliminarManoObra = (idx) => {
-    setForm((f) => {
-      const mo = [...(f.manoObra || [])];
-      mo.splice(idx, 1);
+      mo.splice(index, 1);
       return { ...f, manoObra: mo };
     });
   };
@@ -157,6 +281,7 @@ function GestionCotizacion({ session }) {
     });
     setEditMode(false);
     setShowModal(true);
+    setSearchVehiculo(""); // Limpiar búsqueda al abrir nueva
   };
 
   const abrirEditar = (cot) => {
@@ -167,12 +292,18 @@ function GestionCotizacion({ session }) {
     });
     setEditMode(true);
     setShowModal(true);
+    setSearchVehiculo(""); // Limpiar búsqueda al editar
   };
 
   /* ===== guardar (crear / actualizar) ===== */
   const guardarCotizacion = async () => {
     if (!form.clienteNombre.trim() || !form.clienteCedula.trim()) {
-      alert("Debe completar nombre y cedula del cliente.");
+      alert("Debe seleccionar un vehículo para obtener los datos del cliente.");
+      return;
+    }
+
+    if (!form.vehiculoPlaca.trim()) {
+      alert("Debe seleccionar un vehículo.");
       return;
     }
 
@@ -189,11 +320,16 @@ function GestionCotizacion({ session }) {
       clienteNombre: form.clienteNombre,
       clienteCedula: form.clienteCedula,
       vehiculoPlaca: form.vehiculoPlaca,
-      codigoOrden: form.codigoOrden,
       repuestos: form.repuestos,
       manoObra: form.manoObra,
       descuentoManoObra: Number(form.descuentoManoObra) || 0,
       estado: form.estado || "borrador",
+      // Incluir los totales calculados
+      subtotalRepuestos: calculoTotales.subtotalRepuestos,
+      subtotalManoObra: calculoTotales.subtotalManoObra,
+      descuentoMonto: calculoTotales.descuentoMonto,
+      iva: calculoTotales.iva,
+      total: calculoTotales.total
     };
 
     try {
@@ -271,8 +407,7 @@ function GestionCotizacion({ session }) {
     const s = search.toLowerCase();
     return (
       (c.codigo && c.codigo.toLowerCase().includes(s)) ||
-      (c.clienteNombre && c.clienteNombre.toLowerCase().includes(s)) ||
-      (c.codigoOrden && String(c.codigoOrden).toLowerCase().includes(s))
+      (c.clienteNombre && c.clienteNombre.toLowerCase().includes(s))
     );
   });
 
@@ -302,7 +437,7 @@ function GestionCotizacion({ session }) {
             </div>
             <div>
               Tipo: {c.esProforma ? "Proforma" : "Cotizacion"} | Total:{" "}
-              {c.total != null ? c.total : 0}
+              {formatoMoneda(c.total != null ? c.total : 0)}
             </div>
           </li>
         ))}
@@ -312,257 +447,263 @@ function GestionCotizacion({ session }) {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div
-            className="modal modal-lista"
+            className="modal modal-cotizacion"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>
-              {form.esProforma
-                ? `Proforma ${form.codigo}`
-                : form.codigo
-                ? `Cotizacion ${form.codigo}`
-                : "Nueva cotizacion"}
-            </h3>
+            {/* Contenido del modal con scroll */}
+            <div className="modal-content">
+              <h3>
+                {form.esProforma
+                  ? `Proforma ${form.codigo}`
+                  : form.codigo
+                  ? `Cotizacion ${form.codigo}`
+                  : "Nueva cotizacion"}
+              </h3>
 
-            <p>
-              <b>Estado:</b>{" "}
-              {form.esProforma ? "Proforma (no editable)" : form.estado}
-            </p>
+              <p>
+                <b>Estado:</b>{" "}
+                {form.esProforma ? "Proforma (no editable)" : form.estado}
+              </p>
 
-            <label>
-              Cliente:
-              <input
-                value={form.clienteNombre}
-                onChange={(e) =>
-                  setForm({ ...form, clienteNombre: e.target.value })
-                }
-                disabled={esSoloLectura}
-              />
-            </label>
-
-            <label>
-              Cedula:
-              <input
-                value={form.clienteCedula}
-                onChange={(e) =>
-                  setForm({ ...form, clienteCedula: e.target.value })
-                }
-                disabled={esSoloLectura}
-              />
-            </label>
-
-            <label>
-              Vehiculo / placa:
-              <input
-                value={form.vehiculoPlaca}
-                onChange={(e) =>
-                  setForm({ ...form, vehiculoPlaca: e.target.value })
-                }
-                disabled={esSoloLectura}
-              />
-            </label>
-
-            <label>
-              Codigo OT (opcional):
-              <input
-                value={form.codigoOrden || ""}
-                onChange={(e) =>
-                  setForm({ ...form, codigoOrden: e.target.value })
-                }
-                disabled={esSoloLectura}
-              />
-            </label>
-
-            <hr />
-
-            {/* REPUESTOS */}
-            <h4>Repuestos</h4>
-            {!esSoloLectura && (
-              <button
-                type="button"
-                className="btn-add"
-                onClick={agregarRepuesto}
-                style={{ marginBottom: 8 }}
-              >
-                Agregar repuesto
-              </button>
-            )}
-            {(form.repuestos || []).map((r, idx) => (
-              <div
-                key={idx}
-                className="item-grid"
-              >
-                <input
-                  placeholder="Codigo"
-                  value={r.codigo || ""}
-                  onChange={(e) =>
-                    actualizarRepuesto(idx, "codigo", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                <input
-                  placeholder="Nombre"
-                  value={r.nombre || ""}
-                  onChange={(e) =>
-                    actualizarRepuesto(idx, "nombre", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Cant."
-                  value={r.cantidad || 0}
-                  onChange={(e) =>
-                    actualizarRepuesto(idx, "cantidad", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Precio"
-                  value={r.precio || 0}
-                  onChange={(e) =>
-                    actualizarRepuesto(idx, "precio", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                {!esSoloLectura && (
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => eliminarRepuesto(idx)}
+              <div className="form-grid">
+                {/* BÚSQUEDA Y SELECCIÓN DE VEHÍCULO */}
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <label>
+                    Buscar vehículo:
+                    <input
+                      className="search-bar"
+                      placeholder="Buscar por placa, marca, modelo o cliente..."
+                      value={searchVehiculo}
+                      onChange={(e) => setSearchVehiculo(e.target.value)}
+                      disabled={esSoloLectura}
+                    />
+                  </label>
+                  
+                  <select
+                    value={form.vehiculoPlaca}
+                    onChange={(e) => manejarSeleccionVehiculo(e.target.value)}
+                    disabled={esSoloLectura}
+                    style={{ width: '100%', marginTop: '8px' }}
                   >
-                    X
-                  </button>
+                    <option value="">Seleccione un vehículo</option>
+                    {vehiculosFiltrados.map((v) => (
+                      <option key={v.placa} value={v.placa}>
+                        {v.placa} - {v.marca} {v.modelo} - {v.clienteNombre} ({v.clienteCedula})
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* INFORMACIÓN DEL VEHÍCULO SELECCIONADO */}
+                  {form.vehiculoPlaca && (
+                    <div style={{ 
+                      marginTop: '10px', 
+                      padding: '8px', 
+                      backgroundColor: 'rgba(17, 105, 92, 0.1)', 
+                      borderRadius: '4px',
+                      border: '1px solid #11695c'
+                    }}>
+                      <p><strong>Vehículo seleccionado:</strong></p>
+                      <p><strong>Placa:</strong> {form.vehiculoPlaca}</p>
+                      <p><strong>Cliente:</strong> {form.clienteNombre}</p>
+                      <p><strong>Cédula:</strong> {form.clienteCedula}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <hr />
+
+              {/* REPUESTOS - ESTRUCTURA IGUAL A TRABAJOS */}
+              <div className="seccion-items">
+                <div className="seccion-header">
+                  <h4>Repuestos</h4>
+                </div>
+                
+                {/* LISTA DE REPUESTOS AGREGADOS */}
+                <div className="contenedor-scrollable">
+                  <div className="lista-items">
+                    {(form.repuestos || []).map((repuesto, idx) => (
+                      <div key={idx} className="item-lista">
+                        <span className="item-info">
+                          {repuesto.nombre} ({repuesto.cantidad}) - {formatoMoneda(repuesto.precio)}
+                        </span>
+                        {!esSoloLectura && (
+                          <button 
+                            type="button"
+                            className="btn-eliminar"
+                            onClick={() => eliminarRepuesto(idx)}
+                            title="Eliminar repuesto"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* FORMULARIO PARA AGREGAR REPUESTO */}
+                {!esSoloLectura && (
+                  <div className="agregar-item">
+                    <input
+                      list="repuestos-list"
+                      value={repSeleccionado}
+                      onChange={(e) => setRepSeleccionado(e.target.value)}
+                      placeholder="Buscar repuesto..."
+                    />
+                    <datalist id="repuestos-list">
+                      {inventario.map((r) => (
+                        <option key={r.codigo} value={r.codigo}>
+                          {r.nombre} - {formatoMoneda(r.precio)} (Stock: {r.cantidad})
+                        </option>
+                      ))}
+                    </datalist>
+                    <input
+                      type="number"
+                      min="1"
+                      value={cantidadRep}
+                      onChange={(e) => setCantidadRep(Number(e.target.value))}
+                      placeholder="Cant."
+                      style={{width: '80px'}}
+                    />
+                    <button 
+                      type="button"
+                      onClick={agregarRepuesto}
+                      disabled={!repSeleccionado || cantidadRep < 1}
+                    >
+                      Agregar
+                    </button>
+                  </div>
                 )}
               </div>
-            ))}
 
-            <hr />
+              <hr />
 
-            {/* MANO DE OBRA */}
-            <h4>Mano de obra</h4>
-            {!esSoloLectura && (
-              <button
-                type="button"
-                className="btn-add"
-                onClick={agregarManoObra}
-                style={{ marginBottom: 8 }}
-              >
-                Agregar mano de obra
-              </button>
-            )}
-            {(form.manoObra || []).map((m, idx) => (
-              <div
-                key={idx}
-                className="mano-obra-grid"
-              >
-                <input
-                  placeholder="Descripcion"
-                  value={m.descripcion || ""}
-                  onChange={(e) =>
-                    actualizarManoObra(idx, "descripcion", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Horas"
-                  value={m.horas || 0}
-                  onChange={(e) =>
-                    actualizarManoObra(idx, "horas", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Tarifa"
-                  value={m.tarifa || 0}
-                  onChange={(e) =>
-                    actualizarManoObra(idx, "tarifa", e.target.value)
-                  }
-                  disabled={esSoloLectura}
-                />
+              {/* MANO DE OBRA - ESTRUCTURA IGUAL A TRABAJOS */}
+              <div className="seccion-items">
+                <div className="seccion-header">
+                  <h4>Mano de obra</h4>
+                </div>
+                
+                {/* LISTA DE MANO DE OBRA AGREGADA */}
+                <div className="contenedor-scrollable">
+                  <div className="lista-items">
+                    {(form.manoObra || []).map((servicio, idx) => (
+                      <div key={idx} className="item-lista">
+                        <span className="item-info">
+                          {servicio.nombre} - {formatoMoneda(servicio.tarifa)}
+                        </span>
+                        {!esSoloLectura && (
+                          <button 
+                            type="button"
+                            className="btn-eliminar"
+                            onClick={() => eliminarManoObra(idx)}
+                            title="Eliminar servicio"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* FORMULARIO PARA AGREGAR MANO DE OBRA */}
                 {!esSoloLectura && (
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => eliminarManoObra(idx)}
-                  >
-                    X
-                  </button>
+                  <div className="agregar-item">
+                    <input
+                      list="servicios-list"
+                      value={servicioSeleccionado}
+                      onChange={(e) => setServicioSeleccionado(e.target.value)}
+                      placeholder="Buscar servicio..."
+                    />
+                    <datalist id="servicios-list">
+                      {manoDeObra.map((servicio) => (
+                        <option key={servicio.codigo} value={servicio.codigo}>
+                          {servicio.nombre} - {formatoMoneda(servicio.precio)}
+                        </option>
+                      ))}
+                    </datalist>
+                    <button 
+                      type="button"
+                      onClick={agregarManoObra}
+                      disabled={!servicioSeleccionado}
+                    >
+                      Agregar
+                    </button>
+                  </div>
                 )}
               </div>
-            ))}
 
-            <hr />
+              <hr />
 
-            <label>
-              Descuento mano de obra (% 0-20):
-              <input
-                type="number"
-                min="0"
-                max="20"
-                value={form.descuentoManoObra || 0}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    descuentoManoObra: e.target.value,
-                  })
-                }
-                disabled={esSoloLectura}
-              />
-            </label>
+              <div className="form-grid">
+                <label>
+                  Descuento mano de obra (% 0-20):
+                  <input
+                    type="number"
+                    min="0"
+                    max="20"
+                    value={form.descuentoManoObra || 0}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        descuentoManoObra: Number(e.target.value),
+                      })
+                    }
+                    disabled={esSoloLectura}
+                  />
+                </label>
+              </div>
 
-            <p>
-              <b>Subtotal repuestos:</b>{" "}
-              {form.subtotalRepuestos != null ? form.subtotalRepuestos : 0}
-            </p>
-            <p>
-              <b>Subtotal mano de obra:</b>{" "}
-              {form.subtotalManoObra != null ? form.subtotalManoObra : 0}
-            </p>
-            <p>
-              <b>Descuento aplicado:</b>{" "}
-              {form.descuentoMonto != null ? form.descuentoMonto : 0}
-            </p>
-            <p>
-              <b>IVA:</b> {form.iva != null ? form.iva : 0}
-            </p>
-            <p>
-              <b>Total:</b> {form.total != null ? form.total : 0}
-            </p>
+              {/* RESUMEN DE TOTALES EN TIEMPO REAL */}
+              <div className="resumen-totales">
+                <p>
+                  <b>Subtotal repuestos:</b>{" "}
+                  {formatoMoneda(calculoTotales.subtotalRepuestos)}
+                </p>
+                <p>
+                  <b>Subtotal mano de obra:</b>{" "}
+                  {formatoMoneda(calculoTotales.subtotalManoObra)}
+                </p>
+                <p>
+                  <b>Descuento aplicado:</b>{" "}
+                  {formatoMoneda(calculoTotales.descuentoMonto)}
+                </p>
+                <p>
+                  <b>IVA (13%):</b> {formatoMoneda(calculoTotales.iva)}
+                </p>
+                <p className="total-final">
+                  <b>Total:</b> {formatoMoneda(calculoTotales.total)}
+                </p>
+              </div>
 
-            <div className="btn-group">
-              {!esSoloLectura && (
-                <button className="btn-add" onClick={guardarCotizacion}>
-                  Guardar cotizacion
+              <div className="btn-group">
+                {!esSoloLectura && (
+                  <button className="btn-add" onClick={guardarCotizacion}>
+                    {editMode ? "Actualizar" : "Guardar"} cotizacion
+                  </button>
+                )}
+
+                {editMode && !esSoloLectura && (
+                  <button className="btn-edit" onClick={generarProforma}>
+                    Generar proforma
+                  </button>
+                )}
+
+                {editMode && (
+                  <button className="btn-delete" onClick={eliminarCotizacion}>
+                    Eliminar
+                  </button>
+                )}
+
+                <button
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cerrar
                 </button>
-              )}
-
-              {editMode && !esSoloLectura && (
-                <button className="btn-edit" onClick={generarProforma}>
-                  Generar proforma
-                </button>
-              )}
-
-              {editMode && (
-                <button className="btn-close" onClick={eliminarCotizacion}>
-                  Eliminar
-                </button>
-              )}
-
-              <button
-                className="btn-close"
-                onClick={() => setShowModal(false)}
-              >
-                Cerrar
-              </button>
+              </div>
             </div>
           </div>
         </div>

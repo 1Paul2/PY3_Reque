@@ -1,13 +1,18 @@
 // GestionTrabajos.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./App.css";
 
 /* ======================= API TRABAJOS ======================= */
 const apiTrabajos = {
-  getAll: async () => {
-    const res = await fetch("/api/trabajos");
+  getAll: async (usuario = null) => {
+    let url = "/api/trabajos";
+    if (usuario) {
+      url += `?usuario=${encodeURIComponent(usuario)}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error("No se pudo cargar trabajos");
-    return res.json();
+    const data = await res.json();
+    return data.trabajos || [];
   },
   createFromCita: async (payload) => {
     const res = await fetch("/api/trabajos", {
@@ -19,7 +24,7 @@ const apiTrabajos = {
     if (!res.ok || data.ok === false) {
       throw new Error(data.error || "No se pudo crear la orden de trabajo");
     }
-    return data.trabajos || data.trabajo;
+    return data.trabajo || data;
   },
   update: async (codigoOrden, trabajo) => {
     const res = await fetch(`/api/trabajos/${codigoOrden}`, {
@@ -67,16 +72,30 @@ const apiInventario = {
   },
 };
 
+/* ======================= API MANO DE OBRA ======================= */
+const apiManoDeObra = {
+  getAll: async () => {
+    const res = await fetch("/api/mano_de_obra");
+    if (!res.ok) throw new Error("No se pudo cargar mano de obra");
+    const data = await res.json();
+    return data.manoObra || [];
+  },
+};
+
 /* ======================= COMPONENTE ======================= */
 function GestionTrabajos({ session }) {
   const [trabajos, setTrabajos] = useState([]);
   const [inventario, setInventario] = useState([]);
+  const [manoDeObra, setManoDeObra] = useState([]);
+  const [citas, setCitas] = useState([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
 
   const [showModalNuevaOT, setShowModalNuevaOT] = useState(false);
   const [showModalDetalle, setShowModalDetalle] = useState(false);
   const [showModalEstado, setShowModalEstado] = useState(false);
+  const [showModalNota, setShowModalNota] = useState(false);
+  const [notaSeleccionada, setNotaSeleccionada] = useState(null);
 
   const [newOT, setNewOT] = useState({
     codigoCita: "",
@@ -84,48 +103,135 @@ function GestionTrabajos({ session }) {
   });
 
   const [estadoSeleccionado, setEstadoSeleccionado] = useState("Pendiente");
-
   const [repSeleccionado, setRepSeleccionado] = useState("");
   const [cantidadRep, setCantidadRep] = useState(1);
+  const [servicioSeleccionado, setServicioSeleccionado] = useState("");
+  const [nuevaNotaDiagnostico, setNuevaNotaDiagnostico] = useState("");
 
   const ESTADOS = ["Pendiente", "En proceso", "Finalizada", "Cancelada"];
 
-  /* === CARGAR TRABAJOS E INVENTARIO AL INICIO === */
+  /* === CARGAR DATOS === */
   useEffect(() => {
-    (async () => {
-      try {
-        const arrTrabajos = await apiTrabajos.getAll();
-        const trabajosLista = Array.isArray(arrTrabajos)
-          ? arrTrabajos
-          : arrTrabajos.trabajos || [];
-
-        // FILTRAR SEGÚN USUARIO
-        let trabajosFiltrados = trabajosLista;
-        if (session.rol !== "admin") {
-          const resCitas = await fetch("/api/citas");
-          if (!resCitas.ok) throw new Error("No se pudieron cargar las citas");
-          const citasArr = await resCitas.json();
-          const citasLista = Array.isArray(citasArr) ? citasArr : citasArr.citas || [];
-          const nombreUsuario = session?.nombre?.trim() || "";
-
-          trabajosFiltrados = trabajosLista.filter((trabajo) => {
-            const cita = citasLista.find((c) => String(c.id) === String(trabajo.idCita));
-            if (!cita) return false;
-            return cita.mecanico?.trim() === nombreUsuario;
-          });
-        }
-
-        setTrabajos(trabajosFiltrados);
-
-        // CARGAR INVENTARIO
-        const inv = await apiInventario.getAll();
-        setInventario(inv);
-      } catch (e) {
-        console.error(e);
-        alert("Error al cargar datos.");
-      }
-    })();
+    cargarDatos();
   }, []);
+
+  const cargarDatos = async () => {
+    try {
+      // Determinar si necesitamos filtrar por usuario
+      const usuarioFiltro = session.rol !== "admin" ? session.nombre : null;
+      
+      const [trabajosData, citasResponse, manoDeObraData, inventarioData] = await Promise.all([
+        apiTrabajos.getAll(usuarioFiltro),
+        fetch("/api/citas").then(res => res.json()),
+        apiManoDeObra.getAll(),
+        apiInventario.getAll()
+      ]);
+
+      // 🔽 CORRECIÓN: Manejar tanto array directo como objeto con propiedad citas
+      let citasData;
+      if (Array.isArray(citasResponse)) {
+        citasData = citasResponse;
+      } else {
+        citasData = citasResponse.citas || [];
+      }
+
+      console.log("=== DATOS CARGADOS ===");
+      console.log("Trabajos cargados:", trabajosData);
+      console.log("Citas cargadas:", citasData);
+      console.log("Usuario session:", session.nombre);
+      console.log("Citas con estado 'Aceptada':", citasData.filter(c => c.estado === "Aceptada").length);
+      console.log("=====================");
+
+      setCitas(citasData);
+      setManoDeObra(manoDeObraData);
+      setInventario(inventarioData);
+      setTrabajos(trabajosData);
+
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+      alert("Error al cargar datos.");
+    }
+  };
+
+  /* ==================== OBTENER CITAS DISPONIBLES ==================== */
+  const citasDisponibles = useMemo(() => {
+    if (!citas || citas.length === 0) {
+      console.log("No hay citas cargadas para filtrar");
+      return [];
+    }
+
+    console.log("=== FILTRANDO CITAS DISPONIBLES ===");
+    console.log("Session rol:", session.rol);
+    console.log("Session nombre:", session.nombre);
+    console.log("Total citas:", citas.length);
+    
+    const citasAceptadas = citas.filter(c => c.estado === "Aceptada");
+    console.log("Citas Aceptadas:", citasAceptadas.length);
+    console.log("Trabajos existentes:", trabajos.length);
+    
+    let citasFiltradas;
+    
+    if (session.rol === "admin") {
+      citasFiltradas = citasAceptadas.filter(cita => {
+        const tieneOrden = trabajos.find(t => String(t.idCita) === String(cita.id));
+        const disponible = !tieneOrden;
+        if (disponible) {
+          console.log(`✅ Cita disponible para admin: ${cita.id} - ${cita.clienteNombre} (${cita.vehiculoPlaca}) - Mecánico: ${cita.mecanico}`);
+        }
+        return disponible;
+      });
+    } else {
+      const nombreUsuario = session?.nombre?.trim() || "";
+      console.log(`Buscando citas para mecánico: "${nombreUsuario}"`);
+      
+      citasFiltradas = citasAceptadas.filter(cita => {
+        const tieneOrden = trabajos.find(t => String(t.idCita) === String(cita.id));
+        const coincideMecanico = cita.mecanico?.trim() === nombreUsuario;
+        const disponible = coincideMecanico && !tieneOrden;
+        
+        if (disponible) {
+          console.log(`✅ Cita disponible para ${nombreUsuario}: ${cita.id} - ${cita.clienteNombre} (${cita.vehiculoPlaca})`);
+        } else if (cita.estado === "Aceptada" && coincideMecanico && tieneOrden) {
+          console.log(`❌ Cita ${cita.id} tiene orden existente`);
+        } else if (cita.estado === "Aceptada" && !coincideMecanico) {
+          console.log(`❌ Cita ${cita.id} no coincide con mecánico: ${cita.mecanico} ≠ ${nombreUsuario}`);
+        }
+        return disponible;
+      });
+    }
+    
+    console.log("Citas disponibles finales:", citasFiltradas.length);
+    console.log("=== FIN FILTRADO ===");
+    
+    return citasFiltradas;
+  }, [citas, trabajos, session.rol, session.nombre]);
+
+  /* ==================== VALIDAR CITA PARA ORDEN ==================== */
+  const validarCitaParaOrden = (codigoCita) => {
+    const cita = citas.find(c => String(c.id) === String(codigoCita));
+    
+    if (!cita) {
+      throw new Error("No se encontró la cita con el código proporcionado.");
+    }
+
+    if (session.rol !== "admin") {
+      const nombreUsuario = session?.nombre?.trim() || "";
+      if (cita.mecanico?.trim() !== nombreUsuario) {
+        throw new Error("No tienes permisos para generar una orden de trabajo para esta cita.");
+      }
+    }
+
+    if (cita.estado !== "Aceptada") {
+      throw new Error("Solo se pueden generar órdenes de trabajo para citas en estado 'Aceptada'.");
+    }
+
+    const ordenExistente = trabajos.find(t => String(t.idCita) === String(codigoCita));
+    if (ordenExistente) {
+      throw new Error("Ya existe una orden de trabajo para esta cita.");
+    }
+
+    return cita;
+  };
 
   /* ==================== CREAR ORDEN DESDE CITA ==================== */
   const crearOrdenDesdeCita = async () => {
@@ -136,34 +242,135 @@ function GestionTrabajos({ session }) {
     }
 
     try {
+      validarCitaParaOrden(codigoCita.trim());
+
       const resultado = await apiTrabajos.createFromCita({
         codigoCita: codigoCita.trim(),
         observacionesIniciales: observacionesIniciales.trim(),
       });
-      if (Array.isArray(resultado)) setTrabajos(resultado);
-      else if (resultado && resultado.codigoOrden)
-        setTrabajos((prev) => [...prev, resultado]);
-
+      
+      setTrabajos(prev => Array.isArray(resultado) ? resultado : [...prev, resultado]);
       setNewOT({ codigoCita: "", observacionesIniciales: "" });
       setShowModalNuevaOT(false);
       alert("Orden de trabajo generada correctamente.");
-    } catch (e) {
-      console.error(e);
-      alert(e.message);
+      
+      // Recargar datos para actualizar la lista
+      cargarDatos();
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
   };
 
-  /* ==================== GUARDAR DETALLE / DIAGNOSTICO / REPUESTOS ==================== */
+  /* ==================== AGREGAR NOTA DE DIAGNÓSTICO ==================== */
+  const agregarNotaDiagnostico = () => {
+    if (!nuevaNotaDiagnostico.trim()) {
+      alert("La nota de diagnóstico no puede estar vacía.");
+      return;
+    }
+
+    const nuevaNota = {
+      id: Date.now(),
+      texto: nuevaNotaDiagnostico.trim(),
+      fecha: new Date().toLocaleString()
+    };
+
+    setSelected(prev => ({
+      ...prev,
+      notasDiagnostico: [
+        ...(prev.notasDiagnostico || []),
+        nuevaNota
+      ]
+    }));
+
+    setNuevaNotaDiagnostico("");
+  };
+
+  /* ==================== ELIMINAR NOTA DE DIAGNÓSTICO ==================== */
+  const eliminarNotaDiagnostico = (idNota) => {
+    setSelected(prev => ({
+      ...prev,
+      notasDiagnostico: prev.notasDiagnostico?.filter(nota => nota.id !== idNota) || []
+    }));
+  };
+
+  /* ==================== ABRIR MODAL DE NOTA ==================== */
+  const abrirModalNota = (nota) => {
+    setNotaSeleccionada(nota);
+    setShowModalNota(true);
+  };
+
+  /* ==================== OBTENER RESUMEN DE NOTA ==================== */
+  const obtenerResumenNota = (texto) => {
+    const textoLimpio = texto.trim();
+    if (textoLimpio.length <= 50) {
+      return textoLimpio;
+    }
+    
+    return textoLimpio.substring(0, 50) + '...';
+  };
+
+  /* ==================== AGREGAR SERVICIO ==================== */
+  const agregarServicioTrabajo = () => {
+    if (!servicioSeleccionado) return;
+    
+    const servicio = manoDeObra.find((s) => s.codigo === servicioSeleccionado);
+    if (!servicio) return;
+
+    setSelected(prev => ({
+      ...prev,
+      serviciosRealizados: [
+        ...(prev.serviciosRealizados || []),
+        { 
+          codigo: servicio.codigo, 
+          nombre: servicio.nombre, 
+          descripcion: servicio.descripcion,
+          precio: servicio.precio 
+        },
+      ],
+    }));
+
+    setServicioSeleccionado("");
+  };
+
+  /* ==================== ELIMINAR SERVICIO ==================== */
+  const eliminarServicio = (index) => {
+    setSelected(prev => ({
+      ...prev,
+      serviciosRealizados: prev.serviciosRealizados?.filter((_, i) => i !== index) || []
+    }));
+  };
+
+  /* ==================== AGREGAR REPUESTO ==================== */
   const agregarRepuestoTrabajo = () => {
     if (!repSeleccionado) return;
+    
     const rep = inventario.find((r) => r.codigo === repSeleccionado);
-    if (!rep) return;
+    if (!rep) {
+      alert("Repuesto no encontrado.");
+      return;
+    }
+
     if (cantidadRep > rep.cantidad) {
       alert("No hay suficiente stock de este repuesto.");
       return;
     }
 
-    setSelected((prev) => ({
+    // Actualizar inventario localmente
+    const nuevoInventario = inventario.map(r =>
+      r.codigo === rep.codigo ? { ...r, cantidad: r.cantidad - cantidadRep } : r
+    );
+    setInventario(nuevoInventario);
+
+    // Actualizar en servidor
+    apiInventario.updateCantidad(rep.codigo, rep.cantidad - cantidadRep)
+      .catch(error => {
+        alert("Error al actualizar inventario: " + error.message);
+        setInventario(inventario);
+      });
+
+    // Agregar a la orden
+    setSelected(prev => ({
       ...prev,
       repuestosUtilizados: [
         ...(prev.repuestosUtilizados || []),
@@ -171,34 +378,48 @@ function GestionTrabajos({ session }) {
       ],
     }));
 
-    setInventario((prev) =>
-      prev.map((r) =>
-        r.codigo === rep.codigo ? { ...r, cantidad: r.cantidad - cantidadRep } : r
-      )
-    );
-
-    apiInventario
-      .updateCantidad(rep.codigo, rep.cantidad - cantidadRep)
-      .catch((e) => alert("Error al actualizar inventario: " + e.message));
-
     setRepSeleccionado("");
     setCantidadRep(1);
   };
 
+  /* ==================== ELIMINAR REPUESTO ==================== */
+  const eliminarRepuesto = async (index) => {
+    const repuestoEliminado = selected.repuestosUtilizados?.[index];
+    if (!repuestoEliminado) return;
+
+    try {
+      const repuestoOriginal = inventario.find(r => r.codigo === repuestoEliminado.codigo);
+      if (repuestoOriginal) {
+        const nuevaCantidad = repuestoOriginal.cantidad + repuestoEliminado.cantidad;
+        await apiInventario.updateCantidad(repuestoEliminado.codigo, nuevaCantidad);
+        setInventario(prev => prev.map(r =>
+          r.codigo === repuestoEliminado.codigo ? { ...r, cantidad: nuevaCantidad } : r
+        ));
+      }
+
+      setSelected(prev => ({
+        ...prev,
+        repuestosUtilizados: prev.repuestosUtilizados?.filter((_, i) => i !== index) || []
+      }));
+
+    } catch (error) {
+      alert("Error al restaurar inventario: " + error.message);
+    }
+  };
+
+  /* ==================== GUARDAR DETALLE ==================== */
   const guardarDetalleTrabajo = async () => {
     if (!selected) return;
+    
     try {
       const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
-      setTrabajos((prev) =>
-        prev.map((t) =>
-          t.codigoOrden === actualizado.codigoOrden ? actualizado : t
-        )
-      );
+      setTrabajos(prev => prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t));
+      setSelected(actualizado);
       setShowModalDetalle(false);
       alert("Orden actualizada correctamente.");
-    } catch (e) {
-      console.error(e);
-      alert(e.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
   };
 
@@ -211,22 +432,16 @@ function GestionTrabajos({ session }) {
 
   const guardarNuevoEstado = async () => {
     if (!selected) return;
+    
     try {
-      const actualizado = await apiTrabajos.updateEstado(
-        selected.codigoOrden,
-        estadoSeleccionado
-      );
-      setTrabajos((prev) =>
-        prev.map((t) =>
-          t.codigoOrden === actualizado.codigoOrden ? actualizado : t
-        )
-      );
+      const actualizado = await apiTrabajos.updateEstado(selected.codigoOrden, estadoSeleccionado);
+      setTrabajos(prev => prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t));
       setSelected(actualizado);
       setShowModalEstado(false);
       alert("Estado actualizado correctamente.");
-    } catch (e) {
-      console.error(e);
-      alert(e.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
   };
 
@@ -280,26 +495,54 @@ function GestionTrabajos({ session }) {
         <div className="modal-overlay" onClick={() => setShowModalNuevaOT(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Generar Orden desde Cita</h3>
+            
+            <div className="user-info">
+              <p><strong>Usuario:</strong> {session.nombre} | <strong>Rol:</strong> {session.rol}</p>
+              {session.rol !== "admin" && (
+                <p className="info-text">Solo puedes generar órdenes para citas asignadas a ti.</p>
+              )}
+            </div>
+
             <label>
-              Código de Cita:
-              <input
+              Seleccionar Cita:
+              <select
                 value={newOT.codigoCita}
-                onChange={(e) =>
-                  setNewOT({ ...newOT, codigoCita: e.target.value })
-                }
-              />
+                onChange={(e) => setNewOT({ ...newOT, codigoCita: e.target.value })}
+              >
+                <option value="">Seleccione una cita</option>
+                {citasDisponibles.map((cita) => (
+                  <option key={cita.id} value={cita.id}>
+                    Cita #{cita.id} - {cita.clienteNombre} ({cita.vehiculoPlaca}) - {cita.mecanico}
+                  </option>
+                ))}
+              </select>
             </label>
+
+            {citasDisponibles.length === 0 && (
+              <p className="warning-text">
+                {session.rol === "admin" 
+                  ? "No hay citas disponibles para generar órdenes de trabajo."
+                  : "No tienes citas disponibles para generar órdenes de trabajo."
+                }
+              </p>
+            )}
+
             <label>
               Observaciones iniciales:
               <textarea
                 value={newOT.observacionesIniciales}
-                onChange={(e) =>
-                  setNewOT({ ...newOT, observacionesIniciales: e.target.value })
-                }
+                onChange={(e) => setNewOT({ ...newOT, observacionesIniciales: e.target.value })}
+                placeholder="Ingrese observaciones iniciales del trabajo..."
+                rows="3"
               />
             </label>
+
             <div className="btn-group">
-              <button className="btn-add" onClick={crearOrdenDesdeCita}>
+              <button 
+                className="btn-add" 
+                onClick={crearOrdenDesdeCita}
+                disabled={!newOT.codigoCita}
+              >
                 Crear Orden
               </button>
               <button className="btn-close" onClick={() => setShowModalNuevaOT(false)}>
@@ -313,62 +556,173 @@ function GestionTrabajos({ session }) {
       {/* MODAL DETALLE */}
       {showModalDetalle && selected && (
         <div className="modal-overlay" onClick={() => setShowModalDetalle(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal modal-detalle-trabajo" onClick={(e) => e.stopPropagation()}>
             <h3>Orden #{selected.codigoOrden}</h3>
-            <p>
-              <b>Cliente:</b> {selected.clienteNombre} ({selected.clienteCedula})
-            </p>
-            <p>
-              <b>Placa:</b> {selected.placa}
-            </p>
-            <label>
-              Diagnóstico:
-              <textarea
-                value={selected.diagnostico || ""}
-                onChange={(e) =>
-                  setSelected({ ...selected, diagnostico: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Servicios realizados:
-              <textarea
-                value={selected.serviciosRealizados || ""}
-                onChange={(e) =>
-                  setSelected({ ...selected, serviciosRealizados: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Repuestos utilizados:
-              <ul>
-                {(selected.repuestosUtilizados || []).map((r, idx) => (
-                  <li key={idx}>
-                    {r.nombre} ({r.cantidad})
-                  </li>
-                ))}
-              </ul>
-              <input
-                list="repuestos-list"
-                value={repSeleccionado}
-                onChange={(e) => setRepSeleccionado(e.target.value)}
-                placeholder="Buscar repuesto..."
-              />
-              <datalist id="repuestos-list">
-                {inventario.map((r) => (
-                  <option key={r.codigo} value={r.codigo}>
-                    {r.nombre} (Disponible: {r.cantidad})
-                  </option>
-                ))}
-              </datalist>
-              <input
-                type="number"
-                min="1"
-                value={cantidadRep}
-                onChange={(e) => setCantidadRep(Number(e.target.value))}
-              />
-              <button onClick={agregarRepuestoTrabajo}>Agregar Repuesto</button>
-            </label>
+            
+            <div className="info-cliente">
+              <p><b>Cliente:</b> {selected.clienteNombre} ({selected.clienteCedula})</p>
+              <p><b>Placa:</b> {selected.placa}</p>
+              <p><b>Estado:</b> {selected.estado}</p>
+            </div>
+
+            {/* NOTAS DE DIAGNÓSTICO */}
+            <div className="seccion-diagnostico">
+              <label>Notas de Diagnóstico:</label>
+              <div className="contenedor-scrollable">
+                <div className="lista-notas">
+                  {(selected.notasDiagnostico || []).map((nota) => (
+                    <div key={nota.id} className="item-nota">
+                      <div className="nota-header">
+                        <span className="nota-fecha">{nota.fecha}</span>
+                        <div className="nota-acciones">
+                          <button 
+                            type="button"
+                            className="btn-ver"
+                            onClick={() => abrirModalNota(nota)}
+                            title="Ver nota completa"
+                          >
+                            👁️
+                          </button>
+                          <button 
+                            type="button"
+                            className="btn-eliminar"
+                            onClick={() => eliminarNotaDiagnostico(nota.id)}
+                            title="Eliminar nota"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <div 
+                        className="nota-resumen"
+                        onClick={() => abrirModalNota(nota)}
+                        title="Haz clic para ver la nota completa"
+                      >
+                        {obtenerResumenNota(nota.texto)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="agregar-nota">
+                <textarea
+                  value={nuevaNotaDiagnostico}
+                  onChange={(e) => setNuevaNotaDiagnostico(e.target.value)}
+                  placeholder="Escriba una nueva nota de diagnóstico..."
+                  rows="3"
+                />
+                <button 
+                  type="button"
+                  onClick={agregarNotaDiagnostico}
+                  disabled={!nuevaNotaDiagnostico.trim()}
+                >
+                  Agregar Nota
+                </button>
+              </div>
+            </div>
+
+            {/* SERVICIOS REALIZADOS */}
+            <div className="seccion-servicios">
+              <label>Servicios realizados:</label>
+              <div className="contenedor-scrollable">
+                <div className="lista-items">
+                  {(selected.serviciosRealizados || []).map((servicio, idx) => (
+                    <div key={idx} className="item-lista">
+                      <span className="item-info">
+                        {servicio.nombre}
+                      </span>
+                      <button 
+                        type="button"
+                        className="btn-eliminar"
+                        onClick={() => eliminarServicio(idx)}
+                        title="Eliminar servicio"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="agregar-item">
+                <input
+                  list="servicios-list"
+                  value={servicioSeleccionado}
+                  onChange={(e) => setServicioSeleccionado(e.target.value)}
+                  placeholder="Buscar servicio..."
+                />
+                <datalist id="servicios-list">
+                  {manoDeObra.map((servicio) => (
+                    <option key={servicio.codigo} value={servicio.codigo}>
+                      {servicio.nombre}
+                    </option>
+                  ))}
+                </datalist>
+                <button 
+                  type="button"
+                  onClick={agregarServicioTrabajo}
+                  disabled={!servicioSeleccionado}
+                >
+                  Agregar
+                </button>
+              </div>
+            </div>
+
+            {/* REPUESTOS UTILIZADOS */}
+            <div className="seccion-repuestos">
+              <label>Repuestos utilizados:</label>
+              <div className="contenedor-scrollable">
+                <div className="lista-items">
+                  {(selected.repuestosUtilizados || []).map((repuesto, idx) => (
+                    <div key={idx} className="item-lista">
+                      <span className="item-info">
+                        {repuesto.nombre} ({repuesto.cantidad})
+                      </span>
+                      <button 
+                        type="button"
+                        className="btn-eliminar"
+                        onClick={() => eliminarRepuesto(idx)}
+                        title="Eliminar repuesto"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="agregar-item">
+                <input
+                  list="repuestos-list"
+                  value={repSeleccionado}
+                  onChange={(e) => setRepSeleccionado(e.target.value)}
+                  placeholder="Buscar repuesto..."
+                />
+                <datalist id="repuestos-list">
+                  {inventario.map((r) => (
+                    <option key={r.codigo} value={r.codigo}>
+                      {r.nombre} (Stock: {r.cantidad})
+                    </option>
+                  ))}
+                </datalist>
+                <input
+                  type="number"
+                  min="1"
+                  value={cantidadRep}
+                  onChange={(e) => setCantidadRep(Number(e.target.value))}
+                  placeholder="Cant."
+                  style={{width: '80px'}}
+                />
+                <button 
+                  type="button"
+                  onClick={agregarRepuestoTrabajo}
+                  disabled={!repSeleccionado || cantidadRep < 1}
+                >
+                  Agregar
+                </button>
+              </div>
+            </div>
 
             <div className="btn-group">
               <button className="btn-add" onClick={guardarDetalleTrabajo}>
@@ -385,11 +739,33 @@ function GestionTrabajos({ session }) {
         </div>
       )}
 
+      {/* MODAL NOTA COMPLETA */}
+      {showModalNota && notaSeleccionada && (
+        <div className="modal-overlay" onClick={() => setShowModalNota(false)}>
+          <div className="modal modal-nota" onClick={(e) => e.stopPropagation()}>
+            <h3>Nota de Diagnóstico</h3>
+            <div className="nota-info">
+              <p><strong>Fecha:</strong> {notaSeleccionada.fecha}</p>
+            </div>
+            <div className="contenedor-scrollable-nota">
+              <div className="nota-contenido">
+                {notaSeleccionada.texto}
+              </div>
+            </div>
+            <div className="btn-group">
+              <button className="btn-close" onClick={() => setShowModalNota(false)}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL ESTADO */}
       {showModalEstado && selected && (
         <div className="modal-overlay" onClick={() => setShowModalEstado(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Cambiar estado OT #{selected.codigoOrden}</h3>
+            <h3>Cambiar estado - OT #{selected.codigoOrden}</h3>
             <select
               value={estadoSeleccionado}
               onChange={(e) => setEstadoSeleccionado(e.target.value)}
