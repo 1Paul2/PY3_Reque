@@ -20,7 +20,7 @@
     "codigo": "35",
     "nombre": "Tapón de combustible",
     "descripcion": "Tapón universal para tanque de gasolina",
-    "cantidad": "75",
+    "cantidad": 69,
     "precio": "6000"
   },
   {
@@ -81,7 +81,7 @@
     "codigo": "A06",
     "nombre": "Faro trasero",
     "descripcion": "Faro trasero Toyota Corolla 2020",
-    "cantidad": "6",
+    "cantidad": 5,
     "precio": "85000",
     "vehiculoId": 1
   },
@@ -90,7 +90,7 @@
     "codigo": "A07",
     "nombre": "Retrovisor izquierdo",
     "descripcion": "Espejo lateral Toyota Corolla 2020",
-    "cantidad": "12",
+    "cantidad": 11,
     "precio": "60000",
     "vehiculoId": 1
   },
@@ -99,7 +99,7 @@
     "codigo": "A08",
     "nombre": "Filtro de combustible",
     "descripcion": "Filtro Corolla 2020",
-    "cantidad": "20",
+    "cantidad": 19,
     "precio": "18000",
     "vehiculoId": 1
   },
@@ -108,7 +108,7 @@
     "codigo": "A09",
     "nombre": "Llantas 16''",
     "descripcion": "Juego de llantas Toyota Corolla 2020",
-    "cantidad": "8",
+    "cantidad": 5,
     "precio": "320000",
     "vehiculoId": 1
   },
@@ -117,7 +117,7 @@
     "codigo": "A10",
     "nombre": "Capó",
     "descripcion": "Capó Toyota Corolla 2020",
-    "cantidad": "3",
+    "cantidad": 0,
     "precio": "210000",
     "vehiculoId": 1
   },
@@ -126,7 +126,7 @@
     "codigo": "B01",
     "nombre": "Radiador",
     "descripcion": "Radiador Honda Civic 2019",
-    "cantidad": "10",
+    "cantidad": 6,
     "precio": "135000",
     "vehiculoId": 2
   },
@@ -135,7 +135,7 @@
     "codigo": "B02",
     "nombre": "Batería",
     "descripcion": "Batería original Honda Civic 2019",
-    "cantidad": "15",
+    "cantidad": 13,
     "precio": "90000",
     "vehiculoId": 2
   },
@@ -189,7 +189,7 @@
     "codigo": "B08",
     "nombre": "Motor de arranque",
     "descripcion": "Motor arranque Honda Civic 2019",
-    "cantidad": "5",
+    "cantidad": 4,
     "precio": "230000",
     "vehiculoId": 2
   },
@@ -243,7 +243,7 @@
     "codigo": "C04",
     "nombre": "Faro delantero izquierdo",
     "descripcion": "Faro Nissan Sentra 2021",
-    "cantidad": "6",
+    "cantidad": 6,
     "precio": "90000",
     "vehiculoId": 3
   },
@@ -324,7 +324,7 @@
     "codigo": "D03",
     "nombre": "Faro delantero izquierdo",
     "descripcion": "Faro Hyundai Elantra 2022",
-    "cantidad": "6",
+    "cantidad": 5,
     "precio": "95000",
     "vehiculoId": 4
   },

@@ -1,0 +1,76 @@
+[
+  {
+    "codigo": "COT-1763445014491",
+    "clienteNombre": "Zianny",
+    "clienteCedula": "743214321",
+    "vehiculoPlaca": "321321",
+    "codigoOrden": "",
+    "repuestos": [
+      {
+        "codigo": "A04",
+        "nombre": "Puerta trasera derecha",
+        "cantidad": 1,
+        "precio": 240000,
+        "subtotal": 240000
+      },
+      {
+        "codigo": "A04",
+        "nombre": "Puerta trasera derecha",
+        "cantidad": 1,
+        "precio": 240000,
+        "subtotal": 240000
+      },
+      {
+        "codigo": "A07",
+        "nombre": "Retrovisor izquierdo",
+        "cantidad": 1,
+        "precio": 60000,
+        "subtotal": 60000
+      },
+      {
+        "codigo": "D02",
+        "nombre": "Espejo retrovisor",
+        "cantidad": 1,
+        "precio": 62000,
+        "subtotal": 62000
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO013",
+        "nombre": "Alineación completa",
+        "descripcion": "Alineación y balanceo de las 4 ruedas",
+        "horas": 1,
+        "tarifa": 60000,
+        "subtotal": 60000
+      },
+      {
+        "codigo": "MO016",
+        "nombre": "Frenos completos",
+        "descripcion": "Cambio completo de sistema de frenos (4 ruedas)",
+        "horas": 1,
+        "tarifa": 140000,
+        "subtotal": 140000
+      },
+      {
+        "codigo": "MO014",
+        "nombre": "Frenos delanteros",
+        "descripcion": "Cambio de pastillas y discos de frenos delanteros",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      }
+    ],
+    "descuentoManoObra": 0,
+    "esProforma": true,
+    "estado": "proforma",
+    "fechaCreacion": "2025-11-18T05:50:14.491Z",
+    "descuentoMonto": 0,
+    "subtotalRepuestos": 602000,
+    "subtotalManoObra": 280000,
+    "baseImponible": 882000,
+    "iva": 114660,
+    "total": 996660,
+    "fechaProforma": "2025-11-18T06:15:05.665Z"
+  }
+]

@@ -583,7 +583,7 @@ app.post("/api/citas", (req, res) => {
 /* === GET: obtener citas === */
 app.get("/api/citas", (req, res) => {
   let citas = readCitas();
-  return res.json(citas);
+  return res.json({ citas }); // 🔽 CAMBIO: envolver en objeto con propiedad citas
 });
 
 /* === PUT: actualizar cita === */
@@ -670,7 +670,7 @@ app.get("/api/trabajos", (req, res) => {
 
 /* === POST: crear OT desde una cita (CU-0028) === */
 app.post("/api/trabajos", (req, res) => {
-  const { codigoCita, servicio = "N/A", repuestosUtilizados = [], observacionesIniciales } = req.body || {};
+  const { codigoCita, observacionesIniciales, repuestosUtilizados = [] } = req.body || {};
 
   if (!codigoCita) return res.status(400).json({ ok: false, error: "Debe enviar el codigo de la cita" });
 
@@ -683,16 +683,18 @@ app.post("/api/trabajos", (req, res) => {
   if (trabajos.find((t) => t.idCita === cita.id))
     return res.status(409).json({ ok: false, error: `Ya existe una orden de trabajo para la cita ${codigoCita}` });
 
-  // ✅ restar inventario
-  const inventario = readInventario();
-  for (const r of repuestosUtilizados) {
-    const idx = inventario.findIndex((i) => i.codigo === r.codigo);
-    if (idx === -1 || inventario[idx].cantidad < r.cantidad) {
-      return res.status(400).json({ ok: false, error: `No hay suficiente stock de ${r.nombre}` });
+  // ✅ restar inventario si hay repuestos
+  if (repuestosUtilizados && repuestosUtilizados.length > 0) {
+    const inventario = readInventario();
+    for (const r of repuestosUtilizados) {
+      const idx = inventario.findIndex((i) => i.codigo === r.codigo);
+      if (idx === -1 || inventario[idx].cantidad < r.cantidad) {
+        return res.status(400).json({ ok: false, error: `No hay suficiente stock de ${r.nombre}` });
+      }
+      inventario[idx].cantidad -= r.cantidad;
     }
-    inventario[idx].cantidad -= r.cantidad;
+    writeInventario(inventario);
   }
-  writeInventario(inventario);
 
   const codigoOrden = `OT-${Date.now()}`;
   const nuevoTrabajo = {
@@ -706,11 +708,12 @@ app.post("/api/trabajos", (req, res) => {
     descripcionCita: cita.descripcion || "",
     observacionesIniciales: observacionesIniciales || "",
     tipoServicio: "",
-    servicio,
+    servicio: "N/A",
     estado: "Pendiente",
     diagnostico: "",
-    serviciosRealizados: "",
-    repuestosUtilizados,
+    serviciosRealizados: [],
+    repuestosUtilizados: repuestosUtilizados || [],
+    notasDiagnostico: [] // 🔽 Agregar campo para notas
   };
 
   trabajos.push(nuevoTrabajo);
@@ -718,7 +721,6 @@ app.post("/api/trabajos", (req, res) => {
 
   return res.json({ ok: true, trabajo: nuevoTrabajo });
 });
-
 
 /* === PUT: actualizar detalle de la OT (CU-0031) === */
 app.put("/api/trabajos/:codigoOrden", (req, res) => {
@@ -774,6 +776,140 @@ app.patch("/api/trabajos/:codigoOrden/estado", (req, res) => {
   writeTrabajos(trabajos);
 
   return res.json({ ok: true, trabajo: trabajos[idx] });
+});
+
+/*======================================= Mano de Obra ========================================*/
+const DATA_FILE_MANO_OBRA = path.join(DATA_DIR, "mano_de_obra.json");
+
+// Crear archivo si no existe
+function ensureManoObraFile() {
+  if (!fs.existsSync(DATA_FILE_MANO_OBRA)) {
+    fs.writeFileSync(DATA_FILE_MANO_OBRA, JSON.stringify([], null, 2), "utf8");
+  }
+}
+ensureManoObraFile();
+
+function readManoObra() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE_MANO_OBRA, "utf8");
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeManoObra(list) {
+  fs.writeFileSync(DATA_FILE_MANO_OBRA, JSON.stringify(list, null, 2), "utf8");
+}
+
+/* === GET: listar todos los servicios de mano de obra === */
+app.get("/api/mano_de_obra", (req, res) => {
+  try {
+    const manoObra = readManoObra();
+    return res.json({ ok: true, manoObra });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "Error al cargar mano de obra" });
+  }
+});
+
+/* === GET: obtener un servicio específico por código === */
+app.get("/api/mano_de_obra/:codigo", (req, res) => {
+  const { codigo } = req.params;
+  try {
+    const manoObra = readManoObra();
+    const servicio = manoObra.find(s => s.codigo === codigo);
+    
+    if (!servicio) {
+      return res.status(404).json({ ok: false, error: "Servicio no encontrado" });
+    }
+    
+    return res.json({ ok: true, servicio });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "Error al buscar servicio" });
+  }
+});
+
+/* === POST: crear nuevo servicio de mano de obra === */
+app.post("/api/mano_de_obra", (req, res) => {
+  const { codigo, nombre, descripcion, precio } = req.body;
+  
+  if (!codigo || !nombre || !precio) {
+    return res.status(400).json({ ok: false, error: "Código, nombre y precio son obligatorios" });
+  }
+  
+  try {
+    const manoObra = readManoObra();
+    
+    // Verificar si ya existe el código
+    if (manoObra.find(s => s.codigo === codigo)) {
+      return res.status(409).json({ ok: false, error: "Ya existe un servicio con este código" });
+    }
+    
+    const nuevoServicio = {
+      id: Date.now(),
+      codigo,
+      nombre,
+      descripcion: descripcion || "",
+      precio: Number(precio)
+    };
+    
+    manoObra.push(nuevoServicio);
+    writeManoObra(manoObra);
+    
+    return res.json({ ok: true, servicio: nuevoServicio });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "Error al crear servicio" });
+  }
+});
+
+/* === PUT: actualizar servicio de mano de obra === */
+app.put("/api/mano_de_obra/:codigo", (req, res) => {
+  const { codigo } = req.params;
+  const { nombre, descripcion, precio } = req.body;
+  
+  try {
+    const manoObra = readManoObra();
+    const servicioIndex = manoObra.findIndex(s => s.codigo === codigo);
+    
+    if (servicioIndex === -1) {
+      return res.status(404).json({ ok: false, error: "Servicio no encontrado" });
+    }
+    
+    manoObra[servicioIndex] = {
+      ...manoObra[servicioIndex],
+      ...(nombre && { nombre }),
+      ...(descripcion !== undefined && { descripcion }),
+      ...(precio !== undefined && { precio: Number(precio) })
+    };
+    
+    writeManoObra(manoObra);
+    
+    return res.json({ ok: true, servicio: manoObra[servicioIndex] });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "Error al actualizar servicio" });
+  }
+});
+
+/* === DELETE: eliminar servicio de mano de obra === */
+app.delete("/api/mano_de_obra/:codigo", (req, res) => {
+  const { codigo } = req.params;
+  
+  try {
+    const manoObra = readManoObra();
+    const servicioIndex = manoObra.findIndex(s => s.codigo === codigo);
+    
+    if (servicioIndex === -1) {
+      return res.status(404).json({ ok: false, error: "Servicio no encontrado" });
+    }
+    
+    manoObra.splice(servicioIndex, 1);
+    writeManoObra(manoObra);
+    
+    return res.json({ ok: true, message: "Servicio eliminado correctamente" });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: "Error al eliminar servicio" });
+  }
 });
 
 /*======================================= Gestion Cotizaciones ========================================*/

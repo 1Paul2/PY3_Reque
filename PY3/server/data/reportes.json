@@ -33,5 +33,12 @@
     "descripcion": "Faltan tornillos",
     "usuario": "Desconocido",
     "fecha": "2025-11-10T21:45:11.261Z"
+  },
+  {
+    "id": 1763442734768,
+    "tipo": "Clientes",
+    "descripcion": "Intento de eliminar cliente con cédula 712341234",
+    "usuario": "dei",
+    "fecha": "2025-11-18T05:12:14.753Z"
   }
 ]
