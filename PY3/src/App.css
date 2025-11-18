@@ -348,7 +348,7 @@ label {
   font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s; /* ← 3s → 0.3s NORMAL */
+  transition: background 0.3s, transform 0.3s;
 }
 
 .btn-menu:hover {
@@ -357,13 +357,39 @@ label {
   opacity: 1;
 }
 
-.btn-menu-danger {
-  background: #530202 !important;
-  margin-top: auto;
+/* 🔽 BOTONES DE ACCIÓN ABAJO (Agregar Usuario y Cerrar Sesión) */
+.btn-menu-action {
+  background: #2c3e50 !important;
+  margin-top: 10px !important;
   border-top: 1px solid #666 !important;
   padding-top: 12px !important;
   width: 100%;
-  transition: background 0.3s, transform 0.3s; /* ← AGREGAR TRANSICIÓN */
+  transition: background 0.3s, transform 0.3s;
+}
+
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn-menu-agregar-usuario {
+  background: #324f30 !important;
+}
+
+.btn-menu-agregar-usuario:hover {
+  background: #4e9842 !important;
+  transform: translateX(5px);
+}
+
+.btn-menu-danger {
+  background: #6d0202 !important;
+}
+
+.btn-menu-danger:hover {
+  background: #ac3636 !important;
+  transform: translateX(5px);
 }
 
 /* Colores al hover */
@@ -418,11 +444,6 @@ label {
   box-shadow: 0 2px 8px rgba(52, 73, 94, 0.4);
 }
 
-.btn-menu-danger:hover {
-  background: #a20e04 !important;
-  transform: translateX(5px);
-}
-
 /* ===== MODALES ===== */
 .modal-overlay-global {
   position: fixed;
@@ -472,7 +493,29 @@ label {
   border-radius: 20px;
   padding: 60px 70px;
   border: 1px solid rgba(20, 6, 80, 0.08);
-  box-shadow: 0 20px 60px rgba(81, 0, 0, 0.8);
+  box-shadow: 0 20px 60px rgba(79, 93, 66, 0.8);
+}
+
+.modal-card .btn-primary {
+  padding: 12px 20px;
+  border-radius: 10px;
+  background:   #4e9842;
+}
+
+.modal-card .btn-secondary {
+  padding: 12px 20px;
+  border-radius: 10px;
+  background:  #983e3e
+}
+
+.modal-card .btn-primary:hover {
+  background: #5fb052 !important;
+  transform: translateX(3px);
+}
+
+.modal-card .btn-secondary:hover {
+  background: #b05252 !important;
+  transform: translateX(3px);
 }
 
 .modal-title {

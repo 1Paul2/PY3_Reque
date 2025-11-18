@@ -8,7 +8,7 @@ import GestionReportesUsuario from "./ReportesUsuario";
 import GestioReportesAdministrador from "./ReportesAdministrador";
 import GestionCitas from "./GestionCitas";
 import GestionCotizacion from "./GestionCotizacion";
-import GestionTrabajos from "./GestionTrabajos"; // ✅ NUEVO IMPORT
+import GestionTrabajos from "./GestionTrabajos";
 
 /* ======================= API HTTP ======================= */
 const apiHttp = {
@@ -162,9 +162,7 @@ function Login({ onLogin, api }) {
   const [pass, setPass] = useState("");
   const [err, setErr] = useState("");
   const [forcePwd, setForcePwd] = useState(null);
-  const [showCreate, setShowCreate] = useState(false);
-  const [mostrarVerificacionAdmin, setMostrarVerificacionAdmin] =
-    useState(false);
+  // 🔽 QUITAR showCreate y mostrarVerificacionAdmin del Login
 
   const submit = (e) => {
     e && e.preventDefault();
@@ -224,13 +222,7 @@ function Login({ onLogin, api }) {
             <button type="submit" className="btn-primary">
               Entrar
             </button>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => setMostrarVerificacionAdmin(true)}
-            >
-              Crear usuario
-            </button>
+            {/* 🔽 QUITAR EL BOTÓN DE CREAR USUARIO DEL LOGIN */}
           </div>
         </form>
 
@@ -253,22 +245,7 @@ function Login({ onLogin, api }) {
         />
       )}
 
-      {/* 🔒 Nuevo: Modal de verificación administrador */}
-      {mostrarVerificacionAdmin && (
-        <RegistroAdministrador
-          api={api}
-          onClose={() => setMostrarVerificacionAdmin(false)}
-          alValidar={() => {
-            setMostrarVerificacionAdmin(false);
-            setShowCreate(true);
-          }}
-        />
-      )}
-
-      {/* Modal crear usuario (solo si admin verificado) */}
-      {showCreate && (
-        <CreateUserModal onClose={() => setShowCreate(false)} api={api} />
-      )}
+      {/* 🔽 QUITAR LOS MODALES DE REGISTRO DEL LOGIN */}
     </div>
   );
 }
@@ -278,6 +255,7 @@ function AdminHome({ session, onLogout, api }) {
   const [showMenu, setShowMenu] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
   const [isChanging, setIsChanging] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
   
   const isChangingRef = useRef(false);
   const menuRef = useRef(null);
@@ -363,9 +341,16 @@ function AdminHome({ session, onLogout, api }) {
               Reportes
             </button>
           </div>
-          <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
-            Cerrar sesión
-          </button>
+          
+          {/* BOTONES DE ACCIÓN ABAJO */}
+          <div className="menu-actions">
+            <button className="btn-menu btn-menu-action btn-menu-agregar-usuario" onClick={() => setShowCreateUser(true)}>
+              Agregar Usuario
+            </button>
+            <button className="btn-menu btn-menu-action btn-menu-danger" onClick={() => setConfirmOut(true)}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
 
@@ -391,6 +376,14 @@ function AdminHome({ session, onLogout, api }) {
           message="Si sale, volverá a la pantalla de inicio de sesión."
           onCancel={() => setConfirmOut(false)}
           onConfirm={onLogout}
+        />
+      )}
+
+      {/* MODAL AGREGAR USUARIO (DIRECTO SIN VERIFICACIÓN) */}
+      {showCreateUser && (
+        <CreateUserModal 
+          onClose={() => setShowCreateUser(false)} 
+          api={api} 
         />
       )}
     </div>
@@ -717,7 +710,8 @@ function CreateUserModal({ onClose, api }) {
                       setForm({ ...form, rol: e.target.value })
                     }
                   >
-                    <option value="usuario">Usuario normal</option>
+                    <option value="usuario">Usuario Normal</option>
+                    <option value="admin">Usuario Administrador</option>
                   </select>
                 </div>
               </div>
@@ -745,7 +739,7 @@ function CreateUserModal({ onClose, api }) {
           <>
             <h3 className="modal-title">Creación exitosa</h3>
             <p className="modal-text">
-              Usuario <b>{ok.nombre}</b> registrado.
+              Usuario <b>{ok.nombre}</b> registrado como <b>{ok.rol === "admin" ? "Administrador" : "Usuario normal"}</b>.
               <br />
               Código asignado: <b>{ok.code}</b>
               <br />
