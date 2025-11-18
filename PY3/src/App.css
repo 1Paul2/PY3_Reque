@@ -110,6 +110,30 @@ label {
   min-height: 500px;
 }
 
+/* El contenido siempre tiene transición */
+.panel-content > * {
+  transition: opacity 0.17s ease-in-out;
+}
+
+/* Durante el cambio - fade out */
+.panel-content.changing > * {
+  opacity: 0;
+}
+
+/* Después del cambio - fade in (se aplica automáticamente) */
+.panel-content > * {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Contenedor base para transformación */
 .section-transform {
   position: absolute;
@@ -295,7 +319,7 @@ label {
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  height: calc(100vh - 100px);
+  height: calc(96vh - 100px);
   justify-content: space-between;
   opacity: 0;
   transform: translateY(-10px);
@@ -320,7 +344,7 @@ label {
   background: #444;
   color: white;
   border: none;
-  padding: 12px 16px;
+  padding: 15px 16px;
   font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
@@ -351,9 +375,52 @@ label {
 .btn-menu-cotizacion:hover { background: #11695c !important; }
 .btn-menu-reportes:hover { background: #34495e !important; }
 
+/* Estados activos para los botones del menú */
+.btn-menu-clientes.active {
+  background: #1f4f70 !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(31, 79, 112, 0.4);
+}
+
+.btn-menu-vehiculos.active {
+  background: #7b2c25 !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(123, 44, 37, 0.4);
+}
+
+.btn-menu-inventario.active {
+  background: #1e6b3a !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(30, 107, 58, 0.4);
+}
+
+.btn-menu-citas.active {
+  background: #7a560c !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(122, 86, 12, 0.4);
+}
+
+.btn-menu-trabajos.active {
+  background: #5e3a6b !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(94, 58, 107, 0.4);
+}
+
+.btn-menu-cotizacion.active {
+  background: #11695c !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(17, 105, 92, 0.4);
+}
+
+.btn-menu-reportes.active {
+  background: #34495e !important;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(52, 73, 94, 0.4);
+}
+
 .btn-menu-danger:hover {
   background: #a20e04 !important;
-  transform: translateX(5px); /* ← AGREGAR EFECTO HOVER CONSISTENTE */
+  transform: translateX(5px);
 }
 
 /* ===== MODALES ===== */

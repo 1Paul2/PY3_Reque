@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import GestionClientes from "./GestionClientes"; // importamos nuestro componente
 import GestionVehiculos from "./GestionVehiculos"; // importamos nuestro componente
 import RegistroAdministrador from "./RegistroAdministrador";
@@ -273,61 +273,93 @@ function Login({ onLogin, api }) {
   );
 }
 
-/* ======================= ADMIN HOME ======================= */
 function AdminHome({ session, onLogout, api }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
   const [isChanging, setIsChanging] = useState(false);
+  
+  const isChangingRef = useRef(false);
+  const menuRef = useRef(null);
 
-  // Función para cambiar sección con transición
+  // Cerrar menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const cambiarSeccion = (nuevaSeccion) => {
-    if (nuevaSeccion === currentSection) return;
+    if (nuevaSeccion === currentSection || isChangingRef.current) return;
     
+    isChangingRef.current = true;
     setIsChanging(true);
     
-    // Esperar a que termine la animación de salida
     setTimeout(() => {
       setCurrentSection(nuevaSeccion);
-      // Pequeño delay para que se note el cambio de color
       setTimeout(() => {
+        isChangingRef.current = false;
         setIsChanging(false);
-      }, 200);
-    }, 300);
+      }, 50);
+    }, 100);
   };
 
   const getPanelClass = () => {
     return `center-panel ${currentSection}`;
   };
 
+  const isActive = (section) => {
+    return section === currentSection;
+  };
+
+  const renderSection = (section) => {
+    switch(section) {
+      case "clientes": return <GestionClientes session={session} />;
+      case "vehiculos": return <GestionVehiculos session={session} />;
+      case "inventario": return <GestionInventariosAdmin session={session} />;
+      case "citas": return <GestionCitas session={session} />;
+      case "trabajos": return <GestionTrabajos session={session} />;
+      case "cotizacion": return <GestionCotizacion session={session} />;
+      case "reportes": return <GestioReportesAdministrador session={session} />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="home">
       {/* Menú */}
-      <div className="menu-container">
+      <div className="menu-container" ref={menuRef}>
         <button className="btn-menu-toggle" onClick={() => setShowMenu(!showMenu)}>
           ☰
         </button>
         <div className={`dropdown-menu ${showMenu ? 'show' : ''}`}>
           <div className="menu-items">
-            <button className="btn-menu btn-menu-clientes" onClick={() => cambiarSeccion("clientes")}>
+            <button className={`btn-menu btn-menu-clientes ${isActive("clientes") ? 'active' : ''}`} onClick={() => cambiarSeccion("clientes")}>
               Gestión Clientes
             </button>
-            <button className="btn-menu btn-menu-vehiculos" onClick={() => cambiarSeccion("vehiculos")}>
+            <button className={`btn-menu btn-menu-vehiculos ${isActive("vehiculos") ? 'active' : ''}`} onClick={() => cambiarSeccion("vehiculos")}>
               Gestion Vehiculos
             </button>
-            <button className="btn-menu btn-menu-inventario" onClick={() => cambiarSeccion("inventario")}>
+            <button className={`btn-menu btn-menu-inventario ${isActive("inventario") ? 'active' : ''}`} onClick={() => cambiarSeccion("inventario")}>
               Gestion Inventario
             </button>
-            <button className="btn-menu btn-menu-citas" onClick={() => cambiarSeccion("citas")}>
+            <button className={`btn-menu btn-menu-citas ${isActive("citas") ? 'active' : ''}`} onClick={() => cambiarSeccion("citas")}>
               Gestion Citas
             </button>
-            <button className="btn-menu btn-menu-trabajos" onClick={() => cambiarSeccion("trabajos")}>
+            <button className={`btn-menu btn-menu-trabajos ${isActive("trabajos") ? 'active' : ''}`} onClick={() => cambiarSeccion("trabajos")}>
               Gestion Trabajos
             </button>
-            <button className="btn-menu btn-menu-cotizacion" onClick={() => cambiarSeccion("cotizacion")}>
+            <button className={`btn-menu btn-menu-cotizacion ${isActive("cotizacion") ? 'active' : ''}`} onClick={() => cambiarSeccion("cotizacion")}>
               Cotizacion
             </button>
-            <button className="btn-menu btn-menu-reportes" onClick={() => cambiarSeccion("reportes")}>
+            <button className={`btn-menu btn-menu-reportes ${isActive("reportes") ? 'active' : ''}`} onClick={() => cambiarSeccion("reportes")}>
               Reportes
             </button>
           </div>
@@ -345,16 +377,10 @@ function AdminHome({ session, onLogout, api }) {
         </div>
       </div>
 
-      {/* Panel con transición de color */}
+      {/* Panel con transición SIMPLE */}
       <div className={getPanelClass()}>
         <div className={`panel-content ${isChanging ? 'changing' : ''}`}>
-          {currentSection === "clientes" && <GestionClientes session={session} />}
-          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
-          {currentSection === "inventario" && <GestionInventariosAdmin session={session} />}
-          {currentSection === "citas" && <GestionCitas session={session} />}
-          {currentSection === "trabajos" && <GestionTrabajos session={session} />}
-          {currentSection === "cotizacion" && <GestionCotizacion session={session} />}
-          {currentSection === "reportes" && <GestioReportesAdministrador session={session} />}
+          {renderSection(currentSection)}
         </div>
       </div>
 
@@ -377,31 +403,64 @@ function UserHome({ session, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
   const [isChanging, setIsChanging] = useState(false);
+  
+  const isChangingRef = useRef(false);
+  const menuRef = useRef(null);
 
-  // Función para cambiar sección con transición
+  // Cerrar menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const cambiarSeccion = (nuevaSeccion) => {
-    if (nuevaSeccion === currentSection) return;
+    if (nuevaSeccion === currentSection || isChangingRef.current) return;
     
+    isChangingRef.current = true;
     setIsChanging(true);
     
-    // Ajustado a 1.5 segundos para coincidir con CSS
     setTimeout(() => {
       setCurrentSection(nuevaSeccion);
       setTimeout(() => {
+        isChangingRef.current = false;
         setIsChanging(false);
-      }, 200);
-    }, 800); // Mitad del tiempo de transición
+      }, 50);
+    }, 100);
   };
 
-  // Función para obtener la clase del panel según la sección
+  const isActive = (section) => {
+    return section === currentSection;
+  };
+
   const getPanelClass = () => {
     return `center-panel ${currentSection}`;
+  };
+
+  const renderSection = (section) => {
+    switch(section) {
+      case "clientes": return <GestionClientes session={session} />;
+      case "vehiculos": return <GestionVehiculos session={session} />;
+      case "inventario": return <GestionInventariosUsuario session={session} />;
+      case "citas": return <GestionCitas session={session} />;
+      case "trabajos": return <GestionTrabajos session={session} />;
+      case "cotizacion": return <GestionCotizacion session={session} />;
+      case "reportes": return <GestionReportesUsuario session={session} />;
+      default: return null;
+    }
   };
 
   return (
     <div className="home">
       {/* Menú */}
-      <div className="menu-container">
+      <div className="menu-container" ref={menuRef}>
         <button
           className="btn-menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -411,29 +470,28 @@ function UserHome({ session, onLogout }) {
 
         <div className={`dropdown-menu ${menuOpen ? 'show' : ''}`}>
           <div className="menu-items">
-            <button className="btn-menu btn-menu-clientes" onClick={() => cambiarSeccion("clientes")}>
+            <button className={`btn-menu btn-menu-clientes ${isActive("clientes") ? 'active' : ''}`} onClick={() => cambiarSeccion("clientes")}>
               Gestión Clientes
             </button>
-            <button className="btn-menu btn-menu-vehiculos" onClick={() => cambiarSeccion("vehiculos")}>
+            <button className={`btn-menu btn-menu-vehiculos ${isActive("vehiculos") ? 'active' : ''}`} onClick={() => cambiarSeccion("vehiculos")}>
               Gestion Vehiculos
             </button>
-            <button className="btn-menu btn-menu-inventario" onClick={() => cambiarSeccion("inventario")}>
+            <button className={`btn-menu btn-menu-inventario ${isActive("inventario") ? 'active' : ''}`} onClick={() => cambiarSeccion("inventario")}>
               Gestion Inventario
             </button>
-            <button className="btn-menu btn-menu-citas" onClick={() => cambiarSeccion("citas")}>
+            <button className={`btn-menu btn-menu-citas ${isActive("citas") ? 'active' : ''}`} onClick={() => cambiarSeccion("citas")}>
               Gestion Citas
             </button>
-            <button className="btn-menu btn-menu-trabajos" onClick={() => cambiarSeccion("trabajos")}>
+            <button className={`btn-menu btn-menu-trabajos ${isActive("trabajos") ? 'active' : ''}`} onClick={() => cambiarSeccion("trabajos")}>
               Gestion Trabajos
             </button>
-            <button className="btn-menu btn-menu-cotizacion" onClick={() => cambiarSeccion("cotizacion")}>
+            <button className={`btn-menu btn-menu-cotizacion ${isActive("cotizacion") ? 'active' : ''}`} onClick={() => cambiarSeccion("cotizacion")}>
               Cotizacion
             </button>
-            <button className="btn-menu btn-menu-reportes" onClick={() => cambiarSeccion("reportes")}>
+            <button className={`btn-menu btn-menu-reportes ${isActive("reportes") ? 'active' : ''}`} onClick={() => cambiarSeccion("reportes")}>
               Reportes
             </button>
           </div>
-          {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
           <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
             Cerrar sesión
           </button>
@@ -446,19 +504,12 @@ function UserHome({ session, onLogout }) {
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Código: {session.code}</div>
         </div>
-        {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* ===== CUADRO GRIS CON COLOR DINÁMICO ===== */}
+      {/* Panel con transición */}
       <div className={getPanelClass()}>
         <div className={`panel-content ${isChanging ? 'changing' : ''}`}>
-          {currentSection === "clientes" && <GestionClientes session={session} />}
-          {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
-          {currentSection === "inventario" && <GestionInventariosUsuario session={session} />}
-          {currentSection === "citas" && <GestionCitas session={session} />}
-          {currentSection === "trabajos" && <GestionTrabajos session={session} />}
-          {currentSection === "cotizacion" && <GestionCotizacion session={session} />}
-          {currentSection === "reportes" && <GestionReportesUsuario session={session} />}
+          {renderSection(currentSection)}
         </div>
       </div>
 
