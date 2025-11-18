@@ -278,76 +278,63 @@ function AdminHome({ session, onLogout, api }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
+  const [isChanging, setIsChanging] = useState(false);
 
-  // Función para obtener la clase del panel según la sección
-  const getPanelClass = () => {
-    return `center-panel ${currentSection}`;
+  // Función para cambiar sección con transición
+  const cambiarSeccion = (nuevaSeccion) => {
+    if (nuevaSeccion === currentSection) return;
+    
+    setIsChanging(true);
+    
+    // Esperar a que termine la animación de salida
+    setTimeout(() => {
+      setCurrentSection(nuevaSeccion);
+      // Pequeño delay para que se note el cambio de color
+      setTimeout(() => {
+        setIsChanging(false);
+      }, 200);
+    }, 300);
   };
 
-  const recordarCodigos = () => {
-    const usuarios = api.getAll();
-    if (!usuarios.length) {
-      alert("No hay usuarios");
-      return;
-    }
-    const header = "Nombre | Codigo | Contraseña\n";
-    const body = usuarios
-      .map((u) => `${u.nombre} | ${u.code} | ${u.password}`)
-      .join("\n");
-
-    if (
-      confirm(
-        "Este archivo incluira contraseñas en texto claro. Desea continuar?"
-      )
-    ) {
-      const blob = new Blob([header + body], { type: "text/plain" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "codigos_usuarios.txt";
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
+  const getPanelClass = () => {
+    return `center-panel ${currentSection}`;
   };
 
   return (
     <div className="home">
       {/* Menú */}
       <div className="menu-container">
-        <button
-          className="btn-menu-toggle"
-          onClick={() => setShowMenu(!showMenu)}
-        >
+        <button className="btn-menu-toggle" onClick={() => setShowMenu(!showMenu)}>
           ☰
         </button>
-          {showMenu && (
-            <div className="dropdown-menu">
-              <button className="btn-menu btn-menu-clientes" onClick={() => setCurrentSection("clientes")}>
-                Gestión Clientes
-              </button>
-              <button className="btn-menu btn-menu-vehiculos" onClick={() => setCurrentSection("vehiculos")}>
-                Gestion Vehiculos
-              </button>
-              <button className="btn-menu btn-menu-inventario" onClick={() => setCurrentSection("inventario")}>
-                Gestion Inventario
-              </button>
-              <button className="btn-menu btn-menu-citas" onClick={() => setCurrentSection("citas")}>
-                Gestion Citas
-              </button>
-              <button className="btn-menu btn-menu-trabajos" onClick={() => setCurrentSection("trabajos")}>
-                Gestion Trabajos
-              </button>
-              <button className="btn-menu btn-menu-cotizacion" onClick={() => setCurrentSection("cotizacion")}>
-                Cotizacion
-              </button>
-              <button className="btn-menu btn-menu-reportes" onClick={() => setCurrentSection("reportes")}>
-                Reportes
-              </button>
-              {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
-              <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
-                Cerrar sesión
-              </button>
-            </div>
-          )}
+        <div className={`dropdown-menu ${showMenu ? 'show' : ''}`}>
+          <div className="menu-items">
+            <button className="btn-menu btn-menu-clientes" onClick={() => cambiarSeccion("clientes")}>
+              Gestión Clientes
+            </button>
+            <button className="btn-menu btn-menu-vehiculos" onClick={() => cambiarSeccion("vehiculos")}>
+              Gestion Vehiculos
+            </button>
+            <button className="btn-menu btn-menu-inventario" onClick={() => cambiarSeccion("inventario")}>
+              Gestion Inventario
+            </button>
+            <button className="btn-menu btn-menu-citas" onClick={() => cambiarSeccion("citas")}>
+              Gestion Citas
+            </button>
+            <button className="btn-menu btn-menu-trabajos" onClick={() => cambiarSeccion("trabajos")}>
+              Gestion Trabajos
+            </button>
+            <button className="btn-menu btn-menu-cotizacion" onClick={() => cambiarSeccion("cotizacion")}>
+              Cotizacion
+            </button>
+            <button className="btn-menu btn-menu-reportes" onClick={() => cambiarSeccion("reportes")}>
+              Reportes
+            </button>
+          </div>
+          <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
 
       {/* Encabezado */}
@@ -356,12 +343,11 @@ function AdminHome({ session, onLogout, api }) {
           <h1>Bienvenido, {session.nombre}</h1>
           <div className="muted">Rol: {session.rol}</div>
         </div>
-        {/* QUITÉ EL BOTÓN DE CERRAR SESIÓN DE AQUÍ */}
       </div>
 
-      {/* ===== CUADRO GRIS CON COLOR DINÁMICO ===== */}
+      {/* Panel con transición de color */}
       <div className={getPanelClass()}>
-        <div className="panel-content">
+        <div className={`panel-content ${isChanging ? 'changing' : ''}`}>
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
           {currentSection === "inventario" && <GestionInventariosAdmin session={session} />}
@@ -390,6 +376,22 @@ function UserHome({ session, onLogout }) {
   const [confirmOut, setConfirmOut] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState("clientes");
+  const [isChanging, setIsChanging] = useState(false);
+
+  // Función para cambiar sección con transición
+  const cambiarSeccion = (nuevaSeccion) => {
+    if (nuevaSeccion === currentSection) return;
+    
+    setIsChanging(true);
+    
+    // Ajustado a 1.5 segundos para coincidir con CSS
+    setTimeout(() => {
+      setCurrentSection(nuevaSeccion);
+      setTimeout(() => {
+        setIsChanging(false);
+      }, 200);
+    }, 800); // Mitad del tiempo de transición
+  };
 
   // Función para obtener la clase del panel según la sección
   const getPanelClass = () => {
@@ -407,35 +409,35 @@ function UserHome({ session, onLogout }) {
           ☰
         </button>
 
-        {menuOpen && (
-          <div className="dropdown-menu">
-            <button className="btn-menu btn-menu-clientes" onClick={() => setCurrentSection("clientes")}>
+        <div className={`dropdown-menu ${menuOpen ? 'show' : ''}`}>
+          <div className="menu-items">
+            <button className="btn-menu btn-menu-clientes" onClick={() => cambiarSeccion("clientes")}>
               Gestión Clientes
             </button>
-            <button className="btn-menu btn-menu-vehiculos" onClick={() => setCurrentSection("vehiculos")}>
+            <button className="btn-menu btn-menu-vehiculos" onClick={() => cambiarSeccion("vehiculos")}>
               Gestion Vehiculos
             </button>
-            <button className="btn-menu btn-menu-inventario" onClick={() => setCurrentSection("inventario")}>
+            <button className="btn-menu btn-menu-inventario" onClick={() => cambiarSeccion("inventario")}>
               Gestion Inventario
             </button>
-            <button className="btn-menu btn-menu-citas" onClick={() => setCurrentSection("citas")}>
+            <button className="btn-menu btn-menu-citas" onClick={() => cambiarSeccion("citas")}>
               Gestion Citas
             </button>
-            <button className="btn-menu btn-menu-trabajos" onClick={() => setCurrentSection("trabajos")}>
+            <button className="btn-menu btn-menu-trabajos" onClick={() => cambiarSeccion("trabajos")}>
               Gestion Trabajos
             </button>
-            <button className="btn-menu btn-menu-cotizacion" onClick={() => setCurrentSection("cotizacion")}>
+            <button className="btn-menu btn-menu-cotizacion" onClick={() => cambiarSeccion("cotizacion")}>
               Cotizacion
             </button>
-            <button className="btn-menu btn-menu-reportes" onClick={() => setCurrentSection("reportes")}>
+            <button className="btn-menu btn-menu-reportes" onClick={() => cambiarSeccion("reportes")}>
               Reportes
             </button>
-            {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
-            <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
-              Cerrar sesión
-            </button>
           </div>
-        )}
+          {/* BOTÓN CERRAR SESIÓN EN EL SUBMENÚ */}
+          <button className="btn-menu btn-menu-danger" onClick={() => setConfirmOut(true)}>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
 
       {/* Encabezado */}
@@ -449,7 +451,7 @@ function UserHome({ session, onLogout }) {
 
       {/* ===== CUADRO GRIS CON COLOR DINÁMICO ===== */}
       <div className={getPanelClass()}>
-        <div className="panel-content">
+        <div className={`panel-content ${isChanging ? 'changing' : ''}`}>
           {currentSection === "clientes" && <GestionClientes session={session} />}
           {currentSection === "vehiculos" && <GestionVehiculos session={session} />}
           {currentSection === "inventario" && <GestionInventariosUsuario session={session} />}

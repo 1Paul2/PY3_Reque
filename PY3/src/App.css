@@ -9,7 +9,7 @@ body {
   background-size: cover;
   color: #e5e7eb;
 }
-
+.dropdown-menu
 h1, h2, h3 { 
   margin: 0 0 10px; 
 }
@@ -64,48 +64,98 @@ label {
   min-height: 600px;
   box-shadow: 0 6px 25px rgba(0,0,0,0.6);
   color: #fff;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease-in-out; /* ← MÁS LENTO PARA NOTAR MEJOR EL CAMBIO */
 }
 
-/* CLASES DE COLOR DINÁMICAS */
+/* CLASES DE COLOR DINÁMICAS - CON TRANSICIÓN SUAVE */
 .center-panel.clientes {
   background: rgba(30, 51, 76, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(31, 79, 112, 0.4); /* ← SOMBRA CON COLOR COHERENTE */
 }
 
 .center-panel.vehiculos {
   background: rgba(59, 40, 36, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(123, 44, 37, 0.4); /* ← SOMBRA ROJIZA */
 }
 
 .center-panel.inventario {
   background: rgba(27, 51, 29, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(30, 107, 58, 0.4); /* ← SOMBRA VERDE */
 }
 
 .center-panel.citas {
   background: rgba(51, 50, 27, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(122, 86, 12, 0.4); /* ← SOMBRA AMARILLA */
 }
 
 .center-panel.trabajos {
   background: rgba(52, 39, 58, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(94, 58, 107, 0.4); /* ← SOMBRA MORADA */
 }
 
 .center-panel.cotizacion {
   background: rgba(51, 69, 66, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(17, 105, 92, 0.4); /* ← SOMBRA VERDE AZULADO */
 }
 
 .center-panel.reportes {
   background: rgba(31, 45, 56, 0.9);
-  box-shadow: 0 6px 25px rgba(247, 247, 247, 0.3);
+  box-shadow: 0 6px 25px rgba(52, 73, 94, 0.4); /* ← SOMBRA AZUL OSCURO */
 }
 
 .panel-content {
   width: 100%;
   margin: 16px auto;
+  position: relative;
+  min-height: 500px;
+}
+
+/* Contenedor base para transformación */
+.section-transform {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Sección que está saliendo (desvaneciéndose) */
+.section-leaving {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  z-index: 2;
+}
+
+.section-leaving.active {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  filter: blur(2px);
+}
+
+/* Sección que está entrando (apareciendo) */
+.section-entering {
+  opacity: 0;
+  transform: scale(1.05) translateY(10px);
+  filter: blur(2px);
+  z-index: 1;
+}
+
+.section-entering.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  filter: blur(0px);
+}
+
+/* Estado normal (sin transición) */
+.section-leaving:not(.active) {
+  display: none;
+}
+
+.section-entering:not(.active) {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  filter: blur(0px);
+  z-index: 2;
 }
 
 /* ===== HOME HEAD ===== */
@@ -245,26 +295,51 @@ label {
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  animation: fadeDown 0.25s ease-out;
+  height: calc(100vh - 100px);
+  justify-content: space-between;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  pointer-events: none;
 }
 
-/* ===== BOTONES DEL MENÚ ===== */
+.dropdown-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.dropdown-menu .menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 🔽 CORREGIDO - TRANSICIÓN NORMAL PARA BOTONES */
 .btn-menu {
   background: #444;
   color: white;
   border: none;
-  padding: 10px 16px;
+  padding: 12px 16px;
   font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 5px;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.3s, transform 0.3s; /* ← 3s → 0.3s NORMAL */
 }
 
 .btn-menu:hover {
-  transform: translateX(3px);
+  transform: translateX(5px);
   color: white;
   opacity: 1;
+}
+
+.btn-menu-danger {
+  background: #530202 !important;
+  margin-top: auto;
+  border-top: 1px solid #666 !important;
+  padding-top: 12px !important;
+  width: 100%;
+  transition: background 0.3s, transform 0.3s; /* ← AGREGAR TRANSICIÓN */
 }
 
 /* Colores al hover */
@@ -276,15 +351,9 @@ label {
 .btn-menu-cotizacion:hover { background: #11695c !important; }
 .btn-menu-reportes:hover { background: #34495e !important; }
 
-.btn-menu-danger {
-  background: #444 !important;
-  margin-top: 10px !important;
-  border-top: 1px solid #666 !important;
-  padding-top: 12px !important;
-}
-
 .btn-menu-danger:hover {
-  background: #6b1f1a !important;
+  background: #a20e04 !important;
+  transform: translateX(5px); /* ← AGREGAR EFECTO HOVER CONSISTENTE */
 }
 
 /* ===== MODALES ===== */
