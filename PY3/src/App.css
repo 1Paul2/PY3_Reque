@@ -1492,115 +1492,90 @@ label {
   }
 }
 
-/*============================= Gestión de Reportes Usuario =================================*/
-.reportes-usuario {
-  width: 100%; /* 🔽 OCUPA TODO EL ANCHO */
-  margin: 20px auto;
+/*============================= Gestión de Reportes Administrador =================================*/
+.reportes-admin {
+  width: 100%;
+  margin: 0 auto;
   font-family: Arial, sans-serif;
   padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 200px);
 }
 
-.reportes-usuario h2 {
-  text-align: left; /* 🔽 ALINEADO A LA IZQUIERDA */
+/* 🔽 CONTENEDOR SCROLLABLE INTERNO */
+.reportes-admin .contenido-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 10px;
+}
+
+.reportes-admin h2 {
+  text-align: left;
   margin-bottom: 20px;
-  color: #ffffff; /* 🔽 COLOR BLANCO */
+  color: #ffffff;
   font-size: 24px;
   font-weight: bold;
   margin-top: 0;
 }
 
-/* ================== Contenedor de barra de búsqueda + botón ================== */
-.reportes-usuario .search-add-container {
+/* ================== FILTROS ================== */
+.reportes-admin .filtros-reportes {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
-  margin-top: 28px;
+  margin-bottom: 15px;
   align-items: center;
-  width: 100%;
 }
 
-/* Barra de búsqueda */
-.reportes-usuario .search-add-container .search-bar {
+/* Input de búsqueda */
+.reportes-admin .filtro-input {
   flex: 1;
   padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #ffffff;
+  border: 1px solid #6d766c;
   background-color: #f5f5f5;
   font-size: 15px;
   color: #333;
   transition: border-color 0.2s, box-shadow 0.2s;
-  height: 36px;
-  box-sizing: border-box;
 }
 
-/* Botones */
-.reportes-usuario .btn {
-  background: #1f2d38; /* AZUL OSCURO */
-  color: rgb(241, 227, 214);
-  border: none;
-  border-radius: 6px;
-  padding: 12px 20px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  white-space: nowrap;
-  font-size: 15px;
-  height: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  min-width: 120px;
-}
-
-.reportes-usuario .btn:hover {
-  background: #2c3e50; /* AZUL MÁS CLARO */
-  transform: translateY(-1px);
-}
-
-.reportes-usuario .btn-selected {
-  background-color: #34495e; /* AZUL INTERMEDIO */
-  color: #fff;
-}
-
-/* Área de texto */
-.reportes-usuario textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 8px 10px;
-  border-radius: 5px;
-  border: 1px solid #1f2d38;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1f2d38;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.reportes-usuario textarea:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.6);
+.reportes-admin .filtro-input:focus {
+  border-color: #1f2d38;
+  box-shadow: 0 0 5px rgba(31, 45, 56, 0.5);
   outline: none;
 }
 
-/* Botón enviar */
-.reportes-usuario .btn-enviar {
-  padding: 12px 30px;
+/* ================== BOTÓN DE ORDEN ================== */
+.reportes-admin .btn-orden {
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
-  background: #1f2d38;
-  color: rgb(241, 227, 214);
   cursor: pointer;
-  transition: background 0.2s;
-  font-size: 16px;
   font-weight: bold;
+  transition: all 0.3s ease;
+  color: white;
+  min-width: 150px;
 }
 
-.reportes-usuario .btn-enviar:hover {
-  background: #2c3e50;
+.reportes-admin .btn-orden-activo {
+  background-color: #1f2d38;
 }
 
-/* ======================= Lista de Reportes ======================= */
-.reportes-usuario .lista-reportes-admin {
+.reportes-admin .btn-orden-inactivo {
+  background-color: #2c3e50;
+}
+
+.reportes-admin .btn-orden:hover {
+  background: #34495e !important;
+  transform: scale(1.05);
+}
+
+/* ================== LISTA DE REPORTES ================== */
+.reportes-admin .lista-reportes-admin {
   list-style: none;
   padding: 0;
   border: 1px solid #ffffff;
@@ -1612,7 +1587,505 @@ label {
   margin-top: 20px;
 }
 
-/* 🔽 ELEMENTOS PRINCIPALES - IGUAL QUE INVENTARIO */
+/* 🔽 PERSONALIZAR EL SCROLLBAR */
+.reportes-admin .lista-reportes-admin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.reportes-admin .lista-reportes-admin::-webkit-scrollbar-track {
+  background: rgba(31, 45, 56, 0.5);
+  border-radius: 4px;
+}
+
+.reportes-admin .lista-reportes-admin::-webkit-scrollbar-thumb {
+  background: #1f2d38;
+  border-radius: 4px;
+}
+
+.reportes-admin .lista-reportes-admin::-webkit-scrollbar-thumb:hover {
+  background: #34495e;
+}
+
+/* 🔽 ELEMENTOS PRINCIPALES */
+.reportes-admin .item-principal {
+  font-weight: bold;
+  color: #989898;
+  border-bottom: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.reportes-admin .item-principal:hover {
+  background: #34495e !important;
+  color: #fff;
+}
+
+.reportes-admin .item-principal.selected {
+  background: #34495e !important;
+  color: #fff;
+}
+
+/* 🔽 CONTENEDOR DE SUB-LISTAS */
+.reportes-admin .sub-lista {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+  background: #1f2d38;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ffffff;
+}
+
+/* 🔽 ELEMENTOS DE SUB-LISTAS */
+.reportes-admin .item-sub-lista {
+  font-weight: normal;
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 3px;
+  margin-top: 3px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reportes-admin .item-sub-lista:hover {
+  background: #34495e !important;
+  color: #fff;
+}
+
+.reportes-admin .item-sub-lista.selected {
+  background: #34495e !important;
+  color: #fff;
+}
+
+/* 🔽 CATEGORÍAS */
+.reportes-admin .categoria {
+  font-weight: bold;
+  color: #ffffff;
+  text-align: left;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Mensaje cuando no hay reportes */
+.reportes-admin .no-reportes-vehiculo {
+  text-align: center;
+  color: #ffffff;
+  padding: 15px;
+  font-style: italic;
+  background: #1f2d38;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+/* ================== INDICADORES DE ESTADO ================== */
+.reportes-admin .estado-indicador {
+  margin-right: 8px;
+  font-size: 16px;
+  display: inline-block;
+}
+
+.reportes-admin .estado-pendiente {
+  color: #ffc107;
+}
+
+.reportes-admin .estado-en-proceso {
+  color: #17a2b8;
+}
+
+.reportes-admin .estado-atendido {
+  color: #28a745;
+}
+
+/* ================== MODAL ADMINISTRADOR ================== */
+.reportes-admin .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.reportes-admin .modal {
+  background: rgba(80, 75, 75, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(31, 45, 56, 0.25);
+  animation: aparecer 0.3s ease-out;
+  position: relative;
+  text-align: left;
+}
+
+.reportes-admin .modal h3 {
+  color: #ffffff;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.reportes-admin .modal p {
+  margin: 5px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #ffffff;
+  width: 100%;
+}
+
+/* CONTENEDOR DE ESTADO EN MODAL */
+.reportes-admin .estado-container {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.reportes-admin .estado-container label {
+  color: #ffffff;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* SELECT DE ESTADO CON COLORES */
+.reportes-admin .select-estado {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 2px solid;
+  font-weight: bold;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.reportes-admin .select-estado.estado-pendiente {
+  border-color: #ffc107;
+  background-color: #fffbf0;
+}
+
+.reportes-admin .select-estado.estado-en-proceso {
+  border-color: #17a2b8;
+  background-color: #f0f9ff;
+}
+
+.reportes-admin .select-estado.estado-atendido {
+  border-color: #28a745;
+  background-color: #f0fff4;
+}
+
+/* BOTONES DEL MODAL MEJORADOS */
+.reportes-admin .modal-botones {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 20px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.reportes-admin .btn-guardar {
+  background-color: #1f2d38;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  flex: 1;
+}
+
+.reportes-admin .btn-guardar:hover {
+  background: #34495e !important;
+}
+
+.reportes-admin .btn-atendido {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  flex: 1;
+}
+
+.reportes-admin .btn-atendido:hover {
+  background-color: #21963c;
+}
+
+.reportes-admin .btn-close {
+  background: #1f2d38;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  flex: 1;
+}
+
+.reportes-admin .btn-close:hover {
+  background: #34495e !important;
+}
+
+/* Animación para el modal */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reportes-admin .filtros-reportes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .reportes-admin .modal-botones {
+    flex-direction: column;
+  }
+  
+  .reportes-admin .btn-orden {
+    min-width: 100%;
+  }
+  
+  .reportes-admin .estado-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .reportes-admin .select-estado {
+    min-width: 100%;
+  }
+}
+
+/*============================= Gestión de Reportes Usuario =================================*/
+.reportes-usuario {
+  width: 100%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 200px);
+}
+
+/* 🔽 CONTENEDOR SCROLLABLE INTERNO */
+.reportes-usuario .contenido-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 10px;
+}
+
+/* 🔽 PERSONALIZAR SCROLLBAR DEL CONTENEDOR INTERNO */
+.reportes-usuario .contenido-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.reportes-usuario .contenido-scrollable::-webkit-scrollbar-track {
+  background: rgba(31, 45, 56, 0.3);
+  border-radius: 4px;
+}
+
+.reportes-usuario .contenido-scrollable::-webkit-scrollbar-thumb {
+  background: #1f2d38;
+  border-radius: 4px;
+}
+
+.reportes-usuario .contenido-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #34495e;
+}
+
+.reportes-usuario h2 {
+  text-align: left;
+  margin-bottom: 20px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+/* ================== SECCIONES COMPACTAS ================== */
+.reportes-usuario .seccion-envio {
+  margin-bottom: 0;
+  padding: 15px;
+  background: rgba(46, 68, 85, 0.7);
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-top: -10px; /* 🔽 NUEVO: SUBE LA SECCIÓN */
+}
+
+.reportes-usuario .seccion-lista {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reportes-usuario .seccion-lista h3 {
+  color: #fff;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+/* ================== CONTENEDORES DE BOTONES ================== */
+.reportes-usuario .search-add-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Botones - COLORES CONSISTENTES */
+.reportes-usuario .btn {
+  background: #1f2d38;
+  color: rgb(241, 227, 214);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  font-size: 14px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 110px;
+}
+
+.reportes-usuario .btn:hover {
+  background: #34495e !important;
+  transform: translateY(-1px);
+}
+
+.reportes-usuario .btn-selected {
+  background-color: #34495e !important;
+  color: #fff;
+}
+
+/* Área de texto compacta */
+.reportes-usuario textarea {
+  width: 100%;
+  min-height: 80px;
+  max-height: 120px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #1f2d38;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2d38;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+
+.reportes-usuario textarea:focus {
+  border-color: #1f2d38;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.6);
+  outline: none;
+}
+
+/* Botón enviar compacto */
+.reportes-usuario .btn-enviar {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  background: #1f2d38;
+  color: rgb(241, 227, 214);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.reportes-usuario .btn-enviar:hover {
+  background: #34495e !important;
+}
+
+/* ======================= LISTA DE REPORTES CON SCROLL ======================= */
+.reportes-usuario .contenedor-lista-scroll {
+  flex: 1;
+  max-height: 225px;
+  overflow-y: auto;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  background: none;
+  margin-top: 10px;
+}
+
+/* 🔽 PERSONALIZAR EL SCROLLBAR */
+.reportes-usuario .contenedor-lista-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.reportes-usuario .contenedor-lista-scroll::-webkit-scrollbar-track {
+  background: rgba(31, 45, 56, 0.5);
+  border-radius: 4px;
+}
+
+.reportes-usuario .contenedor-lista-scroll::-webkit-scrollbar-thumb {
+  background: #1f2d38;
+  border-radius: 4px;
+}
+
+.reportes-usuario .contenedor-lista-scroll::-webkit-scrollbar-thumb:hover {
+  background: #34495e;
+}
+
+.reportes-usuario .lista-reportes-admin {
+  list-style: none;
+  padding: 0;
+  background: none;
+  width: 100%;
+  margin: 0;
+}
+
+/* 🔽 ELEMENTOS PRINCIPALES */
 .reportes-usuario .item-principal {
   font-weight: bold;
   color: #989898;
@@ -1628,28 +2101,28 @@ label {
 }
 
 .reportes-usuario .item-principal:hover {
-  background: #1f2d38; /* 🔽 AZUL OSCURO AL HOVER */
-  color: #fff; /* 🔽 TEXTO BLANCO AL HOVER */
+  background: #34495e !important;
+  color: #fff;
 }
 
 .reportes-usuario .item-principal.selected {
-  background: #1f2d38; /* 🔽 AZUL OSCURO AL SELECCIONAR */
-  color: #696262;
+  background: #34495e !important;
+  color: #fff;
 }
 
-/* 🔽 CONTENEDOR DE SUB-LISTAS - FONDO MÁS CLARO */
+/* 🔽 CONTENEDOR DE SUB-LISTAS */
 .reportes-usuario .sub-lista {
   list-style: none;
   padding-left: 20px;
   margin-top: 5px;
-  background: #1f2d38; /* 🔽 FONDO MÁS CLARO PARA SUB-LISTAS */
+  background: #1f2d38;
   border-radius: 5px;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ffffff;
 }
 
-/* 🔽 ELEMENTOS DE SUB-LISTAS - TRANSPARENTES COMO INVENTARIO */
+/* 🔽 ELEMENTOS DE SUB-LISTAS */
 .reportes-usuario .item-sub-lista {
   font-weight: normal;
   color: #ffffff;
@@ -1662,23 +2135,27 @@ label {
   text-align: left;
   width: 100%;
   box-sizing: border-box;
-  background: none; /* 🔽 TRANSPARENTE POR DEFECTO - IGUAL QUE INVENTARIO */
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
 }
 
 .reportes-usuario .item-sub-lista:hover {
-  background: #34495e; /* 🔽 MÁS OSCURO AL HOVER */
+  background: #34495e !important;
   color: #fff;
 }
 
 .reportes-usuario .item-sub-lista.selected {
-  background: #34495e; /* 🔽 MÁS OSCURO AL SELECCIONAR */
+  background: #34495e !important;
   color: #fff;
 }
 
-/* 🔽 CATEGORÍAS - TÍTULOS EN BLANCO */
+/* 🔽 CATEGORÍAS */
 .reportes-usuario .categoria {
   font-weight: bold;
-  color: #ffffff; /* 🔽 BLANCO */
+  color: #ffffff;
   text-align: left;
   margin-top: 15px;
   margin-bottom: 10px;
@@ -1689,58 +2166,34 @@ label {
 .reportes-usuario .no-reportes {
   text-align: center;
   color: #ffffff;
-  padding: 20px;
+  padding: 15px;
   font-style: italic;
   background: #1f2d38;
   border-radius: 5px;
-  margin: 10px 0;
+  margin: 10px;
+  font-size: 14px;
 }
 
-/* ===== Filtros de reportes ===== */
-.reportes-usuario .filtros-reportes {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  align-items: center;
+/* ======================= INDICADORES DE ESTADO ======================= */
+.reportes-usuario .estado-indicador {
+  margin-right: 8px;
+  font-size: 16px;
+  display: inline-block;
 }
 
-/* Input de búsqueda */
-.reportes-usuario .filtro-input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #6d766c;
-  background-color: #f5f5f5;
-  font-size: 15px;
-  color: #333;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.reportes-usuario .estado-pendiente {
+  color: #ffc107;
 }
 
-.reportes-usuario .filtro-input:focus {
-  border-color: #1f2d38;
-  box-shadow: 0 0 5px rgba(31, 45, 56, 0.5);
-  outline: none;
+.reportes-usuario .estado-en-proceso {
+  color: #17a2b8;
 }
 
-/* Select de orden */
-.reportes-usuario .filtro-select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #6d766c;
-  background-color: #f5f5f5;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.reportes-usuario .estado-atendido {
+  color: #28a745;
 }
 
-.reportes-usuario .filtro-select:focus {
-  border-color: #1f2d38;
-  box-shadow: 0 0 5px rgba(31, 45, 56, 0.5);
-  outline: none;
-}
-
-/* ======================= Modal de Reportes ======================= */
+/* ======================= MODAL ======================= */
 .reportes-usuario .modal-overlay {
   position: fixed;
   top: 0;
@@ -1759,11 +2212,11 @@ label {
   padding: 20px;
   border-radius: 10px;
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 0 4px 12px rgba(31, 45, 56, 0.25); /* 🔽 SOMBRA AZUL */
+  box-shadow: 0 4px 12px rgba(31, 45, 56, 0.25);
   animation: aparecer 0.3s ease-out;
   position: relative;
   text-align: left;
@@ -1774,7 +2227,7 @@ label {
   font-size: 18px;
   text-align: center;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .reportes-usuario .modal p {
@@ -1782,34 +2235,52 @@ label {
   font-size: 15px;
   line-height: 1.4;
   color: #ffffff;
+  width: 100%;
 }
 
-/* Botones del modal */
 .reportes-usuario .btn-close {
   background: #1f2d38;
-  color: rgb(241, 227, 214);
+  color: white;
+  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
   transition: background 0.2s;
   align-self: center;
   margin-top: 15px;
 }
 
 .reportes-usuario .btn-close:hover {
-  background: #2c3e50;
+  background: #34495e !important;
 }
 
-/* ======================= Animación ======================= */
+/* Animación para el modal */
 @keyframes aparecer {
   from {
-    transform: scale(0.8);
     opacity: 0;
+    transform: scale(0.9);
   }
   to {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reportes-usuario .search-add-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .reportes-usuario .contenedor-lista-scroll {
+    max-height: 250px;
+  }
+  
+  .reportes-usuario .btn {
+    min-width: 100%;
+    margin-bottom: 5px;
   }
 }
 
