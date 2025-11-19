@@ -481,6 +481,7 @@ app.post("/api/reportes", (req, res) => {
     descripcion,
     usuario,
     fecha: fecha || new Date().toISOString(),
+    estado: "pendiente"
   };
 
   reportes.push(reporte);
@@ -514,6 +515,37 @@ app.get("/api/reportes", (req, res) => {
   }
 
   return res.json(reportes);
+});
+
+/* === PUT: actualizar estado del reporte === */
+app.put("/api/reportes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const { estado } = req.body;
+  
+  let reportes = readReportes();
+  const reporteIndex = reportes.findIndex(r => r.id === id);
+
+  if (reporteIndex === -1) {
+    return res.status(404).json({ ok: false, error: "Reporte no encontrado" });
+  }
+
+  // Validar que el estado sea uno de los permitidos
+  const estadosPermitidos = ["pendiente", "en-proceso", "atendido"];
+  if (!estado || !estadosPermitidos.includes(estado)) {
+    return res.status(400).json({ 
+      ok: false, 
+      error: "Estado inválido. Debe ser: pendiente, en-proceso o atendido" 
+    });
+  }
+
+  // Actualizar el estado del reporte
+  reportes[reporteIndex].estado = estado;
+  writeReportes(reportes);
+
+  return res.json({ 
+    ok: true, 
+    reporte: reportes[reporteIndex] 
+  });
 });
 
 /* === DELETE: eliminar reporte === */
