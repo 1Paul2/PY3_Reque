@@ -727,7 +727,7 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
   const codigoOrden = String(req.params.codigoOrden || "");
   const body = req.body || {};
 
-  // ❌ Eliminar del body cualquier intento de enviar notas internas
+  // ❌ Evitar que el front modifique notas internas accidentalmente
   delete body.notasInternas;
 
   const trabajos = readTrabajos();
@@ -739,44 +739,46 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
       .json({ ok: false, error: "Orden de trabajo no encontrada" });
   }
 
+  /* ================================================================
+     PROCESAR REPUESTOS: calcular precio y subtotal automáticamente
+     ================================================================ */
+  let repuestosProcesados = trabajos[idx].repuestosUtilizados || [];
+
+  // Si vienen repuestos en la actualización…
+  if (Array.isArray(body.repuestosUtilizados)) {
+    const inventario = readInventario();
+
+    repuestosProcesados = body.repuestosUtilizados.map((r) => {
+      const item = inventario.find((i) => i.codigo === r.codigo);
+
+      const precio = item ? Number(item.precio) || 0 : 0;
+      const nombre = r.nombre || (item ? item.nombre : "");
+      const cantidad = Number(r.cantidad) || 0;
+      const subtotal = precio * cantidad;
+
+      return { ...r, nombre, precio, cantidad, subtotal };
+    });
+
+    // Aquí podrías manejar lógica de stock si deseas reflejar aumentos/disminuciones
+  }
+
+  /* ================================================================ */
+
   const actualizado = {
     ...trabajos[idx],
     ...body,
-    codigoOrden: trabajos[idx].codigoOrden,
+    repuestosUtilizados: repuestosProcesados,
+    codigoOrden: trabajos[idx].codigoOrden, // protegidos
     idCita: trabajos[idx].idCita,
   };
 
+  // Guardar
   trabajos[idx] = actualizado;
   writeTrabajos(trabajos);
 
   return res.json({ ok: true, trabajo: actualizado });
 });
 
-/* === PATCH: cambiar estado de la OT (CU-0032) === */
-app.patch("/api/trabajos/:codigoOrden/estado", (req, res) => {
-  const codigoOrden = String(req.params.codigoOrden || "");
-  const { estado } = req.body || {};
-
-  if (!estado) {
-    return res
-      .status(400)
-      .json({ ok: false, error: "Debe enviar el nuevo estado" });
-  }
-
-  const trabajos = readTrabajos();
-  const idx = trabajos.findIndex((t) => String(t.codigoOrden) === codigoOrden);
-
-  if (idx === -1) {
-    return res
-      .status(404)
-      .json({ ok: false, error: "Orden de trabajo no encontrada" });
-  }
-
-  trabajos[idx].estado = estado;
-  writeTrabajos(trabajos);
-
-  return res.json({ ok: true, trabajo: trabajos[idx] });
-});
 
 /*======================================= Mano de Obra ========================================*/
 const DATA_FILE_MANO_OBRA = path.join(DATA_DIR, "mano_de_obra.json");

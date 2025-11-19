@@ -1,3 +1,41 @@
 [
-
+  {
+    "codigoOrden": "OT-1763524931412",
+    "idCita": 1763333198221,
+    "clienteNombre": "Jeffry",
+    "clienteCedula": "778967896",
+    "placa": "147147",
+    "fechaCita": "2025-11-16",
+    "horaCita": "15:00",
+    "descripcionCita": "descripcion Jefrry",
+    "observacionesIniciales": "",
+    "tipoServicio": "",
+    "servicio": "N/A",
+    "estado": "Pendiente",
+    "diagnostico": "",
+    "serviciosRealizados": [
+      {
+        "codigo": "MO002",
+        "nombre": "Pintura panel pequeño",
+        "descripcion": "Pintura de 1 panel pequeño (espejos, tapas de gasolina)",
+        "precio": 50000
+      }
+    ],
+    "repuestosUtilizados": [
+      {
+        "codigo": "35",
+        "nombre": "Tapón de combustible",
+        "cantidad": 1,
+        "precio": 6000,
+        "subtotal": 6000
+      }
+    ],
+    "notasDiagnostico": [
+      {
+        "id": 1763524955237,
+        "texto": "ffgg",
+        "fecha": "18/11/2025, 10:02:35 p. m."
+      }
+    ]
+  }
 ]

@@ -12,7 +12,7 @@
     "codigo": "34",
     "nombre": "Aceite para frenos DOT4",
     "descripcion": "Fluido de frenos universal DOT4 para sistemas hidráulicos",
-    "cantidad": "90",
+    "cantidad": 87,
     "precio": "8000"
   },
   {
@@ -20,7 +20,7 @@
     "codigo": "35",
     "nombre": "Tapón de combustible",
     "descripcion": "Tapón universal para tanque de gasolina",
-    "cantidad": 69,
+    "cantidad": 67,
     "precio": "6000"
   },
   {

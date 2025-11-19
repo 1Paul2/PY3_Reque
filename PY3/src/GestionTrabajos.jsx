@@ -407,21 +407,49 @@ function GestionTrabajos({ session }) {
     }
   };
 
-  /* ==================== GUARDAR DETALLE ==================== */
-  const guardarDetalleTrabajo = async () => {
-    if (!selected) return;
-    
-    try {
-      const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
-      setTrabajos(prev => prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t));
-      setSelected(actualizado);
-      setShowModalDetalle(false);
-      alert("Orden actualizada correctamente.");
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
+ /* ==================== GUARDAR DETALLE ==================== */
+const guardarDetalleTrabajo = async () => {
+  if (!selected) return;
+
+  // 🔎 VALIDACIONES ANTES DE GUARDAR
+  const errores = [];
+
+  // Al menos una nota de diagnóstico
+  if (!selected.notasDiagnostico || selected.notasDiagnostico.length === 0) {
+    errores.push("Debe agregar al menos una nota de diagnóstico.");
+  }
+
+  // Al menos un servicio realizado
+  if (!selected.serviciosRealizados || selected.serviciosRealizados.length === 0) {
+    errores.push("Debe agregar al menos un servicio realizado.");
+  }
+
+  // Al menos un repuesto utilizado
+  if (!selected.repuestosUtilizados || selected.repuestosUtilizados.length === 0) {
+    errores.push("Debe agregar al menos un repuesto utilizado.");
+  }
+
+  // Si hay errores, mostramos alerta y detenemos el guardado
+  if (errores.length > 0) {
+    alert(errores.join("\n"));
+    return;
+  }
+
+  // ✅ Si pasa las validaciones, se guarda normalmente
+  try {
+    const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
+    setTrabajos(prev =>
+      prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t)
+    );
+    setSelected(actualizado);
+    setShowModalDetalle(false);
+    alert("Orden actualizada correctamente.");
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+};
+
 
   /* ==================== CAMBIO DE ESTADO ==================== */
   const abrirModalEstado = (trabajo) => {
