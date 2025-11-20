@@ -190,15 +190,16 @@
       }
     ],
     "descuentoManoObra": 0,
-    "esProforma": false,
-    "estado": "borrador",
+    "esProforma": true,
+    "estado": "proforma",
     "fechaCreacion": "2025-11-20T02:46:17.936Z",
     "descuentoMonto": 0,
     "subtotalRepuestos": 8000,
     "subtotalManoObra": 80000,
     "baseImponible": 88000,
     "iva": 11440,
-    "total": 99440
+    "total": 99440,
+    "fechaProforma": "2025-11-20T20:19:32.843Z"
   },
   {
     "codigo": "COT-1763606910255",
@@ -252,5 +253,74 @@
     "iva": 192374,
     "total": 1672174,
     "fechaProforma": "2025-11-20T02:48:43.676Z"
+  },
+  {
+    "codigo": "COT-1763668019026",
+    "clienteNombre": "Zianny",
+    "clienteCedula": "743214321",
+    "vehiculoPlaca": "999999",
+    "codigoOrdenTrabajo": "",
+    "mecanicoOrdenTrabajo": "dei",
+    "repuestos": [
+      {
+        "codigo": "A02",
+        "nombre": "Parachoques delantero",
+        "cantidad": 1,
+        "precio": 180000,
+        "subtotal": 180000
+      },
+      {
+        "codigo": "33",
+        "nombre": "Bombillo H4",
+        "cantidad": 3,
+        "precio": 7400,
+        "subtotal": 22200
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO004",
+        "nombre": "Pintura panel grande",
+        "descripcion": "Pintura de 1 panel grande (techo, laterales completos)",
+        "horas": 1,
+        "tarifa": 120000,
+        "subtotal": 120000
+      },
+      {
+        "codigo": "MO003",
+        "nombre": "Pintura panel mediano",
+        "descripcion": "Pintura de 1 panel mediano (puertas, capó, maletero)",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      },
+      {
+        "codigo": "MO003",
+        "nombre": "Pintura panel mediano",
+        "descripcion": "Pintura de 1 panel mediano (puertas, capó, maletero)",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      },
+      {
+        "codigo": "MO002",
+        "nombre": "Pintura panel pequeño",
+        "descripcion": "Pintura de 1 panel pequeño (espejos, tapas de gasolina)",
+        "horas": 1,
+        "tarifa": 50000,
+        "subtotal": 50000
+      }
+    ],
+    "descuentoManoObra": 12,
+    "esProforma": true,
+    "estado": "proforma",
+    "fechaCreacion": "2025-11-20T19:46:59.026Z",
+    "descuentoMonto": 39600,
+    "subtotalRepuestos": 202200,
+    "subtotalManoObra": 330000,
+    "baseImponible": 492600,
+    "iva": 64038,
+    "total": 556638,
+    "fechaProforma": "2025-11-20T20:19:19.292Z"
   }
 ]

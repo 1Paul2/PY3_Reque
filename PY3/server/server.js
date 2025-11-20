@@ -1118,6 +1118,52 @@ app.get("/api/cotizaciones", (_req, res) => {
   return res.json(readCotizaciones());
 });
 
+/* === GET: verificar stock antes de generar proforma === */
+app.get("/api/cotizaciones/:codigo/verificar-stock", (req, res) => {
+  const codigo = String(req.params.codigo || "");
+  const cotizaciones = readCotizaciones();
+  
+  const cotizacion = cotizaciones.find(c => String(c.codigo) === codigo);
+  if (!cotizacion) {
+    return res.status(404).json({ ok: false, error: "Cotización no encontrada" });
+  }
+
+  const inventario = readInventario();
+  const repuestos = cotizacion.repuestos || [];
+  const verificacion = [];
+
+  for (const repuesto of repuestos) {
+    const itemInventario = inventario.find(item => 
+      String(item.codigo) === String(repuesto.codigo)
+    );
+    
+    const stockActual = itemInventario ? parseInt(itemInventario.cantidad) || 0 : 0;
+    const cantidadRequerida = parseInt(repuesto.cantidad) || 0;
+
+    verificacion.push({
+      codigo: repuesto.codigo,
+      nombre: repuesto.nombre,
+      stockActual,
+      cantidadRequerida,
+      suficiente: stockActual >= cantidadRequerida,
+      diferencia: stockActual - cantidadRequerida
+    });
+  }
+
+  const stockSuficiente = verificacion.every(item => item.suficiente);
+
+  return res.json({
+    ok: true,
+    stockSuficiente,
+    verificacion,
+    resumen: {
+      totalRepuestos: repuestos.length,
+      conStockSuficiente: verificacion.filter(item => item.suficiente).length,
+      sinStockSuficiente: verificacion.filter(item => !item.suficiente).length
+    }
+  });
+});
+
 /* === POST: crear cotizacion nueva === */
 app.post("/api/cotizaciones", (req, res) => {
   const body = req.body || {};
@@ -1125,8 +1171,8 @@ app.post("/api/cotizaciones", (req, res) => {
     clienteNombre,
     clienteCedula,
     vehiculoPlaca,
-    codigoOrdenTrabajo, // Cambié de codigoOrden a codigoOrdenTrabajo
-    mecanicoOrdenTrabajo, // Nuevo campo
+    codigoOrdenTrabajo,
+    mecanicoOrdenTrabajo,
     repuestos,
     manoObra,
     descuentoManoObra,
@@ -1160,8 +1206,8 @@ app.post("/api/cotizaciones", (req, res) => {
     clienteNombre,
     clienteCedula,
     vehiculoPlaca,
-    codigoOrdenTrabajo: codigoOrdenTrabajo || "", // Cambiado el nombre del campo
-    mecanicoOrdenTrabajo: mecanicoOrdenTrabajo || "", // Nuevo campo
+    codigoOrdenTrabajo: codigoOrdenTrabajo || "",
+    mecanicoOrdenTrabajo: mecanicoOrdenTrabajo || "",
     repuestos: repuestos || [],
     manoObra: manoObra || [],
     descuentoManoObra: descuentoManoObra || 0,
@@ -1213,7 +1259,7 @@ app.put("/api/cotizaciones/:codigo", (req, res) => {
   return res.json({ ok: true, cotizacion: actualizada });
 });
 
-/* === PATCH: convertir a proforma === */
+/* === PATCH: convertir a proforma y RESTAR INVENTARIO === */
 app.patch("/api/cotizaciones/:codigo/proforma", (req, res) => {
   const codigo = String(req.params.codigo || "");
   let cotizaciones = readCotizaciones();
@@ -1231,6 +1277,69 @@ app.patch("/api/cotizaciones/:codigo/proforma", (req, res) => {
       .json({ ok: false, error: "La cotizacion ya fue convertida en proforma" });
   }
 
+  // RESTAR REPUESTOS DEL INVENTARIO
+  try {
+    const inventario = readInventario();
+    const repuestosUtilizados = actual.repuestos || [];
+    const inventarioActualizado = [...inventario];
+    const erroresStock = [];
+
+    // Verificar stock y preparar actualización
+    for (const repuesto of repuestosUtilizados) {
+      const inventarioIdx = inventarioActualizado.findIndex(item => 
+        String(item.codigo) === String(repuesto.codigo)
+      );
+      
+      if (inventarioIdx === -1) {
+        erroresStock.push({
+          repuesto: repuesto.nombre,
+          codigo: repuesto.codigo,
+          error: "No encontrado en inventario"
+        });
+        continue;
+      }
+
+      const stockActual = parseInt(inventarioActualizado[inventarioIdx].cantidad) || 0;
+      const cantidadRequerida = parseInt(repuesto.cantidad) || 0;
+
+      if (stockActual < cantidadRequerida) {
+        erroresStock.push({
+          repuesto: repuesto.nombre,
+          codigo: repuesto.codigo,
+          stockActual,
+          cantidadRequerida,
+          error: "Stock insuficiente"
+        });
+      } else {
+        // Restar del inventario
+        inventarioActualizado[inventarioIdx].cantidad = stockActual - cantidadRequerida;
+      }
+    }
+
+    // Si hay errores de stock, no proceder
+    if (erroresStock.length > 0) {
+      return res.status(400).json({
+        ok: false,
+        error: "Stock insuficiente para generar proforma",
+        detalles: erroresStock,
+        mensaje: `No se puede generar proforma: ${erroresStock.map(e => 
+          `${e.repuesto} (Stock: ${e.stockActual}, Necesita: ${e.cantidadRequerida})`
+        ).join(', ')}`
+      });
+    }
+
+    // ACTUALIZAR INVENTARIO (solo si todo está bien)
+    writeInventario(inventarioActualizado);
+
+  } catch (error) {
+    console.error("Error al actualizar inventario:", error);
+    return res.status(500).json({ 
+      ok: false, 
+      error: "Error interno al actualizar el inventario" 
+    });
+  }
+
+  // Crear la proforma
   const proforma = {
     ...calcularTotalesCotizacion(actual),
     esProforma: true,
@@ -1241,7 +1350,11 @@ app.patch("/api/cotizaciones/:codigo/proforma", (req, res) => {
   cotizaciones[idx] = proforma;
   writeCotizaciones(cotizaciones);
 
-  return res.json({ ok: true, cotizacion: proforma });
+  return res.json({ 
+    ok: true, 
+    cotizacion: proforma,
+    mensaje: "Proforma generada correctamente. Inventario actualizado."
+  });
 });
 
 /* === DELETE: eliminar cotizacion === */

@@ -4,7 +4,7 @@
     "codigo": "33",
     "nombre": "Bombillo H4",
     "descripcion": "Bombillo halógeno H4 para faros delanteros",
-    "cantidad": 39,
+    "cantidad": 36,
     "precio": "7400"
   },
   {
@@ -12,7 +12,7 @@
     "codigo": "34",
     "nombre": "Aceite para frenos DOT4",
     "descripcion": "Fluido de frenos universal DOT4 para sistemas hidráulicos",
-    "cantidad": 85,
+    "cantidad": 84,
     "precio": "8000"
   },
   {
@@ -45,7 +45,7 @@
     "codigo": "A02",
     "nombre": "Parachoques delantero",
     "descripcion": "Parachoques Toyota Corolla 2020",
-    "cantidad": "8",
+    "cantidad": 7,
     "precio": "180000",
     "vehiculoId": 1
   },
