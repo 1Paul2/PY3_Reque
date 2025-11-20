@@ -18,7 +18,7 @@ const GeneradorPDF = {
       // **AGREGAR IMAGEN DE FONDO - VERSIÓN CORREGIDA**
       try {
         // Usar la ruta completa de la imagen
-        const imageUrl = `${window.location.origin}/old-car-at-shop-cmoqec8v43avgin8.jpg`;
+        const imageUrl = `${window.location.origin}/0a5e9ec455a959eb27a9826fae06dd6f.jpg`;
         console.log('Intentando cargar imagen desde:', imageUrl);
         
         const response = await fetch(imageUrl);
