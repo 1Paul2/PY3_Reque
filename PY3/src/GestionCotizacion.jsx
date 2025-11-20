@@ -658,7 +658,7 @@ function GestionCotizacion({ session }) {
 
       {/* Información del usuario */}
       <div className="user-info">
-        <p><strong>Usuario:</strong> {session.nombre} | <strong>Rol:</strong> {session.rol}</p>
+
         {session.rol !== "admin" && (
           <p className="info-text">Solo puedes ver las cotizaciones y órdenes de trabajo que has creado.</p>
         )}
@@ -713,7 +713,6 @@ function GestionCotizacion({ session }) {
               <h3>Seleccionar tipo de cotización</h3>
               
               <div className="user-info">
-                <p><strong>Usuario:</strong> {session.nombre} | <strong>Rol:</strong> {session.rol}</p>
                 {session.rol !== "admin" && (
                   <p className="info-text">Solo puedes generar cotizaciones para órdenes de trabajo que has creado.</p>
                 )}
