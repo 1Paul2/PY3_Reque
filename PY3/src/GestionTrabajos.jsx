@@ -734,132 +734,7 @@ function GestionTrabajos({ session }) {
               )}
             </div>
 
-            {/* NOTAS DE DIAGNÓSTICO */}
-            <div className="seccion-diagnostico">
-              <label>Notas de Diagnóstico:</label>
-              <div className="contenedor-scrollable">
-                <div className="lista-notas">
-                  {(selected.notasDiagnostico || []).map((nota) => (
-                    <div key={nota.id} className="item-nota">
-                      <div className="nota-header">
-                        <span className="nota-fecha">{nota.fecha}</span>
-                        <div className="nota-acciones">
-                          <button 
-                            type="button"
-                            className="btn-ver"
-                            onClick={() => abrirModalNota(nota)}
-                            title="Ver nota completa"
-                          >
-                            👁️
-                          </button>
-                          <button 
-                            type="button"
-                            className="btn-eliminar"
-                            onClick={() => eliminarNotaDiagnostico(nota.id)}
-                            title="Eliminar nota"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      </div>
-                      <div 
-                        className="nota-resumen"
-                        onClick={() => abrirModalNota(nota)}
-                        title="Haz clic para ver la nota completa"
-                      >
-                        {obtenerResumenNota(nota.texto)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="agregar-nota">
-                <textarea
-                  value={nuevaNotaDiagnostico}
-                  onChange={(e) => setNuevaNotaDiagnostico(e.target.value)}
-                  placeholder="Escriba una nueva nota de diagnóstico..."
-                  rows="3"
-                />
-                <button 
-                  type="button"
-                  onClick={agregarNotaDiagnostico}
-                  disabled={!nuevaNotaDiagnostico.trim()}
-                >
-                  Agregar Nota
-                </button>
-              </div>
-            </div>
-
-            {/* SERVICIOS REALIZADOS */}
-            <div className="seccion-servicios">
-              <label>Servicios realizados:</label>
-              <div className="contenedor-scrollable">
-                <div className="lista-items">
-                  {(selected.serviciosRealizados || []).map((servicio, idx) => (
-                    <div key={idx} className="item-lista">
-                      <span className="item-info">
-                        {servicio.nombre} - ₡{servicio.precio?.toLocaleString()}
-                      </span>
-                      <button 
-                        type="button"
-                        className="btn-eliminar"
-                        onClick={() => eliminarServicio(idx)}
-                        title="Eliminar servicio"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="agregar-item" ref={serviciosDropdownRef}>
-                <input
-                  value={servicioSeleccionado}
-                  onChange={(e) => manejarBusquedaServicios(e.target.value)}
-                  onFocus={() => {
-                    setServiciosFiltradosBusqueda(manoDeObra.slice(0, 10));
-                    setShowServiciosDropdown(manoDeObra.length > 0);
-                  }}
-                  placeholder="Buscar servicio..."
-                />
-                
-                {/* DROPDOWN PERSONALIZADO PARA SERVICIOS */}
-                {showServiciosDropdown && (
-                  <div className="dropdown-list">
-                    {serviciosFiltradosBusqueda.map((servicio) => (
-                      <div
-                        key={servicio.codigo}
-                        className="dropdown-item"
-                        onClick={() => seleccionarServicio(servicio)}
-                      >
-                        <div className="dropdown-item-main">
-                          <strong>{servicio.nombre}</strong>
-                          <span className="dropdown-price">₡{servicio.precio?.toLocaleString()}</span>
-                        </div>
-                        <div className="dropdown-item-desc">
-                          {servicio.descripcion}
-                        </div>
-                        <div className="dropdown-item-code">
-                          Código: {servicio.codigo}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                <button 
-                  type="button"
-                  onClick={agregarServicioTrabajo}
-                  disabled={!servicioSeleccionado}
-                >
-                  Agregar
-                </button>
-              </div>
-            </div>
-
-            {/* REPUESTOS UTILIZADOS */}
+            {/* REPUESTOS UTILIZADOS - ARRIBA */}
             <div className="seccion-repuestos">
               <label>Repuestos utilizados:</label>
               <div className="contenedor-scrollable">
@@ -936,8 +811,131 @@ function GestionTrabajos({ session }) {
                   Agregar
                 </button>
               </div>
+            </div>
+
+            {/* SERVICIOS REALIZADOS - EN MEDIO */}
+            <div className="seccion-servicios">
+              <label>Servicios realizados:</label>
+              <div className="contenedor-scrollable">
+                <div className="lista-items">
+                  {(selected.serviciosRealizados || []).map((servicio, idx) => (
+                    <div key={idx} className="item-lista">
+                      <span className="item-info">
+                        {servicio.nombre} - ₡{servicio.precio?.toLocaleString()}
+                      </span>
+                      <button 
+                        type="button"
+                        className="btn-eliminar"
+                        onClick={() => eliminarServicio(idx)}
+                        title="Eliminar servicio"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
               
-              {/* INFORMACIÓN DEL FILTRO */}
+              <div className="agregar-item" ref={serviciosDropdownRef}>
+                <input
+                  value={servicioSeleccionado}
+                  onChange={(e) => manejarBusquedaServicios(e.target.value)}
+                  onFocus={() => {
+                    setServiciosFiltradosBusqueda(manoDeObra.slice(0, 10));
+                    setShowServiciosDropdown(manoDeObra.length > 0);
+                  }}
+                  placeholder="Buscar servicio..."
+                />
+                
+                {/* DROPDOWN PERSONALIZADO PARA SERVICIOS */}
+                {showServiciosDropdown && (
+                  <div className="dropdown-list">
+                    {serviciosFiltradosBusqueda.map((servicio) => (
+                      <div
+                        key={servicio.codigo}
+                        className="dropdown-item"
+                        onClick={() => seleccionarServicio(servicio)}
+                      >
+                        <div className="dropdown-item-main">
+                          <strong>{servicio.nombre}</strong>
+                          <span className="dropdown-price">₡{servicio.precio?.toLocaleString()}</span>
+                        </div>
+                        <div className="dropdown-item-desc">
+                          {servicio.descripcion}
+                        </div>
+                        <div className="dropdown-item-code">
+                          Código: {servicio.codigo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <button 
+                  type="button"
+                  onClick={agregarServicioTrabajo}
+                  disabled={!servicioSeleccionado}
+                >
+                  Agregar
+                </button>
+              </div>
+            </div>
+
+            {/* NOTAS DE DIAGNÓSTICO - ABAJO */}
+            <div className="seccion-diagnostico">
+              <label>Notas de Diagnóstico:</label>
+              <div className="contenedor-scrollable">
+                <div className="lista-notas">
+                  {(selected.notasDiagnostico || []).map((nota) => (
+                    <div key={nota.id} className="item-nota">
+                      <div className="nota-header">
+                        <span className="nota-fecha">{nota.fecha}</span>
+                        <div className="nota-acciones">
+                          <button 
+                            type="button"
+                            className="btn-ver"
+                            onClick={() => abrirModalNota(nota)}
+                            title="Ver nota completa"
+                          >
+                            👁️
+                          </button>
+                          <button 
+                            type="button"
+                            className="btn-eliminar"
+                            onClick={() => eliminarNotaDiagnostico(nota.id)}
+                            title="Eliminar nota"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                      <div 
+                        className="nota-resumen"
+                        onClick={() => abrirModalNota(nota)}
+                        title="Haz clic para ver la nota completa"
+                      >
+                        {obtenerResumenNota(nota.texto)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="agregar-nota">
+                <textarea
+                  value={nuevaNotaDiagnostico}
+                  onChange={(e) => setNuevaNotaDiagnostico(e.target.value)}
+                  placeholder="Escriba una nueva nota de diagnóstico..."
+                  rows="3"
+                />
+                <button 
+                  type="button"
+                  onClick={agregarNotaDiagnostico}
+                  disabled={!nuevaNotaDiagnostico.trim()}
+                >
+                  Agregar Nota
+                </button>
+              </div>
             </div>
 
             <div className="btn-group">
