@@ -1,0 +1,69 @@
+[
+  {
+    "id": 1763332176284,
+    "placa": "123123",
+    "marca": "Yamaha",
+    "modelo": "FZ-25",
+    "tipo": "Motocicleta",
+    "anoVehiculo": 2022,
+    "clienteCedula": "712341234",
+    "clienteNombre": "Liam",
+    "vehiculoBaseId": 11
+  },
+  {
+    "id": 1763332199321,
+    "placa": "321321",
+    "marca": "Hyundai",
+    "modelo": "Tucson",
+    "tipo": "SUV",
+    "anoVehiculo": 2021,
+    "clienteCedula": "743214321",
+    "clienteNombre": "Zianny",
+    "vehiculoBaseId": 17
+  },
+  {
+    "id": 1763332876384,
+    "placa": "BMM096",
+    "marca": "Toyota",
+    "modelo": "Yaris",
+    "tipo": "Automóvil",
+    "anoVehiculo": "2007",
+    "clienteCedula": "701230123",
+    "clienteNombre": "Jenny",
+    "vehiculoBaseId": 1
+  },
+  {
+    "id": 1763333178669,
+    "placa": "147147",
+    "marca": "Toyota",
+    "modelo": "Yaris",
+    "tipo": "Automóvil",
+    "anoVehiculo": "2007",
+    "clienteCedula": "778967896",
+    "clienteNombre": "Jeffry",
+    "vehiculoBaseId": 1763332839366
+  },
+  {
+    "id": 1763591164971,
+    "placa": "123321",
+    "marca": "Toyota",
+    "modelo": "Corolla",
+    "tipo": "Automóvil",
+    "anoVehiculo": 2020,
+    "clienteCedula": "712341234",
+    "clienteNombre": "Liam",
+    "vehiculoBaseId": 1
+    
+  },
+  {
+    "id": 1763591849733,
+    "placa": "999999",
+    "marca": "Toyota",
+    "modelo": "Corolla",
+    "tipo": "Automóvil",
+    "anoVehiculo": 2020,
+    "clienteCedula": "743214321",
+    "clienteNombre": "Zianny",
+    "vehiculoBaseId": 1
+  }
+]

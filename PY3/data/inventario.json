@@ -1,0 +1,349 @@
+[
+  {
+    "id": 1762574000003,
+    "codigo": "33",
+    "nombre": "Bombillo H4",
+    "descripcion": "Bombillo halógeno H4 para faros delanteros",
+    "cantidad": 36,
+    "precio": "7400"
+  },
+  {
+    "id": 1762574000004,
+    "codigo": "34",
+    "nombre": "Aceite para frenos DOT4",
+    "descripcion": "Fluido de frenos universal DOT4 para sistemas hidráulicos",
+    "cantidad": 84,
+    "precio": "8000"
+  },
+  {
+    "id": 1762574000005,
+    "codigo": "35",
+    "nombre": "Tapón de combustible",
+    "descripcion": "Tapón universal para tanque de gasolina",
+    "cantidad": 66,
+    "precio": "6000"
+  },
+  {
+    "id": 1762574000006,
+    "codigo": "36",
+    "nombre": "Cables de batería",
+    "descripcion": "Juego de cables de arranque universales de 2.5 metros",
+    "cantidad": 39,
+    "precio": "20000"
+  },
+  {
+    "id": 1762574000001,
+    "codigo": "A01",
+    "nombre": "Radiador",
+    "descripcion": "Radiador para Toyota Corolla 2020",
+    "cantidad": "12",
+    "precio": "130000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000002,
+    "codigo": "A02",
+    "nombre": "Parachoques delantero",
+    "descripcion": "Parachoques Toyota Corolla 2020",
+    "cantidad": 7,
+    "precio": "180000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000003,
+    "codigo": "A03",
+    "nombre": "Puerta delantera izquierda",
+    "descripcion": "Puerta izquierda Toyota Corolla 2020",
+    "cantidad": "5",
+    "precio": "250000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000004,
+    "codigo": "A04",
+    "nombre": "Puerta trasera derecha",
+    "descripcion": "Puerta trasera derecha Toyota Corolla 2020",
+    "cantidad": 3,
+    "precio": "240000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000005,
+    "codigo": "A05",
+    "nombre": "Faro delantero derecho",
+    "descripcion": "Faro derecho Toyota Corolla 2020",
+    "cantidad": "6",
+    "precio": "90000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000006,
+    "codigo": "A06",
+    "nombre": "Faro trasero",
+    "descripcion": "Faro trasero Toyota Corolla 2020",
+    "cantidad": 5,
+    "precio": "85000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000007,
+    "codigo": "A07",
+    "nombre": "Retrovisor izquierdo",
+    "descripcion": "Espejo lateral Toyota Corolla 2020",
+    "cantidad": 11,
+    "precio": "60000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000008,
+    "codigo": "A08",
+    "nombre": "Filtro de combustible",
+    "descripcion": "Filtro Corolla 2020",
+    "cantidad": 15,
+    "precio": "18000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000009,
+    "codigo": "A09",
+    "nombre": "Llantas 16''",
+    "descripcion": "Juego de llantas Toyota Corolla 2020",
+    "cantidad": 5,
+    "precio": "320000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000010,
+    "codigo": "A10",
+    "nombre": "Capó",
+    "descripcion": "Capó Toyota Corolla 2020",
+    "cantidad": 0,
+    "precio": "210000",
+    "vehiculoId": 1
+  },
+  {
+    "id": 1762574000011,
+    "codigo": "B01",
+    "nombre": "Radiador",
+    "descripcion": "Radiador Honda Civic 2019",
+    "cantidad": 6,
+    "precio": "135000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000012,
+    "codigo": "B02",
+    "nombre": "Batería",
+    "descripcion": "Batería original Honda Civic 2019",
+    "cantidad": 13,
+    "precio": "90000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000013,
+    "codigo": "B03",
+    "nombre": "Filtro de aceite",
+    "descripcion": "Filtro Honda Civic 2019",
+    "cantidad": "30",
+    "precio": "9500",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000014,
+    "codigo": "B04",
+    "nombre": "Espejo retrovisor derecho",
+    "descripcion": "Retrovisor Honda Civic 2019",
+    "cantidad": "10",
+    "precio": "60000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000015,
+    "codigo": "B05",
+    "nombre": "Puerta trasera izquierda",
+    "descripcion": "Puerta trasera Honda Civic 2019",
+    "cantidad": "6",
+    "precio": "240000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000016,
+    "codigo": "B06",
+    "nombre": "Parachoques trasero",
+    "descripcion": "Parachoques Honda Civic 2019",
+    "cantidad": "4",
+    "precio": "185000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000017,
+    "codigo": "B07",
+    "nombre": "Alternador",
+    "descripcion": "Alternador Honda Civic 2019",
+    "cantidad": "5",
+    "precio": "210000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000018,
+    "codigo": "B08",
+    "nombre": "Motor de arranque",
+    "descripcion": "Motor arranque Honda Civic 2019",
+    "cantidad": 4,
+    "precio": "230000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000019,
+    "codigo": "B09",
+    "nombre": "Guardabarro delantero",
+    "descripcion": "Guardabarro Honda Civic 2019",
+    "cantidad": "7",
+    "precio": "75000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000020,
+    "codigo": "B10",
+    "nombre": "Suspensión delantera",
+    "descripcion": "Suspensión Honda Civic 2019",
+    "cantidad": "8",
+    "precio": "150000",
+    "vehiculoId": 2
+  },
+  {
+    "id": 1762574000021,
+    "codigo": "C01",
+    "nombre": "Radiador",
+    "descripcion": "Radiador Nissan Sentra 2021",
+    "cantidad": "10",
+    "precio": "125000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000022,
+    "codigo": "C02",
+    "nombre": "Filtro de aire",
+    "descripcion": "Filtro Nissan Sentra 2021",
+    "cantidad": "25",
+    "precio": "8500",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000023,
+    "codigo": "C03",
+    "nombre": "Batería",
+    "descripcion": "Batería Nissan Sentra 2021",
+    "cantidad": "10",
+    "precio": "88000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000024,
+    "codigo": "C04",
+    "nombre": "Faro delantero izquierdo",
+    "descripcion": "Faro Nissan Sentra 2021",
+    "cantidad": 6,
+    "precio": "90000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000025,
+    "codigo": "C05",
+    "nombre": "Espejo retrovisor",
+    "descripcion": "Retrovisor Nissan Sentra 2021",
+    "cantidad": "10",
+    "precio": "58000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000026,
+    "codigo": "C06",
+    "nombre": "Parachoques delantero",
+    "descripcion": "Parachoques Nissan Sentra 2021",
+    "cantidad": "6",
+    "precio": "190000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000027,
+    "codigo": "C07",
+    "nombre": "Puerta delantera izquierda",
+    "descripcion": "Puerta Nissan Sentra 2021",
+    "cantidad": "5",
+    "precio": "260000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000028,
+    "codigo": "C08",
+    "nombre": "Capó",
+    "descripcion": "Capó Nissan Sentra 2021",
+    "cantidad": "3",
+    "precio": "220000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000029,
+    "codigo": "C09",
+    "nombre": "Suspensión trasera",
+    "descripcion": "Suspensión Nissan Sentra 2021",
+    "cantidad": "7",
+    "precio": "145000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000030,
+    "codigo": "C10",
+    "nombre": "Filtro de combustible",
+    "descripcion": "Filtro Nissan Sentra 2021",
+    "cantidad": "18",
+    "precio": "17000",
+    "vehiculoId": 3
+  },
+  {
+    "id": 1762574000031,
+    "codigo": "D01",
+    "nombre": "Puerta delantera derecha",
+    "descripcion": "Puerta Hyundai Elantra 2022",
+    "cantidad": "5",
+    "precio": "255000",
+    "vehiculoId": 4
+  },
+  {
+    "id": 1762574000032,
+    "codigo": "D02",
+    "nombre": "Espejo retrovisor",
+    "descripcion": "Retrovisor Hyundai Elantra 2022",
+    "cantidad": "8",
+    "precio": "62000",
+    "vehiculoId": 4
+  },
+  {
+    "id": 1762574000033,
+    "codigo": "D03",
+    "nombre": "Faro delantero izquierdo",
+    "descripcion": "Faro Hyundai Elantra 2022",
+    "cantidad": 5,
+    "precio": "95000",
+    "vehiculoId": 4
+  },
+  {
+    "id": 1762574000034,
+    "codigo": "D04",
+    "nombre": "Parachoques delantero",
+    "descripcion": "Parachoques Hyundai Elantra 2022",
+    "cantidad": "5",
+    "precio": "185000",
+    "vehiculoId": 4
+  },
+  {
+    "id": 1762574000035,
+    "codigo": "D05",
+    "nombre": "Filtro de aceite",
+    "descripcion": "Filtro Hyundai Elantra 2022",
+    "cantidad": "20",
+    "precio": "9000",
+    "vehiculoId": 4
+  }
+]

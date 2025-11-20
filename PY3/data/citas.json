@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1763332264132,
+    "clienteNombre": "Liam",
+    "clienteCedula": "712341234",
+    "vehiculoPlaca": "123123",
+    "fecha": "2025-11-16",
+    "hora": "12:00",
+    "descripcion": "Revision general",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763332295317,
+    "clienteNombre": "Zianny",
+    "clienteCedula": "743214321",
+    "vehiculoPlaca": "321321",
+    "fecha": "2025-11-16",
+    "hora": "13:00",
+    "descripcion": "Revision General",
+    "mecanico": "Julian",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763333198221,
+    "clienteNombre": "Jeffry",
+    "clienteCedula": "778967896",
+    "vehiculoPlaca": "147147",
+    "fecha": "2025-11-16",
+    "hora": "15:00",
+    "descripcion": "descripcion Jefrry",
+    "mecanico": "Gabriel",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763412783615,
+    "clienteNombre": "Zianny",
+    "clienteCedula": "743214321",
+    "vehiculoPlaca": "321321",
+    "fecha": "2025-11-07",
+    "hora": "14:54",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763413694828,
+    "clienteNombre": "Jenny",
+    "clienteCedula": "701230123",
+    "vehiculoPlaca": "BMM096",
+    "fecha": "2025-11-30",
+    "hora": "16:00",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763413721223,
+    "clienteNombre": "Jenny",
+    "clienteCedula": "701230123",
+    "vehiculoPlaca": "BMM096",
+    "fecha": "2025-11-30",
+    "hora": "17:01",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763415336105,
+    "clienteNombre": "Jenny",
+    "clienteCedula": "701230123",
+    "vehiculoPlaca": "BMM096",
+    "fecha": "2025-11-18",
+    "hora": "15:38",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  },
+  {
+    "id": 1763439364980,
+    "clienteNombre": "Jenny",
+    "clienteCedula": "701230123",
+    "vehiculoPlaca": "BMM096",
+    "fecha": "2025-11-13",
+    "hora": "22:17",
+    "descripcion": "",
+    "mecanico": "Sin Asignar",
+    "estado": "En Espera"
+  },
+  {
+    "id": 1763591179369,
+    "clienteNombre": "Liam",
+    "clienteCedula": "712341234",
+    "vehiculoPlaca": "123321",
+    "fecha": "2025-11-29",
+    "hora": "16:29",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
+  }
+]

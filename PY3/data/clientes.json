@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Liam",
+    "cedula": "712341234",
+    "correo": "l@gmail.com",
+    "numero": "12341234"
+  },
+  {
+    "nombre": "Zianny",
+    "cedula": "743214321",
+    "correo": "z@gmail.com",
+    "numero": "43214321"
+  },
+  {
+    "nombre": "Jenny",
+    "cedula": "701230123",
+    "correo": "J@gmail.com",
+    "numero": "01230123"
+  },
+  {
+    "nombre": "Jeffry",
+    "cedula": "778967896",
+    "correo": "j@gmail.com",
+    "numero": "01470147"
+  }
+]
