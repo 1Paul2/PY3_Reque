@@ -86,5 +86,16 @@
     "descripcion": "",
     "mecanico": "Sin Asignar",
     "estado": "En Espera"
+  },
+  {
+    "id": 1763591179369,
+    "clienteNombre": "Liam",
+    "clienteCedula": "712341234",
+    "vehiculoPlaca": "123321",
+    "fecha": "2025-11-29",
+    "hora": "16:29",
+    "descripcion": "",
+    "mecanico": "dei",
+    "estado": "Aceptada"
   }
 ]

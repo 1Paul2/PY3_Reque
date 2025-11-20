@@ -264,14 +264,34 @@ app.post("/api/vehiculos", (req, res) => {
     return res.status(409).json({ ok: false, error: "Vehículo ya existe" });
   }
 
+  // Buscar el vehículo base correspondiente
+  const vehiculosBase = readVehiculosBase();
+  const vehiculoBase = vehiculosBase.find(vb => 
+    vb.marca === marca && 
+    vb.modelo === modelo &&
+    vb.tipo === tipo
+  );
+
   const id = Date.now();
-  const nuevoVehiculo = { id, placa, marca, modelo, tipo, anoVehiculo, clienteCedula, clienteNombre };
+  const nuevoVehiculo = { 
+    id, 
+    placa, 
+    marca, 
+    modelo, 
+    tipo, 
+    anoVehiculo, 
+    clienteCedula, 
+    clienteNombre,
+    vehiculoBaseId: vehiculoBase ? vehiculoBase.id : null // Guardar el ID del vehículo base
+  };
+  
   vehiculosClientes.push(nuevoVehiculo);
   writeVehiculosClientes(vehiculosClientes);
 
   return res.json({ ok: true, vehiculos: vehiculosClientes });
 });
 
+/* === PUT: actualizar vehículo por placa === */
 /* === PUT: actualizar vehículo por placa === */
 app.put("/api/vehiculos/:placa", (req, res) => {
   const placa = req.params.placa;
@@ -281,6 +301,17 @@ app.put("/api/vehiculos/:placa", (req, res) => {
   const idx = vehiculosClientes.findIndex(v => v.placa === placa);
   if (idx === -1) {
     return res.status(404).json({ ok: false, error: "Vehículo no encontrado" });
+  }
+
+  // Si se actualizan marca, modelo o tipo, buscar el nuevo vehiculoBaseId
+  if (update.marca || update.modelo || update.tipo) {
+    const vehiculosBase = readVehiculosBase();
+    const vehiculoBase = vehiculosBase.find(vb => 
+      vb.marca === (update.marca || vehiculosClientes[idx].marca) && 
+      vb.modelo === (update.modelo || vehiculosClientes[idx].modelo) &&
+      vb.tipo === (update.tipo || vehiculosClientes[idx].tipo)
+    );
+    update.vehiculoBaseId = vehiculoBase ? vehiculoBase.id : null;
   }
 
   vehiculosClientes[idx] = { ...vehiculosClientes[idx], ...update };
@@ -681,28 +712,81 @@ function writeTrabajos(list) {
   fs.writeFileSync(DATA_FILE_TRABAJOS, JSON.stringify(list, null, 2), "utf8");
 }
 
+// 🔽 FUNCIÓN PARA MIGRAR OTs EXISTENTES - EJECUTAR UNA SOLA VEZ
+function migrarOTsConMecanico() {
+  const trabajos = readTrabajos();
+  let actualizados = 0;
+  
+  const trabajosActualizados = trabajos.map(trabajo => {
+    // Si la OT no tiene campo mecanico, se lo agregamos
+    if (!trabajo.hasOwnProperty('mecanico')) {
+      console.log(`Actualizando OT ${trabajo.codigoOrden} - agregando campo mecanico`);
+      actualizados++;
+      
+      // Intentar obtener el mecánico de la cita relacionada
+      let mecanicoAsignado = "";
+      try {
+        const citas = readCitas();
+        const cita = citas.find(c => c.id === trabajo.idCita);
+        if (cita && cita.mecanico) {
+          mecanicoAsignado = cita.mecanico;
+          console.log(`  - Mecánico asignado desde cita: ${mecanicoAsignado}`);
+        }
+      } catch (error) {
+        console.log(`  - No se pudo obtener mecánico de cita: ${error.message}`);
+      }
+      
+      return {
+        ...trabajo,
+        mecanico: mecanicoAsignado
+      };
+    }
+    return trabajo;
+  });
+  
+  if (actualizados > 0) {
+    writeTrabajos(trabajosActualizados);
+    console.log(`✅ Migración completada: ${actualizados} OTs actualizadas con campo mecanico`);
+  } else {
+    console.log("✅ Todas las OTs ya tienen campo mecanico");
+  }
+}
+
+// 🔽 EJECUTAR MIGRACIÓN AL INICIAR EL SERVIDOR (solo una vez)
+migrarOTsConMecanico();
+
 /* === GET: listar ordenes de trabajo (filtrado por mecánico si aplica) === */
 app.get("/api/trabajos", (req, res) => {
   const usuario = req.query.usuario || null; 
   const trabajos = readTrabajos();
 
+  console.log("=== GET /api/trabajos ===");
+  console.log("Usuario filtro:", usuario);
+  console.log("Total trabajos:", trabajos.length);
+
   if (usuario) {
-    const citas = readCitas();
-
+    // 🔽 FILTRADO MEJORADO: busca por el campo mecanico de la OT
     const filtrados = trabajos.filter((t) => {
-      const cita = citas.find((c) => c.id === t.idCita);
-      return cita && cita.mecanico === usuario;
+      // Si la OT no tiene mecanico, incluirla temporalmente para no perder datos
+      if (!t.mecanico) {
+        console.log(`⚠️  OT ${t.codigoOrden} sin campo mecanico - incluyendo temporalmente`);
+        return true;
+      }
+      
+      console.log(`Comparando: OT ${t.codigoOrden} - Mecánico: "${t.mecanico}" con Usuario: "${usuario}"`);
+      return t.mecanico === usuario;
     });
-
+    console.log("Trabajos filtrados:", filtrados.length);
     return res.json({ ok: true, trabajos: filtrados });
   }
 
+  console.log("Retornando todos los trabajos");
   return res.json({ ok: true, trabajos });
 });
 
 /* === POST: crear OT desde una cita (CU-0028) === */
 app.post("/api/trabajos", (req, res) => {
-  const { codigoCita, observacionesIniciales, repuestosUtilizados = [] } = req.body || {};
+  const { codigoCita, observacionesIniciales, repuestosUtilizados = [], mecanico } = req.body || {};
 
   if (!codigoCita) return res.status(400).json({ ok: false, error: "Debe enviar el codigo de la cita" });
 
@@ -745,8 +829,11 @@ app.post("/api/trabajos", (req, res) => {
     diagnostico: "",
     serviciosRealizados: [],
     repuestosUtilizados: repuestosUtilizados || [],
-    notasDiagnostico: [] // 🔽 Agregar campo para notas
+    notasDiagnostico: [],
+    mecanico: mecanico || (cita.mecanico || "") // 🔽 USAR MECÁNICO DE LA CITA COMO FALLBACK
   };
+
+  console.log("✅ Nueva OT creada con mecánico:", nuevoTrabajo.mecanico);
 
   trabajos.push(nuevoTrabajo);
   writeTrabajos(trabajos);
@@ -759,8 +846,9 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
   const codigoOrden = String(req.params.codigoOrden || "");
   const body = req.body || {};
 
-  // ❌ Evitar que el front modifique notas internas accidentalmente
+  // ❌ Evitar que el front modifique campos internos accidentalmente
   delete body.notasInternas;
+  delete body.mecanico; // 🔽 PROTEGER EL CAMPO MECÁNICO
 
   const trabajos = readTrabajos();
   const idx = trabajos.findIndex((t) => String(t.codigoOrden) === codigoOrden);
@@ -802,6 +890,7 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
     repuestosUtilizados: repuestosProcesados,
     codigoOrden: trabajos[idx].codigoOrden, // protegidos
     idCita: trabajos[idx].idCita,
+    mecanico: trabajos[idx].mecanico // 🔽 MANTENER EL MECÁNICO ORIGINAL
   };
 
   // Guardar
@@ -810,7 +899,6 @@ app.put("/api/trabajos/:codigoOrden", (req, res) => {
 
   return res.json({ ok: true, trabajo: actualizado });
 });
-
 
 /*======================================= Mano de Obra ========================================*/
 const DATA_FILE_MANO_OBRA = path.join(DATA_DIR, "mano_de_obra.json");
@@ -1037,11 +1125,12 @@ app.post("/api/cotizaciones", (req, res) => {
     clienteNombre,
     clienteCedula,
     vehiculoPlaca,
-    codigoOrden,
+    codigoOrdenTrabajo, // Cambié de codigoOrden a codigoOrdenTrabajo
+    mecanicoOrdenTrabajo, // Nuevo campo
     repuestos,
     manoObra,
     descuentoManoObra,
-    estado, // "borrador" o "aceptada" (opcional)
+    estado,
   } = body;
 
   if (!clienteNombre || !clienteCedula) {
@@ -1071,12 +1160,13 @@ app.post("/api/cotizaciones", (req, res) => {
     clienteNombre,
     clienteCedula,
     vehiculoPlaca,
-    codigoOrden: codigoOrden || "",
+    codigoOrdenTrabajo: codigoOrdenTrabajo || "", // Cambiado el nombre del campo
+    mecanicoOrdenTrabajo: mecanicoOrdenTrabajo || "", // Nuevo campo
     repuestos: repuestos || [],
     manoObra: manoObra || [],
     descuentoManoObra: descuentoManoObra || 0,
     esProforma: false,
-    estado: estado || "borrador", // solo referencia visual
+    estado: estado || "borrador",
     fechaCreacion: new Date().toISOString(),
   };
 
@@ -1107,9 +1197,12 @@ app.put("/api/cotizaciones/:codigo", (req, res) => {
     });
   }
 
+  // Excluir campos que no deben ser modificados
+  const { codigo: _, fechaCreacion, ...camposActualizables } = body;
+  
   let actualizada = {
     ...cotizaciones[idx],
-    ...body,
+    ...camposActualizables,
     codigo, // no se cambia
   };
 

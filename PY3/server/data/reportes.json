@@ -46,5 +46,69 @@
     "usuario": "dei",
     "fecha": "2025-11-19T06:42:27.858Z",
     "estado": "atendido"
+  },
+  {
+    "id": 1763588390825,
+    "tipo": "Clientes",
+    "descripcion": "Intento de eliminar cliente con cédula 743214321",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:39:50.810Z",
+    "estado": "atendido"
+  },
+  {
+    "id": 1763588405720,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa undefined",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:40:05.707Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763588785103,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa undefined",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:46:25.091Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763588875498,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa NO DEFINIDA",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:47:55.486Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763588945036,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa BMM096",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:49:05.023Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763589210953,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa 321321",
+    "usuario": "dei",
+    "fecha": "2025-11-19T21:53:30.940Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763607019034,
+    "tipo": "Clientes",
+    "descripcion": "Intento de eliminar cliente con cédula 701230123",
+    "usuario": "dei",
+    "fecha": "2025-11-20T02:50:19.021Z",
+    "estado": "pendiente"
+  },
+  {
+    "id": 1763615535143,
+    "tipo": "Vehiculos",
+    "descripcion": "Intento de eliminar vehículo con placa 321321",
+    "usuario": "dei",
+    "fecha": "2025-11-20T05:12:15.135Z",
+    "estado": "pendiente"
   }
 ]

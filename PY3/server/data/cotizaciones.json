@@ -72,5 +72,185 @@
     "iva": 114660,
     "total": 996660,
     "fechaProforma": "2025-11-18T06:15:05.665Z"
+  },
+  {
+    "codigo": "COT-1763601546847",
+    "clienteNombre": "Liam",
+    "clienteCedula": "712341234",
+    "vehiculoPlaca": "123123",
+    "codigoOrdenTrabajo": "",
+    "mecanicoOrdenTrabajo": "dei",
+    "repuestos": [
+      {
+        "codigo": "34",
+        "nombre": "Aceite para frenos DOT4",
+        "cantidad": 1,
+        "precio": 8000,
+        "subtotal": 8000
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO003",
+        "nombre": "Pintura panel mediano",
+        "descripcion": "Pintura de 1 panel mediano (puertas, capó, maletero)",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      }
+    ],
+    "descuentoManoObra": 0,
+    "esProforma": false,
+    "estado": "borrador",
+    "fechaCreacion": "2025-11-20T01:19:06.847Z",
+    "descuentoMonto": 0,
+    "subtotalRepuestos": 8000,
+    "subtotalManoObra": 80000,
+    "baseImponible": 88000,
+    "iva": 11440,
+    "total": 99440
+  },
+  {
+    "codigo": "COT-1763606752821",
+    "clienteNombre": "Zianny",
+    "clienteCedula": "743214321",
+    "vehiculoPlaca": "321321",
+    "codigoOrdenTrabajo": "OT-1763601657893",
+    "mecanicoOrdenTrabajo": "dei",
+    "repuestos": [
+      {
+        "codigo": "33",
+        "nombre": "Bombillo H4",
+        "cantidad": 1,
+        "precio": 7400,
+        "subtotal": 7400
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO001",
+        "nombre": "Limpieza de chasis",
+        "descripcion": "Limpieza completa y desoxidación de chasis",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      },
+      {
+        "codigo": "MO002",
+        "nombre": "Pintura panel pequeño",
+        "descripcion": "Pintura de 1 panel pequeño (espejos, tapas de gasolina)",
+        "horas": 1,
+        "tarifa": 50000,
+        "subtotal": 50000
+      },
+      {
+        "codigo": "MO001",
+        "nombre": "Limpieza de chasis",
+        "descripcion": "Limpieza completa y desoxidación de chasis",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      }
+    ],
+    "descuentoManoObra": 0,
+    "esProforma": false,
+    "estado": "borrador",
+    "fechaCreacion": "2025-11-20T02:45:52.821Z",
+    "descuentoMonto": 0,
+    "subtotalRepuestos": 7400,
+    "subtotalManoObra": 210000,
+    "baseImponible": 217400,
+    "iva": 28262,
+    "total": 245662
+  },
+  {
+    "codigo": "COT-1763606777936",
+    "clienteNombre": "Liam",
+    "clienteCedula": "712341234",
+    "vehiculoPlaca": "123321",
+    "codigoOrdenTrabajo": "OT-1763603261416",
+    "mecanicoOrdenTrabajo": "dei",
+    "repuestos": [
+      {
+        "codigo": "34",
+        "nombre": "Aceite para frenos DOT4",
+        "cantidad": 1,
+        "precio": 8000,
+        "subtotal": 8000
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO001",
+        "nombre": "Limpieza de chasis",
+        "descripcion": "Limpieza completa y desoxidación de chasis",
+        "horas": 1,
+        "tarifa": 80000,
+        "subtotal": 80000
+      }
+    ],
+    "descuentoManoObra": 0,
+    "esProforma": false,
+    "estado": "borrador",
+    "fechaCreacion": "2025-11-20T02:46:17.936Z",
+    "descuentoMonto": 0,
+    "subtotalRepuestos": 8000,
+    "subtotalManoObra": 80000,
+    "baseImponible": 88000,
+    "iva": 11440,
+    "total": 99440
+  },
+  {
+    "codigo": "COT-1763606910255",
+    "clienteNombre": "Jenny",
+    "clienteCedula": "701230123",
+    "vehiculoPlaca": "BMM096",
+    "codigoOrdenTrabajo": "OT-1763606824789",
+    "mecanicoOrdenTrabajo": "dei",
+    "repuestos": [
+      {
+        "codigo": "A04",
+        "nombre": "Puerta trasera derecha",
+        "cantidad": 1,
+        "precio": 240000,
+        "subtotal": 240000
+      },
+      {
+        "codigo": "33",
+        "nombre": "Bombillo H4",
+        "cantidad": 2,
+        "precio": 7400,
+        "subtotal": 14800
+      }
+    ],
+    "manoObra": [
+      {
+        "codigo": "MO008",
+        "nombre": "Pintura completa 3",
+        "descripcion": "Pintura completa de vehículo grande (camionetas grandes)",
+        "horas": 1,
+        "tarifa": 1200000,
+        "subtotal": 1200000
+      },
+      {
+        "codigo": "MO010",
+        "nombre": "Cambio de aceite básico",
+        "descripcion": "Cambio de aceite y filtro estándar",
+        "horas": 1,
+        "tarifa": 25000,
+        "subtotal": 25000
+      }
+    ],
+    "descuentoManoObra": 0,
+    "esProforma": true,
+    "estado": "proforma",
+    "fechaCreacion": "2025-11-20T02:48:30.255Z",
+    "descuentoMonto": 0,
+    "subtotalRepuestos": 254800,
+    "subtotalManoObra": 1225000,
+    "baseImponible": 1479800,
+    "iva": 192374,
+    "total": 1672174,
+    "fechaProforma": "2025-11-20T02:48:43.676Z"
   }
 ]

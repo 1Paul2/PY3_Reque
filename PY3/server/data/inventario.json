@@ -4,7 +4,7 @@
     "codigo": "33",
     "nombre": "Bombillo H4",
     "descripcion": "Bombillo halógeno H4 para faros delanteros",
-    "cantidad": "43",
+    "cantidad": 39,
     "precio": "7400"
   },
   {
@@ -12,7 +12,7 @@
     "codigo": "34",
     "nombre": "Aceite para frenos DOT4",
     "descripcion": "Fluido de frenos universal DOT4 para sistemas hidráulicos",
-    "cantidad": 87,
+    "cantidad": 85,
     "precio": "8000"
   },
   {
@@ -20,7 +20,7 @@
     "codigo": "35",
     "nombre": "Tapón de combustible",
     "descripcion": "Tapón universal para tanque de gasolina",
-    "cantidad": 67,
+    "cantidad": 66,
     "precio": "6000"
   },
   {
@@ -28,7 +28,7 @@
     "codigo": "36",
     "nombre": "Cables de batería",
     "descripcion": "Juego de cables de arranque universales de 2.5 metros",
-    "cantidad": "40",
+    "cantidad": 39,
     "precio": "20000"
   },
   {
@@ -63,7 +63,7 @@
     "codigo": "A04",
     "nombre": "Puerta trasera derecha",
     "descripcion": "Puerta trasera derecha Toyota Corolla 2020",
-    "cantidad": "5",
+    "cantidad": 3,
     "precio": "240000",
     "vehiculoId": 1
   },
@@ -99,7 +99,7 @@
     "codigo": "A08",
     "nombre": "Filtro de combustible",
     "descripcion": "Filtro Corolla 2020",
-    "cantidad": 19,
+    "cantidad": 15,
     "precio": "18000",
     "vehiculoId": 1
   },
