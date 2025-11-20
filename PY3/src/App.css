@@ -1080,6 +1080,18 @@ label {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+
+.gestion-vehiculos .input-placa {
+  width: 100%;
+  min-width: 400px; /* o el tamaño que prefieras */
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  color: #666;
+}
+
 .gestion-vehiculos .modal-editar input:focus,
 .gestion-vehiculos .modal-agregar input:focus,
 .gestion-vehiculos .input-busqueda-clientes:focus,
@@ -1893,6 +1905,44 @@ label {
   .reportes-admin .select-estado {
     min-width: 100%;
   }
+}
+
+/* ======================= SCROLLBAR VERDE GRUESO PARA INVENTARIO USUARIO NORMAL ======================= */
+
+/* OPCIÓN 1: Grueso estándar (15px) */
+.gestion-inventario .inventario-list::-webkit-scrollbar {
+  width: 15px;
+}
+
+.gestion-inventario .inventario-list::-webkit-scrollbar-track {
+  background: rgba(34, 139, 34, 0.1);
+  border-radius: 8px;
+}
+
+.gestion-inventario .inventario-list::-webkit-scrollbar-thumb {
+  background: rgba(34, 139, 34, 0.3); /* Verde translúcido para normal */
+  border-radius: 8px;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.gestion-inventario .inventario-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 139, 34, 0.6); /* Menos translúcido al hover */
+}
+
+.gestion-inventario .inventario-list::-webkit-scrollbar-thumb:active {
+  background: #228B22; /* Verde sólido cuando se presiona */
+  border: 3px solid #228B22; /* Forzar el color sólido */
+}
+
+/* Para Firefox */
+.gestion-inventario .inventario-list {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(34, 139, 34, 0.3) rgba(34, 139, 34, 0.1);
+}
+
+/* Forzar el estado active en todos los navegadores */
+.gestion-inventario .inventario-list:active::-webkit-scrollbar-thumb {
+  background: #228B22 !important;
 }
 
 /*============================= Gestión de Reportes Usuario =================================*/
@@ -3064,6 +3114,133 @@ label {
   font-size: 15px;
 }
 
+/* ======================= DROPDOWNS PERSONALIZADOS ======================= */
+
+/* Contenedor del dropdown */
+.gestion-trabajos .dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(30, 30, 30, 0.95);
+  border: 2px solid #7a4f8a;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  margin-top: 5px;
+}
+
+/* Items del dropdown */
+.gestion-trabajos .dropdown-item {
+  padding: 12px;
+  border-bottom: 1px solid rgba(122, 79, 138, 0.3);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #ffffff;
+}
+
+.gestion-trabajos .dropdown-item:hover {
+  background-color: rgba(122, 79, 138, 0.3);
+}
+
+.gestion-trabajos .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Contenido principal del item */
+.gestion-trabajos .dropdown-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.gestion-trabajos .dropdown-item-main strong {
+  color: #e0d1e8;
+  font-size: 14px;
+  flex: 1;
+}
+
+.gestion-trabajos .dropdown-price {
+  background: rgba(122, 79, 138, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+/* Detalles del item */
+.gestion-trabajos .dropdown-item-desc {
+  font-size: 12px;
+  color: #b8b8b8;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.gestion-trabajos .dropdown-item-details {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.gestion-trabajos .dropdown-item-code {
+  font-size: 11px;
+  color: #888;
+  font-family: monospace;
+}
+
+/* Badges para repuestos */
+.gestion-trabajos .dropdown-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.gestion-trabajos .dropdown-badge.universal {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.gestion-trabajos .dropdown-badge.specific {
+  background: rgba(33, 150, 243, 0.3);
+  color: #2196f3;
+}
+
+.gestion-trabajos .dropdown-stock {
+  font-size: 11px;
+  color: #ff9800;
+  font-weight: bold;
+}
+
+/* Scrollbar para el dropdown */
+.gestion-trabajos .dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.gestion-trabajos .dropdown-list::-webkit-scrollbar-track {
+  background: rgba(122, 79, 138, 0.2);
+  border-radius: 3px;
+}
+
+.gestion-trabajos .dropdown-list::-webkit-scrollbar-thumb {
+  background: #7a4f8a;
+  border-radius: 3px;
+}
+
+.gestion-trabajos .dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #8a5a9a;
+}
+
+/* Posicionamiento relativo para el contenedor de agregar items */
+.gestion-trabajos .agregar-item {
+  position: relative;
+}
+
 /*============================= Gestion de Cotizaciones =================================*/
 .gestion-cotizaciones {
   width: 100%; /* Ocupa todo el ancho disponible */
@@ -3589,3 +3766,4 @@ label {
     width: 100%;
   }
 }
+

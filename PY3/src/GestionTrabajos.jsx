@@ -1,5 +1,5 @@
 // GestionTrabajos.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import "./App.css";
 
 /* ======================= API TRABAJOS ======================= */
@@ -39,8 +39,8 @@ const apiTrabajos = {
     return data.trabajo;
   },
   updateEstado: async (codigoOrden, nuevoEstado) => {
-    const res = await fetch(`/api/trabajos/${codigoOrden}/estado`, {
-      method: "PATCH",
+    const res = await fetch(`/api/trabajos/${codigoOrden}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ estado: nuevoEstado }),
     });
@@ -82,12 +82,28 @@ const apiManoDeObra = {
   },
 };
 
+/* ======================= API VEHICULOS ======================= */
+const apiVehiculos = {
+  getAll: async () => {
+    try {
+      const res = await fetch("/api/vehiculos");
+      if (!res.ok) return [];
+      return await res.json();
+    } catch (error) {
+      console.warn("No se pudo cargar vehículos:", error);
+      return [];
+    }
+  }
+};
+
 /* ======================= COMPONENTE ======================= */
 function GestionTrabajos({ session }) {
   const [trabajos, setTrabajos] = useState([]);
   const [inventario, setInventario] = useState([]);
   const [manoDeObra, setManoDeObra] = useState([]);
   const [citas, setCitas] = useState([]);
+  const [vehiculosClientes, setVehiculosClientes] = useState([]);
+  const [vehiculoOrden, setVehiculoOrden] = useState(null);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
 
@@ -108,6 +124,16 @@ function GestionTrabajos({ session }) {
   const [servicioSeleccionado, setServicioSeleccionado] = useState("");
   const [nuevaNotaDiagnostico, setNuevaNotaDiagnostico] = useState("");
 
+  // Nuevos estados para los dropdowns personalizados
+  const [showRepuestosDropdown, setShowRepuestosDropdown] = useState(false);
+  const [showServiciosDropdown, setShowServiciosDropdown] = useState(false);
+  const [repuestosFiltradosBusqueda, setRepuestosFiltradosBusqueda] = useState([]);
+  const [serviciosFiltradosBusqueda, setServiciosFiltradosBusqueda] = useState([]);
+
+  // Refs para manejar clicks fuera del dropdown
+  const repuestosDropdownRef = useRef(null);
+  const serviciosDropdownRef = useRef(null);
+
   const ESTADOS = ["Pendiente", "En proceso", "Finalizada", "Cancelada"];
 
   /* === CARGAR DATOS === */
@@ -115,19 +141,35 @@ function GestionTrabajos({ session }) {
     cargarDatos();
   }, []);
 
+  // Efecto para cerrar dropdowns al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (repuestosDropdownRef.current && !repuestosDropdownRef.current.contains(event.target)) {
+        setShowRepuestosDropdown(false);
+      }
+      if (serviciosDropdownRef.current && !serviciosDropdownRef.current.contains(event.target)) {
+        setShowServiciosDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const cargarDatos = async () => {
     try {
-      // Determinar si necesitamos filtrar por usuario
       const usuarioFiltro = session.rol !== "admin" ? session.nombre : null;
       
-      const [trabajosData, citasResponse, manoDeObraData, inventarioData] = await Promise.all([
+      const [trabajosData, citasResponse, manoDeObraData, inventarioData, vehiculosData] = await Promise.all([
         apiTrabajos.getAll(usuarioFiltro),
         fetch("/api/citas").then(res => res.json()),
         apiManoDeObra.getAll(),
-        apiInventario.getAll()
+        apiInventario.getAll(),
+        apiVehiculos.getAll()
       ]);
 
-      // 🔽 CORRECIÓN: Manejar tanto array directo como objeto con propiedad citas
       let citasData;
       if (Array.isArray(citasResponse)) {
         citasData = citasResponse;
@@ -136,21 +178,152 @@ function GestionTrabajos({ session }) {
       }
 
       console.log("=== DATOS CARGADOS ===");
-      console.log("Trabajos cargados:", trabajosData);
-      console.log("Citas cargadas:", citasData);
-      console.log("Usuario session:", session.nombre);
-      console.log("Citas con estado 'Aceptada':", citasData.filter(c => c.estado === "Aceptada").length);
-      console.log("=====================");
+      console.log("Trabajos cargados:", trabajosData.length);
+      console.log("Citas cargadas:", citasData.length);
+      console.log("Vehículos clientes:", vehiculosData.length);
+      console.log("Inventario:", inventarioData.length);
 
       setCitas(citasData);
       setManoDeObra(manoDeObraData);
       setInventario(inventarioData);
+      setVehiculosClientes(vehiculosData);
       setTrabajos(trabajosData);
 
     } catch (error) {
       console.error("Error al cargar datos:", error);
       alert("Error al cargar datos.");
     }
+  };
+
+  /* ==================== CARGAR DATOS DEL VEHÍCULO ==================== */
+  const cargarDatosVehiculo = async (placa) => {
+    if (!placa) {
+      setVehiculoOrden(null);
+      return;
+    }
+    
+    try {
+      console.log("🔍 Buscando vehículo con placa:", placa);
+      
+      // Buscar en los vehículos de clientes ya cargados
+      const vehiculoCliente = vehiculosClientes.find(v => v.placa === placa);
+      
+      if (vehiculoCliente) {
+        console.log("✅ Vehículo encontrado:", vehiculoCliente);
+        console.log("📋 vehiculoBaseId:", vehiculoCliente.vehiculoBaseId, "Tipo:", typeof vehiculoCliente.vehiculoBaseId);
+        setVehiculoOrden(vehiculoCliente);
+      } else {
+        console.log("❌ No se encontró vehículo para placa:", placa);
+        setVehiculoOrden(null);
+      }
+    } catch (error) {
+      console.warn("Error al cargar vehículo:", error);
+      setVehiculoOrden(null);
+    }
+  };
+
+  /* ==================== FILTRAR REPUESTOS POR VEHÍCULO ==================== */
+  const repuestosFiltrados = useMemo(() => {
+    if (!inventario.length) {
+      console.log("❌ Inventario vacío");
+      return [];
+    }
+    
+    console.log("=== INICIANDO FILTRADO DE REPUESTOS ===");
+    console.log("📦 Total inventario:", inventario.length);
+    console.log("🚗 Vehículo orden:", vehiculoOrden);
+    
+    if (!vehiculoOrden) {
+      console.log("❌ No hay vehículo seleccionado - mostrando solo universales");
+      const universales = inventario.filter(repuesto => !repuesto.vehiculoId);
+      console.log("📋 Repuestos universales encontrados:", universales.length);
+      return universales;
+    }
+    
+    console.log("🔍 vehiculoBaseId del vehículo:", vehiculoOrden.vehiculoBaseId);
+    
+    if (!vehiculoOrden.vehiculoBaseId) {
+      console.log("❌ Vehículo no tiene vehiculoBaseId - mostrando solo universales");
+      const universales = inventario.filter(repuesto => !repuesto.vehiculoId);
+      console.log("📋 Repuestos universales encontrados:", universales.length);
+      return universales;
+    }
+    
+    // Normalizar IDs para comparación (ambos a número)
+    const vehiculoBaseId = Number(vehiculoOrden.vehiculoBaseId);
+    console.log("🔢 vehiculoBaseId convertido a número:", vehiculoBaseId);
+    
+    // Filtrar repuestos: universales + específicos del vehículo
+    const repuestosFiltrados = inventario.filter(repuesto => {
+      const esUniversal = !repuesto.vehiculoId;
+      
+      // Convertir vehiculoId del repuesto a número para comparación
+      const repuestoVehiculoId = repuesto.vehiculoId ? Number(repuesto.vehiculoId) : null;
+      const esEspecifico = repuestoVehiculoId && repuestoVehiculoId === vehiculoBaseId;
+      
+      return esUniversal || esEspecifico;
+    });
+    
+    console.log("=== RESULTADO FILTRADO ===");
+    console.log("📊 Total repuestos filtrados:", repuestosFiltrados.length);
+    
+    const universales = repuestosFiltrados.filter(r => !r.vehiculoId);
+    const especificos = repuestosFiltrados.filter(r => r.vehiculoId);
+    
+    console.log("🌐 Repuestos universales:", universales.length);
+    console.log("🎯 Repuestos específicos:", especificos.length);
+    
+    return repuestosFiltrados;
+  }, [inventario, vehiculoOrden]);
+
+  /* ==================== MANEJAR BÚSQUEDA DE REPUESTOS ==================== */
+  const manejarBusquedaRepuestos = (busqueda) => {
+    setRepSeleccionado(busqueda);
+    
+    if (busqueda.trim() === '') {
+      setRepuestosFiltradosBusqueda(repuestosFiltrados.slice(0, 10));
+      setShowRepuestosDropdown(false);
+      return;
+    }
+
+    const filtrados = repuestosFiltrados.filter(repuesto =>
+      repuesto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      repuesto.codigo.toLowerCase().includes(busqueda.toLowerCase())
+    ).slice(0, 10);
+
+    setRepuestosFiltradosBusqueda(filtrados);
+    setShowRepuestosDropdown(filtrados.length > 0);
+  };
+
+  /* ==================== MANEJAR BÚSQUEDA DE SERVICIOS ==================== */
+  const manejarBusquedaServicios = (busqueda) => {
+    setServicioSeleccionado(busqueda);
+    
+    if (busqueda.trim() === '') {
+      setServiciosFiltradosBusqueda(manoDeObra.slice(0, 10));
+      setShowServiciosDropdown(false);
+      return;
+    }
+
+    const filtrados = manoDeObra.filter(servicio =>
+      servicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      servicio.codigo.toLowerCase().includes(busqueda.toLowerCase())
+    ).slice(0, 10);
+
+    setServiciosFiltradosBusqueda(filtrados);
+    setShowServiciosDropdown(filtrados.length > 0);
+  };
+
+  /* ==================== SELECCIONAR REPUESTO ==================== */
+  const seleccionarRepuesto = (repuesto) => {
+    setRepSeleccionado(repuesto.codigo);
+    setShowRepuestosDropdown(false);
+  };
+
+  /* ==================== SELECCIONAR SERVICIO ==================== */
+  const seleccionarServicio = (servicio) => {
+    setServicioSeleccionado(servicio.codigo);
+    setShowServiciosDropdown(false);
   };
 
   /* ==================== OBTENER CITAS DISPONIBLES ==================== */
@@ -160,48 +333,23 @@ function GestionTrabajos({ session }) {
       return [];
     }
 
-    console.log("=== FILTRANDO CITAS DISPONIBLES ===");
-    console.log("Session rol:", session.rol);
-    console.log("Session nombre:", session.nombre);
-    console.log("Total citas:", citas.length);
-    
     const citasAceptadas = citas.filter(c => c.estado === "Aceptada");
-    console.log("Citas Aceptadas:", citasAceptadas.length);
-    console.log("Trabajos existentes:", trabajos.length);
     
     let citasFiltradas;
     
     if (session.rol === "admin") {
       citasFiltradas = citasAceptadas.filter(cita => {
         const tieneOrden = trabajos.find(t => String(t.idCita) === String(cita.id));
-        const disponible = !tieneOrden;
-        if (disponible) {
-          console.log(`✅ Cita disponible para admin: ${cita.id} - ${cita.clienteNombre} (${cita.vehiculoPlaca}) - Mecánico: ${cita.mecanico}`);
-        }
-        return disponible;
+        return !tieneOrden;
       });
     } else {
       const nombreUsuario = session?.nombre?.trim() || "";
-      console.log(`Buscando citas para mecánico: "${nombreUsuario}"`);
-      
       citasFiltradas = citasAceptadas.filter(cita => {
         const tieneOrden = trabajos.find(t => String(t.idCita) === String(cita.id));
         const coincideMecanico = cita.mecanico?.trim() === nombreUsuario;
-        const disponible = coincideMecanico && !tieneOrden;
-        
-        if (disponible) {
-          console.log(`✅ Cita disponible para ${nombreUsuario}: ${cita.id} - ${cita.clienteNombre} (${cita.vehiculoPlaca})`);
-        } else if (cita.estado === "Aceptada" && coincideMecanico && tieneOrden) {
-          console.log(`❌ Cita ${cita.id} tiene orden existente`);
-        } else if (cita.estado === "Aceptada" && !coincideMecanico) {
-          console.log(`❌ Cita ${cita.id} no coincide con mecánico: ${cita.mecanico} ≠ ${nombreUsuario}`);
-        }
-        return disponible;
+        return coincideMecanico && !tieneOrden;
       });
     }
-    
-    console.log("Citas disponibles finales:", citasFiltradas.length);
-    console.log("=== FIN FILTRADO ===");
     
     return citasFiltradas;
   }, [citas, trabajos, session.rol, session.nombre]);
@@ -247,6 +395,7 @@ function GestionTrabajos({ session }) {
       const resultado = await apiTrabajos.createFromCita({
         codigoCita: codigoCita.trim(),
         observacionesIniciales: observacionesIniciales.trim(),
+        mecanico: session.nombre // 🔽 AGREGAR EL NOMBRE DEL MECÁNICO ACTUAL
       });
       
       setTrabajos(prev => Array.isArray(resultado) ? resultado : [...prev, resultado]);
@@ -254,7 +403,6 @@ function GestionTrabajos({ session }) {
       setShowModalNuevaOT(false);
       alert("Orden de trabajo generada correctamente.");
       
-      // Recargar datos para actualizar la lista
       cargarDatos();
     } catch (error) {
       console.error(error);
@@ -331,6 +479,7 @@ function GestionTrabajos({ session }) {
     }));
 
     setServicioSeleccionado("");
+    setShowServiciosDropdown(false);
   };
 
   /* ==================== ELIMINAR SERVICIO ==================== */
@@ -345,7 +494,7 @@ function GestionTrabajos({ session }) {
   const agregarRepuestoTrabajo = () => {
     if (!repSeleccionado) return;
     
-    const rep = inventario.find((r) => r.codigo === repSeleccionado);
+    const rep = repuestosFiltrados.find((r) => r.codigo === repSeleccionado);
     if (!rep) {
       alert("Repuesto no encontrado.");
       return;
@@ -374,12 +523,19 @@ function GestionTrabajos({ session }) {
       ...prev,
       repuestosUtilizados: [
         ...(prev.repuestosUtilizados || []),
-        { codigo: rep.codigo, nombre: rep.nombre, cantidad: cantidadRep },
+        { 
+          codigo: rep.codigo, 
+          nombre: rep.nombre, 
+          cantidad: cantidadRep,
+          precio: rep.precio,
+          subtotal: rep.precio * cantidadRep
+        },
       ],
     }));
 
     setRepSeleccionado("");
     setCantidadRep(1);
+    setShowRepuestosDropdown(false);
   };
 
   /* ==================== ELIMINAR REPUESTO ==================== */
@@ -407,49 +563,24 @@ function GestionTrabajos({ session }) {
     }
   };
 
- /* ==================== GUARDAR DETALLE ==================== */
-const guardarDetalleTrabajo = async () => {
-  if (!selected) return;
+  /* ==================== GUARDAR DETALLE ==================== */
+  const guardarDetalleTrabajo = async () => {
+    if (!selected) return;
 
-  // 🔎 VALIDACIONES ANTES DE GUARDAR
-  const errores = [];
-
-  // Al menos una nota de diagnóstico
-  if (!selected.notasDiagnostico || selected.notasDiagnostico.length === 0) {
-    errores.push("Debe agregar al menos una nota de diagnóstico.");
-  }
-
-  // Al menos un servicio realizado
-  if (!selected.serviciosRealizados || selected.serviciosRealizados.length === 0) {
-    errores.push("Debe agregar al menos un servicio realizado.");
-  }
-
-  // Al menos un repuesto utilizado
-  if (!selected.repuestosUtilizados || selected.repuestosUtilizados.length === 0) {
-    errores.push("Debe agregar al menos un repuesto utilizado.");
-  }
-
-  // Si hay errores, mostramos alerta y detenemos el guardado
-  if (errores.length > 0) {
-    alert(errores.join("\n"));
-    return;
-  }
-
-  // ✅ Si pasa las validaciones, se guarda normalmente
-  try {
-    const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
-    setTrabajos(prev =>
-      prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t)
-    );
-    setSelected(actualizado);
-    setShowModalDetalle(false);
-    alert("Orden actualizada correctamente.");
-  } catch (error) {
-    console.error(error);
-    alert(error.message);
-  }
-};
-
+    // ELIMINADA LA VALIDACIÓN OBLIGATORIA - AHORA ES OPCIONAL
+    try {
+      const actualizado = await apiTrabajos.update(selected.codigoOrden, selected);
+      setTrabajos(prev =>
+        prev.map(t => t.codigoOrden === actualizado.codigoOrden ? actualizado : t)
+      );
+      setSelected(actualizado);
+      setShowModalDetalle(false);
+      alert("Orden actualizada correctamente.");
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
 
   /* ==================== CAMBIO DE ESTADO ==================== */
   const abrirModalEstado = (trabajo) => {
@@ -471,6 +602,14 @@ const guardarDetalleTrabajo = async () => {
       console.error(error);
       alert(error.message);
     }
+  };
+
+  /* ==================== MANEJAR SELECCIÓN DE ORDEN ==================== */
+  const manejarSeleccionOrden = async (trabajo) => {
+    setSelected(trabajo);
+    setShowModalDetalle(true);
+    // Cargar datos del vehículo cuando se selecciona una orden
+    await cargarDatosVehiculo(trabajo.placa);
   };
 
   /* ==================== FILTRO BUSQUEDA ==================== */
@@ -505,10 +644,7 @@ const guardarDetalleTrabajo = async () => {
           <li
             key={t.codigoOrden}
             className={selected?.codigoOrden === t.codigoOrden ? "selected" : ""}
-            onClick={() => {
-              setSelected(t);
-              setShowModalDetalle(true);
-            }}
+            onClick={() => manejarSeleccionOrden(t)}
           >
             <div>
               <b>OT #{t.codigoOrden}</b> - {t.clienteNombre} ({t.placa})
@@ -591,6 +727,11 @@ const guardarDetalleTrabajo = async () => {
               <p><b>Cliente:</b> {selected.clienteNombre} ({selected.clienteCedula})</p>
               <p><b>Placa:</b> {selected.placa}</p>
               <p><b>Estado:</b> {selected.estado}</p>
+              {vehiculoOrden && (
+                <div>
+                  <p><b>Vehículo:</b> {vehiculoOrden.marca} {vehiculoOrden.modelo} ({vehiculoOrden.tipo})</p>
+                </div>
+              )}
             </div>
 
             {/* NOTAS DE DIAGNÓSTICO */}
@@ -658,7 +799,7 @@ const guardarDetalleTrabajo = async () => {
                   {(selected.serviciosRealizados || []).map((servicio, idx) => (
                     <div key={idx} className="item-lista">
                       <span className="item-info">
-                        {servicio.nombre}
+                        {servicio.nombre} - ₡{servicio.precio?.toLocaleString()}
                       </span>
                       <button 
                         type="button"
@@ -673,20 +814,41 @@ const guardarDetalleTrabajo = async () => {
                 </div>
               </div>
               
-              <div className="agregar-item">
+              <div className="agregar-item" ref={serviciosDropdownRef}>
                 <input
-                  list="servicios-list"
                   value={servicioSeleccionado}
-                  onChange={(e) => setServicioSeleccionado(e.target.value)}
+                  onChange={(e) => manejarBusquedaServicios(e.target.value)}
+                  onFocus={() => {
+                    setServiciosFiltradosBusqueda(manoDeObra.slice(0, 10));
+                    setShowServiciosDropdown(manoDeObra.length > 0);
+                  }}
                   placeholder="Buscar servicio..."
                 />
-                <datalist id="servicios-list">
-                  {manoDeObra.map((servicio) => (
-                    <option key={servicio.codigo} value={servicio.codigo}>
-                      {servicio.nombre}
-                    </option>
-                  ))}
-                </datalist>
+                
+                {/* DROPDOWN PERSONALIZADO PARA SERVICIOS */}
+                {showServiciosDropdown && (
+                  <div className="dropdown-list">
+                    {serviciosFiltradosBusqueda.map((servicio) => (
+                      <div
+                        key={servicio.codigo}
+                        className="dropdown-item"
+                        onClick={() => seleccionarServicio(servicio)}
+                      >
+                        <div className="dropdown-item-main">
+                          <strong>{servicio.nombre}</strong>
+                          <span className="dropdown-price">₡{servicio.precio?.toLocaleString()}</span>
+                        </div>
+                        <div className="dropdown-item-desc">
+                          {servicio.descripcion}
+                        </div>
+                        <div className="dropdown-item-code">
+                          Código: {servicio.codigo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 <button 
                   type="button"
                   onClick={agregarServicioTrabajo}
@@ -705,7 +867,7 @@ const guardarDetalleTrabajo = async () => {
                   {(selected.repuestosUtilizados || []).map((repuesto, idx) => (
                     <div key={idx} className="item-lista">
                       <span className="item-info">
-                        {repuesto.nombre} ({repuesto.cantidad})
+                        {repuesto.nombre} ({repuesto.cantidad}) - ₡{repuesto.subtotal?.toLocaleString()}
                       </span>
                       <button 
                         type="button"
@@ -720,20 +882,44 @@ const guardarDetalleTrabajo = async () => {
                 </div>
               </div>
               
-              <div className="agregar-item">
+              <div className="agregar-item" ref={repuestosDropdownRef}>
                 <input
-                  list="repuestos-list"
                   value={repSeleccionado}
-                  onChange={(e) => setRepSeleccionado(e.target.value)}
+                  onChange={(e) => manejarBusquedaRepuestos(e.target.value)}
+                  onFocus={() => {
+                    setRepuestosFiltradosBusqueda(repuestosFiltrados.slice(0, 10));
+                    setShowRepuestosDropdown(repuestosFiltrados.length > 0);
+                  }}
                   placeholder="Buscar repuesto..."
                 />
-                <datalist id="repuestos-list">
-                  {inventario.map((r) => (
-                    <option key={r.codigo} value={r.codigo}>
-                      {r.nombre} (Stock: {r.cantidad})
-                    </option>
-                  ))}
-                </datalist>
+                
+                {/* DROPDOWN PERSONALIZADO PARA REPUESTOS */}
+                {showRepuestosDropdown && (
+                  <div className="dropdown-list">
+                    {repuestosFiltradosBusqueda.map((repuesto) => (
+                      <div
+                        key={repuesto.codigo}
+                        className="dropdown-item"
+                        onClick={() => seleccionarRepuesto(repuesto)}
+                      >
+                        <div className="dropdown-item-main">
+                          <strong>{repuesto.nombre}</strong>
+                          <span className="dropdown-price">₡{repuesto.precio?.toLocaleString()}</span>
+                        </div>
+                        <div className="dropdown-item-details">
+                          <span className={`dropdown-badge ${repuesto.vehiculoId ? 'specific' : 'universal'}`}>
+                            {repuesto.vehiculoId ? 'Específico' : 'Universal'}
+                          </span>
+                          <span className="dropdown-stock">Stock: {repuesto.cantidad}</span>
+                        </div>
+                        <div className="dropdown-item-code">
+                          Código: {repuesto.codigo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 <input
                   type="number"
                   min="1"
@@ -750,6 +936,8 @@ const guardarDetalleTrabajo = async () => {
                   Agregar
                 </button>
               </div>
+              
+              {/* INFORMACIÓN DEL FILTRO */}
             </div>
 
             <div className="btn-group">

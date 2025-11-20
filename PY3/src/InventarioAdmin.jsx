@@ -364,7 +364,7 @@ function GestionInventario({ session }) {
         </div>
       )}
 
-      {/* MODAL AGREGAR */}
+      {/* MODAL AGREGAR REPUESTO */}
       {showFormAgregar && (
         <div className="modal-overlay" onClick={() => setShowFormAgregar(false)}>
           <div className="modal modal-agregar" onClick={(e) => e.stopPropagation()}>
@@ -384,17 +384,23 @@ function GestionInventario({ session }) {
               value={newRepuesto.descripcion}
               onChange={(e) => setNewRepuesto({ ...newRepuesto, descripcion: e.target.value })}
             />
+            
+            {/* CANTIDAD CON LABEL */}
+            <label><b>Cantidad:</b></label>
             <input
               type="number"
               placeholder="Cantidad"
-              value={newRepuesto.cantidad}
-              onChange={(e) => setNewRepuesto({ ...newRepuesto, cantidad: e.target.value })}
+              value={newRepuesto.cantidad || ""}
+              onChange={(e) => setNewRepuesto({ ...newRepuesto, cantidad: parseInt(e.target.value) || 0 })}
             />
+            
+            {/* PRECIO CON LABEL */}
+            <label><b>Precio:</b></label>
             <input
               type="number"
               placeholder="Precio"
-              value={newRepuesto.precio}
-              onChange={(e) => setNewRepuesto({ ...newRepuesto, precio: e.target.value })}
+              value={newRepuesto.precio || ""}
+              onChange={(e) => setNewRepuesto({ ...newRepuesto, precio: parseFloat(e.target.value) || 0 })}
             />
 
             {/* Seleccionar vehículo (opcional) */}
@@ -464,7 +470,7 @@ function GestionInventario({ session }) {
         </div>
       )}
 
-      {/* MODAL EDITAR */}
+      {/* MODAL EDITAR REPUESTO */}
       {showFormEditar && editandoRepuesto && (
         <div className="modal-overlay" onClick={() => setShowFormEditar(false)}>
           <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
@@ -486,21 +492,23 @@ function GestionInventario({ session }) {
               }
             />
 
-            <label><b>Cantidad</b></label>
+            {/* CANTIDAD CON LABEL */}
+            <label><b>Cantidad:</b></label>
             <input
               type="number"
-              value={editandoRepuesto.cantidad}
+              value={editandoRepuesto.cantidad || ""}
               onChange={(e) =>
-                setEditandoRepuesto({ ...editandoRepuesto, cantidad: e.target.value })
+                setEditandoRepuesto({ ...editandoRepuesto, cantidad: parseInt(e.target.value) || 0 })
               }
             />
 
-            <label><b>Precio</b></label>
+            {/* PRECIO CON LABEL */}
+            <label><b>Precio:</b></label>
             <input
               type="number"
-              value={editandoRepuesto.precio}
+              value={editandoRepuesto.precio || ""}
               onChange={(e) =>
-                setEditandoRepuesto({ ...editandoRepuesto, precio: e.target.value })
+                setEditandoRepuesto({ ...editandoRepuesto, precio: parseFloat(e.target.value) || 0 })
               }
             />
 

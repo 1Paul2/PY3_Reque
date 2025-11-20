@@ -46,15 +46,18 @@ function GestionVehiculos({ session }) {
   const [mostrarListaClientes, setMostrarListaClientes] = useState(false);
   const [textoVehiculo, setTextoVehiculo] = useState("");
   const [mostrarListaVehiculos, setMostrarListaVehiculos] = useState(false);
+  const [textoVehiculoEditar, setTextoVehiculoEditar] = useState("");
+  const [mostrarListaVehiculosEditar, setMostrarListaVehiculosEditar] = useState(false);
   const [search, setSearchVehiculos] = useState("");
   const [selected, setSelectedVehiculos] = useState(null);
   const [showFormAgregar, setShowFormAgregar] = useState(false);
   const [showFormEditar, setShowFormEditar] = useState(false);
+  
   const resetFormularioVehiculo = () => {
-  setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
-  setTextoCliente("");
-  setTextoVehiculo("");
-  setClienteSeleccionado("");
+    setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
+    setTextoCliente("");
+    setTextoVehiculo("");
+    setClienteSeleccionado("");
   };
 
   const [newVehiculo, setNewVehiculo] = useState({
@@ -94,6 +97,13 @@ function GestionVehiculos({ session }) {
     })();
   }, []);
 
+  // Actualizar texto del vehículo cuando se abre el modal de editar
+  useEffect(() => {
+    if (showFormEditar && selected) {
+      setTextoVehiculoEditar(`${selected.marca} ${selected.modelo} ${selected.anoVehiculo ?? ""} (${selected.tipo})`);
+    }
+  }, [showFormEditar, selected]);
+
   /* === AGREGAR VEHÍCULO === */
   const agregarVehiculo = async () => {
     if (!newVehiculo.placa.trim() || !newVehiculo.marca.trim()) {
@@ -116,9 +126,7 @@ function GestionVehiculos({ session }) {
       const updated = await apiVehiculos.create(vehiculoCompleto);
       setVehiculos(updated);
       setShowFormAgregar(false);
-      setNewVehiculo({ marca: "", modelo: "", anoVehiculo: "", placa: "", tipo: "" });
-      setTextoCliente("");
-      setTextoVehiculo("");
+      resetFormularioVehiculo();
     } catch (e) {
       alert(e.message);
     }
@@ -144,49 +152,47 @@ function GestionVehiculos({ session }) {
   };
 
   /* === ELIMINAR VEHÍCULO === */
-  /* === ELIMINAR VEHÍCULO === */
-const eliminarVehiculo = async (vehiculo) => {
-  if (!session) return;
+  const eliminarVehiculo = async (vehiculo) => {
+    if (!session) return;
 
-  // Si no es admin, enviar reporte automático
-  if (session.rol !== "admin") {
-    try {
-      const reporte = {
-        usuario: session.nombre || "Desconocido",
-        tipo: "Vehiculos",
-        descripcion: `Intento de eliminar vehículo con placa ${vehiculo.placa}`,
-        fecha: new Date().toISOString(),
-      };
+    // Si no es admin, enviar reporte automático
+    if (session.rol !== "admin") {
+      try {
+        const reporte = {
+          usuario: session.nombre || "Desconocido",
+          tipo: "Vehiculos",
+          descripcion: `Intento de eliminar vehículo con placa ${vehiculo?.placa || "NO DEFINIDA"}`,
+          fecha: new Date().toISOString(),
+        };
 
-      const res = await fetch("/api/reportes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(reporte),
-      });
+        const res = await fetch("/api/reportes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reporte),
+        });
 
-      if (!res.ok) throw new Error("Error al enviar reporte");
+        if (!res.ok) throw new Error("Error al enviar reporte");
 
-      alert("Se ha enviado el reporte");
-      return; // No continuar con eliminación
-    } catch (err) {
-      console.error(err);
-      alert("No se pudo enviar el reporte.");
-      return;
+        alert("Se ha enviado el reporte");
+        return; // No continuar con eliminación
+      } catch (err) {
+        console.error(err);
+        alert("No se pudo enviar el reporte.");
+        return;
+      }
     }
-  }
 
-  // Admin puede eliminar
-  if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+    // Admin puede eliminar
+    if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
 
-  try {
-    const updated = await apiVehiculos.remove(vehiculo.placa);
-    setVehiculos(updated);
-    setSelectedVehiculos(null);
-  } catch (e) {
-    alert(e.message);
-  }
-};
-
+    try {
+      const updated = await apiVehiculos.remove(vehiculo.placa);
+      setVehiculos(updated);
+      setSelectedVehiculos(null);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
 
   /* === FILTRAR VEHÍCULOS === */
   const vehiculosFiltrados = vehiculos.filter(
@@ -341,55 +347,83 @@ const eliminarVehiculo = async (vehiculo) => {
             <p><b>Marca:</b> {selected.marca}</p>
             <p><b>Modelo:</b> {selected.modelo}</p>
             <p><b>Tipo:</b> {selected.tipo}</p>
-            <p><b>anoVehiculo:</b> {selected.anoVehiculo || "N/A"}</p>
+            <p><b>Año del Vehiculo:</b> {selected.anoVehiculo || "N/A"}</p>
             <p><b>Cédula Cliente:</b> {selected.clienteCedula || "No asignado"}</p>
 
             <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
               <button className="btn btn-edit" onClick={() => setShowFormEditar(true)}>Modificar</button>
-              <button className="btn btn-delete" onClick={() => eliminarVehiculo(selected.placa)}>Eliminar</button>
+              <button className="btn btn-delete" onClick={() => eliminarVehiculo(selected)}>Eliminar</button>
               <button className="btn btn-close" onClick={() => setSelectedVehiculos(null)}>Cerrar</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* MODAL EDITAR */}
-      {showFormEditar && selected && (
-        <div className="modal-overlay" onClick={() => setShowFormEditar(false)}>
-          <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
-            <h3>Editar Vehículo</h3>
-            <label><b>Placa:</b></label>
-            <input
-              value={selected.placa}
-              onChange={(e) => setSelectedVehiculos({ ...selected, placa: e.target.value })}
-            />
-            <label><b>anoVehiculo:</b></label>
-            <input
-              value={selected.anoVehiculo}
-              onChange={(e) => setSelectedVehiculos({ ...selected, anoVehiculo: e.target.value })}
-            />
-            <label><b>Modelo:</b></label>
-            <input
-              value={selected.modelo}
-              onChange={(e) => setSelectedVehiculos({ ...selected, modelo: e.target.value })}
-            />
-            <label><b>Marca:</b></label>
-            <input
-              value={selected.marca}
-              onChange={(e) => setSelectedVehiculos({ ...selected, marca: e.target.value })}
-            />
-            <label><b>Tipo:</b></label>
-            <input
-              value={selected.tipo}
-              onChange={(e) => setSelectedVehiculos({ ...selected, tipo: e.target.value })}
-            />
-            <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
-              <button className="btn btn-add" onClick={guardarEdicion}>Guardar</button>
-              <button className="btn btn-close" onClick={() => setShowFormEditar(false)}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
+{/* MODAL EDITAR */}
+{showFormEditar && selected && (
+  <div className="modal-overlay" onClick={() => setShowFormEditar(false)}>
+    <div className="modal modal-editar" onClick={(e) => e.stopPropagation()}>
+      <h3>Editar Vehículo</h3>
+      
+      {/* Placa (solo lectura) */}
+      <div>
+        <label><b>Placa:</b></label>
+        <input
+          value={selected.placa}
+          readOnly
+          className="input-placa"
+        />
+      </div>
+
+      {/* Vehículo base (búsqueda) */}
+      <div className="selector-vehiculo">
+        <label><b>Modificar el tipo de vehículo:</b></label>
+        <input
+          type="text"
+          className="input-busqueda-vehiculos"
+          placeholder="Buscar tipo o modelo..."
+          value={textoVehiculoEditar}
+          onChange={(e) => setTextoVehiculoEditar(e.target.value)}
+          onFocus={() => setMostrarListaVehiculosEditar(true)}
+          onBlur={() => setTimeout(() => setMostrarListaVehiculosEditar(false), 200)}
+        />
+        {mostrarListaVehiculosEditar && textoVehiculoEditar && (
+          <ul className="lista-vehiculos">
+            {vehiculosBase
+              .filter((v) =>
+                `${v.marca} ${v.modelo} ${v.tipo} ${v.anoVehiculo ?? ""}`
+                  .toLowerCase()
+                  .includes(textoVehiculoEditar.toLowerCase())
+              )
+              .map((v) => (
+                <li
+                  key={v.id}
+                  onClick={() => {
+                    setSelectedVehiculos({
+                      ...selected,
+                      tipo: v.tipo,
+                      marca: v.marca,
+                      modelo: v.modelo,
+                      anoVehiculo: v.anoVehiculo
+                    });
+                    setTextoVehiculoEditar(`${v.marca} ${v.modelo} ${v.anoVehiculo ?? ""} (${v.tipo})`);
+                    setMostrarListaVehiculosEditar(false);
+                  }}
+                >
+                  {v.marca} {v.modelo} {v.anoVehiculo ?? ""} ({v.tipo})
+                </li>
+              ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="btn-group" style={{ display: "flex", justifyContent: "space-between" }}>
+        <button className="btn btn-add" onClick={guardarEdicion}>Guardar</button>
+        <button className="btn btn-close" onClick={() => setShowFormEditar(false)}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
