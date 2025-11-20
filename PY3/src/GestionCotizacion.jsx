@@ -1,7 +1,7 @@
 // src/GestionCotizacion.jsx
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import "./App.css";
-import GeneradorPDF from "./GeneradorPDF"; // 🔽 AGREGAR IMPORT
+import GeneradorPDF from "./GeneradorPDF";
 
 /* ======================= API COTIZACIONES ======================= */
 const apiCotizaciones = {
@@ -13,7 +13,7 @@ const apiCotizaciones = {
     const res = await fetch(url);
     if (!res.ok) throw new Error("No se pudieron cargar las cotizaciones");
     const data = await res.json();
-    return Array.isArray(data) ? data : data.cotizaciones || [];
+    return Array.isArray(data) ? data : [];
   },
 
   create: async (payload) => {
@@ -63,6 +63,16 @@ const apiCotizaciones = {
       throw new Error(data.error || "No se pudo eliminar la cotizacion");
     }
   },
+
+  // 🔽 NUEVO: Verificar stock antes de generar proforma
+  verificarStock: async (codigo) => {
+    const res = await fetch(`/api/cotizaciones/${codigo}/verificar-stock`);
+    const data = await res.json();
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || "Error al verificar stock");
+    }
+    return data;
+  }
 };
 
 /* ======================= API VEHÍCULOS ======================= */
@@ -545,11 +555,6 @@ function GestionCotizacion({ session }) {
       estado: form.estado || "borrador",
       codigoOrdenTrabajo: form.codigoOrdenTrabajo || "",
       mecanicoOrdenTrabajo: form.mecanicoOrdenTrabajo || session.nombre,
-      subtotalRepuestos: calculoTotales.subtotalRepuestos,
-      subtotalManoObra: calculoTotales.subtotalManoObra,
-      descuentoMonto: calculoTotales.descuentoMonto,
-      iva: calculoTotales.iva,
-      total: calculoTotales.total
     };
 
     try {
@@ -581,20 +586,62 @@ function GestionCotizacion({ session }) {
       alert("Primero debe guardar la cotizacion.");
       return;
     }
-    if (!window.confirm("¿Desea convertir esta cotizacion en proforma?")) {
-      return;
-    }
 
+    // 🔽 NUEVO: Verificar stock antes de generar proforma
     try {
+      const verificacion = await apiCotizaciones.verificarStock(form.codigo);
+      
+      if (!verificacion.stockSuficiente) {
+        const repuestosProblema = verificacion.verificacion.filter(item => !item.suficiente);
+        const mensaje = repuestosProblema.map(item => 
+          `• ${item.nombre}: Stock ${item.stockActual}, Necesita ${item.cantidadRequerida}`
+        ).join('\n');
+        
+        if (!window.confirm(
+          `⚠️ ALERTA DE STOCK INSUFICIENTE:\n\n${mensaje}\n\n¿Desea continuar igualmente? Esto podría causar problemas de inventario.`
+        )) {
+          return;
+        }
+      }
+
+      if (!window.confirm(
+        "¿Desea convertir esta cotización en proforma?\n\n✅ Los repuestos se restarán del inventario automáticamente.\n❌ Esta acción NO se puede deshacer."
+      )) {
+        return;
+      }
+
       const proforma = await apiCotizaciones.toProforma(form.codigo);
       setCotizaciones((prev) =>
         prev.map((c) => (c.codigo === proforma.codigo ? proforma : c))
       );
       setForm(proforma);
-      alert("Proforma generada correctamente.");
+      
+      // Recargar inventario para reflejar cambios
+      const inventarioActualizado = await apiInventario.getAll();
+      setInventario(inventarioActualizado);
+      
+      alert("✅ Proforma generada correctamente. El inventario ha sido actualizado.");
+      
     } catch (e) {
-      console.error(e);
-      alert(e.message);
+      console.error("Error al generar proforma:", e);
+      
+      // Manejar errores de stock de manera específica
+      if (e.message.includes("Stock insuficiente")) {
+        try {
+          const errorData = JSON.parse(e.message.replace("Error: ", ""));
+          if (errorData.detalles) {
+            const mensajeError = errorData.detalles.map(d => 
+              `• ${d.repuesto}: ${d.error} (Stock: ${d.stockActual}, Necesita: ${d.cantidadRequerida})`
+            ).join('\n');
+            alert(`❌ No se pudo generar proforma:\n\n${mensajeError}`);
+            return;
+          }
+        } catch {
+          // Si no se puede parsear, mostrar el mensaje original
+        }
+      }
+      
+      alert(`❌ Error: ${e.message}`);
     }
   };
 
@@ -631,11 +678,8 @@ function GestionCotizacion({ session }) {
     
     try {
       console.log('Generando PDF para:', form);
-      
-      // USANDO AWAIT (recomendado)
       await GeneradorPDF.generarCotizacionPDF(form);
       console.log('PDF generado exitosamente');
-      
     } catch (error) {
       console.error("Error completo al generar PDF:", error);
       alert(`Error al generar el PDF: ${error.message}`);
@@ -658,7 +702,6 @@ function GestionCotizacion({ session }) {
 
       {/* Información del usuario */}
       <div className="user-info">
-
         {session.rol !== "admin" && (
           <p className="info-text">Solo puedes ver las cotizaciones y órdenes de trabajo que has creado.</p>
         )}
@@ -705,10 +748,7 @@ function GestionCotizacion({ session }) {
       {/* MODAL DE SELECCIÓN DE ORDEN DE TRABAJO */}
       {showModalSeleccionOT && (
         <div className="modal-overlay" onClick={() => setShowModalSeleccionOT(false)}>
-          <div
-            className="modal modal-seleccion-ot"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal modal-seleccion-ot" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <h3>Seleccionar tipo de cotización</h3>
               
@@ -779,11 +819,7 @@ function GestionCotizacion({ session }) {
       {/* MODAL COTIZACION / PROFORMA */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div
-            className="modal modal-cotizacion"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Contenido del modal con scroll */}
+          <div className="modal modal-cotizacion" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <h3>
                 {form.esProforma
@@ -1096,25 +1132,17 @@ function GestionCotizacion({ session }) {
                   </button>
                 )}
 
-                {/* 🔽 BOTÓN GENERAR PDF */}
+                {/* BOTÓN GENERAR PDF */}
                 {editMode && (
                   <button 
                     className="btn-pdf" 
                     onClick={generarPDF}
-                    style={{
-                      background: '#dc3545',
-                      color: 'white',
-                      border: 'none',
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
                   >
                     📄 Generar PDF
                   </button>
                 )}
 
-                {editMode && (
+                {editMode && !form.esProforma && (
                   <button className="btn-delete" onClick={eliminarCotizacion}>
                     Eliminar
                   </button>

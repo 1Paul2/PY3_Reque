@@ -3957,3 +3957,145 @@ label {
     width: 35%;
   }
 }
+
+.gestion-cotizaciones .btn-pdf {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ======================= DROPDOWNS PERSONALIZADOS ======================= */
+
+/* Contenedor del dropdown */
+.gestion-cotizaciones .dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(60, 60, 60, 0.95);
+  border: 1px solid #11695c;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin-top: 2px;
+}
+
+/* Items del dropdown */
+.gestion-cotizaciones .dropdown-item {
+  padding: 10px;
+  border-bottom: 1px solid rgba(17, 105, 92, 0.3);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #ffffff;
+}
+
+.gestion-cotizaciones .dropdown-item:hover {
+  background-color: rgba(17, 105, 92, 0.5);
+}
+
+.gestion-cotizaciones .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Contenido principal del item */
+.gestion-cotizaciones .dropdown-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.gestion-cotizaciones .dropdown-item-main strong {
+  font-size: 14px;
+  color: #b8e0d8;
+  flex: 1;
+}
+
+.gestion-cotizaciones .dropdown-price {
+  background: #11695c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Detalles del item */
+.gestion-cotizaciones .dropdown-item-details,
+.gestion-cotizaciones .dropdown-item-desc {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+/* Badges para tipo de repuesto */
+.gestion-cotizaciones .dropdown-badge {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.gestion-cotizaciones .dropdown-badge.universal {
+  background: #28a745;
+  color: white;
+}
+
+.gestion-cotizaciones .dropdown-badge.specific {
+  background: #ffc107;
+  color: #212529;
+}
+
+/* Stock y código */
+.gestion-cotizaciones .dropdown-stock {
+  font-size: 11px;
+  color: #b8e0d8;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.gestion-cotizaciones .dropdown-item-code {
+  font-size: 10px;
+  color: #8fb3ac;
+  font-family: monospace;
+}
+
+/* Descripción de servicios */
+.gestion-cotizaciones .dropdown-item-desc {
+  font-size: 12px;
+  color: #b8e0d8;
+  line-height: 1.3;
+}
+
+/* Contenedor de agregar item con posición relativa */
+.gestion-cotizaciones .agregar-item {
+  position: relative; /* 🔽 IMPORTANTE para el dropdown */
+}
+
+/* Scrollbar para dropdowns */
+.gestion-cotizaciones .dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.gestion-cotizaciones .dropdown-list::-webkit-scrollbar-track {
+  background: rgba(17, 105, 92, 0.1);
+  border-radius: 3px;
+}
+
+.gestion-cotizaciones .dropdown-list::-webkit-scrollbar-thumb {
+  background: #11695c;
+  border-radius: 3px;
+}
+
+.gestion-cotizaciones .dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #148571;
+}
